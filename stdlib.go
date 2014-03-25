@@ -1,7 +1,7 @@
 package multitemplate
 
 import (
-	"text/template"
+	"html/template"
 	"text/template/parse"
 )
 

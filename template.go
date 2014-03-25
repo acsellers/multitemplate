@@ -36,7 +36,7 @@ func Must(t *Template, err error) *Template {
 }
 
 func New(name string) *Template {
-	return &Template{Tmpl: template.New(name)}
+	return &Template{Tmpl: template.New(name).Funcs(template.FuncMap{})}
 }
 
 func ParseFiles(filenames ...string) (*Template, error) {

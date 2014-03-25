@@ -14,10 +14,10 @@ _Done:_
 * Move helpers, mussed, and bham into subdirectories of the same repo.
 * Write a buildable version of multitemplate.Template
 * Figure out how to set up Delims on standard library
+* Write tests on multitemplate.Template
 
 _To Do:_
 
-* Write tests on multitemplate.Template
 * Implement the template interoperation library
 * Fix up yield function to take fallback template name
 * Content_for function with template name
