@@ -3,17 +3,26 @@ package multitemplate
 import (
 	"text/template"
 	"text/template/parse"
-
-	"github.com/acsellers/multitemplate"
 )
 
-type defaultParser struct{}
+var GoLeftDelim, GoRightDelim string
 
-func (ms *multiStruct) ParseTemplate(name, src string, funcs template.FuncMap) (map[string]*parse.Tree, error) {
-	t, e := template.New(name).Funcs(funcs).Parse(src)
+type defaultParser struct {
+	left, right string
+}
+
+func (ms *defaultParser) ParseTemplate(name, src string, funcs template.FuncMap) (map[string]*parse.Tree, error) {
+	var t *template.Template
+	var e error
+	if GoRightDelim != "" || GoLeftDelim != "" {
+		t, e = template.New(name).Funcs(funcs).Delims(GoLeftDelim, GoRightDelim).Parse(src)
+	} else {
+		t, e = template.New(name).Funcs(funcs).Parse(src)
+	}
 	if e != nil {
 		return nil, e
 	}
+
 	ret := make(map[string]*parse.Tree)
 	for _, t := range t.Templates() {
 		ret[t.Name()] = t.Tree
@@ -21,12 +30,10 @@ func (ms *multiStruct) ParseTemplate(name, src string, funcs template.FuncMap) (
 	return ret, nil
 }
 
-func (ms *multiStruct) String() string {
+func (ms *defaultParser) String() string {
 	return "html/template: Standard Library Template"
 }
 
 func init() {
-	ms := multiStruct{}
-	multitemplate.Parsers["default"] = &ms
-	multitemplate.Parsers["tmpl"] = &ms
+	Parsers["tmpl"] = &defaultParser{}
 }
