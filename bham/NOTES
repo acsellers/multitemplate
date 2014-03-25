@@ -1,0 +1,34 @@
+So I have come to the conclusion that bham needs a more proper parser
+than the hacky thing it has at the moment. I'm going to collect ideas
+in this file so I can be thinking ahead and not forgetting things.
+
+Stages:
+Input =>
+  Creates a protoTree for the content that was input
+Lex =>
+  Splits the input into templateLines that record the 
+  content on the line and what the indentation was also
+  should check for overindented lines.
+Analyze =>
+  DoAnalyze(ALL) => 
+    Iterates through the list of templateLines produced
+    by Lex and classifies each as to whether they are
+    executable, a tag, need to be filtered, etc. If a 
+    line is continued on the next line, it should be 
+    combined in this stage so the next stage has 
+    all the necessary pieces on it's line. Each should 
+    insert protoNodes into the protoTree.nodes array.
+    If statements, range statements, etc will call 
+    DoAnalyze on the sub areas of the tree to simplify
+    the end/else parsing.
+Compile =>
+  Takes the optimized array of protoNodes and 
+  compiles them into a text/template/parse Tree that
+  is then put into pt.Main. As define is available to
+  template authors, those templates should be saved
+  under a pt.Subs map.
+Optimize =>
+  Iterates through the parse.Tree and produces 
+  an optimized verion by combining textual 
+  nodes.
+
