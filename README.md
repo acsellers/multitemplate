@@ -9,6 +9,9 @@ Multitemplate is a set of parsers, a html function library, template
 interoperation functions, and an implementation of a Template similar to the
 html/template Template struct in the standard library.
 
+Samples in the revel folder are a selection of samples available from
+github.com/revel/revel, but with templates converted to use multitemplate.
+
 _Done:_
 
 * Move helpers, mussed, and bham into subdirectories of the same repo.

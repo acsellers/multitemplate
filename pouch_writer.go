@@ -2,6 +2,8 @@ package multitemplate
 
 import "bytes"
 
+// A specialized Writer struct I'm using to make blocks work.
+// I'm not sure whether I should keep this public, or make it private.
 func NewPouchWriter() *PouchWriter {
 	p := &PouchWriter{}
 	return p

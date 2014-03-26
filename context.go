@@ -6,16 +6,23 @@ import (
 	"io"
 )
 
-func NewContext(t *Template, data interface{}) *Context {
-	c := &Context{tmpl: t}
+func NewContext(data interface{}) *Context {
+	c := &Context{}
 	c.Yields = make(map[string]string)
 	c.Content = make(map[string]template.HTML)
 	c.Dot = data
-	c.Output = NewPouchWriter()
+	c.output = NewPouchWriter()
 	return c
 }
 
+// A Content allows you to setup more specialized template executions,
+// like those involving layouts
 type Context struct {
+	// Main template to be rendered, not layout
+	Main string
+	// Layout for rendering
+	Layout string
+
 	// Templates set for yields
 	Yields map[string]string
 	// Data (strings), set for yields
@@ -28,7 +35,7 @@ type Context struct {
 	// internal, for exec
 	tmpl *Template
 	// blocks need this
-	Output *PouchWriter
+	output *PouchWriter
 }
 
 func (c *Context) exec(name string, dot interface{}) (template.HTML, error) {
@@ -47,12 +54,12 @@ func (c *Context) execWithFallback(name string, f Fallback, dot interface{}) (te
 	return c.exec(string(f), dot)
 }
 
-func (c *Context) Close(w io.Writer) error {
+func (c *Context) close(w io.Writer) error {
 	if c.parent != "" {
 		temp := c.parent
 		c.parent = ""
 		for temp != "" {
-			c.Output.Reset()
+			c.output.Reset()
 			e := c.tmpl.ExecuteTemplate(w, temp, c.Dot)
 			if e != nil {
 				return e
@@ -60,7 +67,7 @@ func (c *Context) Close(w io.Writer) error {
 			temp = c.parent
 		}
 	}
-	_, e := c.Output.root.WriteTo(w)
+	_, e := c.output.root.WriteTo(w)
 	return e
 }
 

@@ -1,8 +1,3 @@
-// multitemplate allows for multiple template parsers that emit
-// text/template/parse trees. The interface is intended to be a
-// reminiscent of text|html/template. Notable departures are the
-// absence of a Delims method and Parse taking a name, src, and
-// parser.
 package multitemplate
 
 import (
@@ -72,25 +67,37 @@ func (t *Template) Context(ctx *Context) (*Template, error) {
 func (t *Template) Execute(w io.Writer, data interface{}) error {
 	var tt *Template
 	if t.ctx == nil {
-		tt, _ = t.Context(NewContext(t, data))
+		tt, _ = t.Context(NewContext(data))
 	}
 
-	e := tt.Tmpl.Execute(tt.ctx.Output, data)
+	e := tt.Tmpl.Execute(tt.ctx.output, data)
 	if e == nil {
-		return tt.ctx.Close(w)
+		return tt.ctx.close(w)
 	}
 	return e
+}
+
+func (t *Template) ExecuteContext(w io.Writer, ctx *Context) error {
+	tt, e := t.Context(ctx)
+	if e != nil {
+		return e
+	}
+	main := ctx.Main
+	if ctx.Layout != "" {
+		main = ctx.Layout
+	}
+	return tt.Tmpl.ExecuteTemplate(w, main, ctx.Dot)
 }
 
 func (t *Template) ExecuteTemplate(w io.Writer, name string, data interface{}) error {
 	tt := t
 	if t.ctx == nil {
-		tt, _ = t.Context(NewContext(t, data))
+		tt, _ = t.Context(NewContext(data))
 	}
 
-	e := tt.Tmpl.ExecuteTemplate(tt.ctx.Output, name, data)
+	e := tt.Tmpl.ExecuteTemplate(tt.ctx.output, name, data)
 	if e == nil {
-		return tt.ctx.Close(w)
+		return tt.ctx.close(w)
 	}
 	return e
 }
