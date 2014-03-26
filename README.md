@@ -18,10 +18,10 @@ _Done:_
 * Implement the template interoperation library
 * Fix up yield function to take fallback template name
 * Content_for function with template name
+* Implement block and end_block
 
 _To Do:_
 
-* Implement the helpers library
-* Implement the inheritence parser inspired by django using content_for and yield
 * Write a revel connector
+* Implement the helpers library
 * Figure out what other libraries (martini?) could use a connector

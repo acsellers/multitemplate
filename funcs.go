@@ -48,14 +48,41 @@ func GenerateFuncs(t *Template) template.FuncMap {
 			}
 			return template.HTML(""), nil
 		},
-		"content_for": func(name string, templateName string) {
+		"content_for": func(name string, templateName string) string {
 			t.ctx.Yields[name] = templateName
+			return ""
 		},
 		"root_dot": func() interface{} {
 			return t.ctx.Dot
 		},
 		"exec": func(templateName string, dot interface{}) (template.HTML, error) {
 			return t.ctx.exec(templateName, dot)
+		},
+		"block": func(name string) string {
+			if t.ctx.parent != "" {
+				t.ctx.Output.Open(name)
+			} else {
+				if c, ok := t.ctx.Content[name]; ok {
+					t.ctx.Output.Write([]byte(c))
+					t.ctx.Output.Nop()
+				}
+			}
+			return ""
+		},
+		"end_block": func() string {
+			n, c := t.ctx.Output.Close()
+			if n == "" {
+				return ""
+			}
+			if _, ok := t.ctx.Content[n]; !ok {
+				t.ctx.Content[n] = template.HTML(c)
+			}
+			return ""
+		},
+		"extends": func(parent string) string {
+			t.ctx.Output.NoRoot()
+			t.ctx.parent = parent
+			return ""
 		},
 	}
 }
