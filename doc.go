@@ -140,7 +140,16 @@ the Main template without a Main template set is an error
   // or render nothing
   {{ yield "hero_module" }}
 
-  // Yield
+  // Yield a pre-set template, or a fallback template
+  // if the pre-set template is not present
+  {{ yield "blurb" (fallback "demo/lorem_blurb.html" }}
+
+  // Yield a pre-set template with specific RenderArgs
+  {{ yield "carousel" .CarouselImages }}
+
+  // Yield a pre-set template, or a fallback template, both
+  // with specific RenderArgs
+  {{ yield "results" .CurrentObject (fallback "errors/undefined.html") }}
 
 content_for allows you to set a template to be rendered in a block or yield from
 within a template.
