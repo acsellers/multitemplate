@@ -15,12 +15,12 @@ _Done:_
 * Write a buildable version of multitemplate.Template
 * Figure out how to set up Delims on standard library
 * Write tests on multitemplate.Template
-
-_To Do:_
-
 * Implement the template interoperation library
 * Fix up yield function to take fallback template name
 * Content_for function with template name
+
+_To Do:_
+
 * Implement the helpers library
 * Implement the inheritence parser inspired by django using content_for and yield
 * Write a revel connector

@@ -25,6 +25,7 @@ type Parser interface {
 type Template struct {
 	Tmpl  *template.Template
 	Base  string
+	ctx   *Context
 	funcs template.FuncMap
 }
 
@@ -55,14 +56,30 @@ func (t *Template) AddParseTree(name string, tree *parse.Tree) (*Template, error
 
 func (t *Template) Clone() (*Template, error) {
 	tmpl, err := t.Tmpl.Clone()
-	return &Template{tmpl, t.Base, t.funcs}, err
+	return &Template{tmpl, t.Base, nil, t.funcs}, err
+}
+
+func (t *Template) Context(ctx *Context) (*Template, error) {
+	tmpl, err := t.Clone()
+	if err != nil {
+		return nil, err
+	}
+	tmpl.ctx = ctx
+	return tmpl.Funcs(GenerateFuncs(t)), nil
 }
 
 func (t *Template) Execute(w io.Writer, data interface{}) error {
+	if t.ctx == nil {
+		t.ctx = &Context{}
+	}
 	return t.Tmpl.Execute(w, data)
 }
 
 func (t *Template) ExecuteTemplate(w io.Writer, name string, data interface{}) error {
+	if t.ctx == nil {
+		t.ctx = &Context{}
+	}
+
 	return t.Tmpl.ExecuteTemplate(w, name, data)
 }
 
@@ -74,11 +91,11 @@ func (t *Template) Funcs(fm template.FuncMap) *Template {
 			t.funcs[k] = v
 		}
 	}
-	return &Template{t.Tmpl.Funcs(fm), t.Base, t.funcs}
+	return &Template{t.Tmpl.Funcs(fm), t.Base, nil, t.funcs}
 }
 
 func (t *Template) Lookup(name string) *Template {
-	return &Template{t.Tmpl.Lookup(name), t.Base, t.funcs}
+	return &Template{t.Tmpl.Lookup(name), t.Base, nil, t.funcs}
 }
 
 func (t *Template) Name() string {
@@ -166,7 +183,7 @@ func (t *Template) Templates() []*Template {
 	tmpls := t.Tmpl.Templates()
 	ret := make([]*Template, len(tmpls))
 	for i, tmpl := range tmpls {
-		ret[i] = &Template{tmpl, t.Base, t.funcs}
+		ret[i] = &Template{tmpl, t.Base, nil, t.funcs}
 	}
 	return ret
 }
