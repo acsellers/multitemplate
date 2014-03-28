@@ -19,7 +19,8 @@ func NewContext(data interface{}) *Context {
 // like those involving layouts
 type Context struct {
 	// Main template to be rendered, not layout
-	Main string
+	Main        string
+	mainContent template.HTML
 	// Layout for rendering
 	Layout string
 

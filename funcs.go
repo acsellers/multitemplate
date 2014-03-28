@@ -8,7 +8,7 @@ func GenerateFuncs(t *Template) template.FuncMap {
 		"yield": func(vals ...interface{}) (template.HTML, error) {
 			switch len(vals) {
 			case 0:
-				return t.ctx.exec(t.ctx.Main, t.ctx.Dot)
+				return t.ctx.mainContent, nil
 			case 1:
 				if name, ok := vals[0].(string); ok {
 					if t.ctx.Yields[name] != "" {

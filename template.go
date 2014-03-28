@@ -85,6 +85,10 @@ func (t *Template) ExecuteContext(w io.Writer, ctx *Context) error {
 
 	main := ctx.Main
 	if ctx.Layout != "" {
+		ctx.mainContent, e = tt.ctx.exec(ctx.Main, ctx.Dot)
+		if e != nil {
+			return e
+		}
 		main = ctx.Layout
 	}
 	return tt.Tmpl.ExecuteTemplate(w, main, ctx.Dot)
