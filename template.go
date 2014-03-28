@@ -32,7 +32,7 @@ func Must(t *Template, err error) *Template {
 }
 
 func New(name string) *Template {
-	return &Template{Tmpl: template.New(name).Funcs(template.FuncMap{})}
+	return &Template{Tmpl: template.New(name).Funcs(template.FuncMap{}), Base: name}
 }
 
 func ParseFiles(filenames ...string) (*Template, error) {
@@ -82,6 +82,7 @@ func (t *Template) ExecuteContext(w io.Writer, ctx *Context) error {
 	if e != nil {
 		return e
 	}
+
 	main := ctx.Main
 	if ctx.Layout != "" {
 		main = ctx.Layout
@@ -115,7 +116,11 @@ func (t *Template) Funcs(fm template.FuncMap) *Template {
 }
 
 func (t *Template) Lookup(name string) *Template {
-	return &Template{t.Tmpl.Lookup(name), t.Base, nil, t.funcs}
+	tmpl := t.Tmpl.Lookup(name)
+	if tmpl != nil {
+		return &Template{tmpl, t.Base, nil, t.funcs}
+	}
+	return nil
 }
 
 func (t *Template) Name() string {
