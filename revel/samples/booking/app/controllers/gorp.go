@@ -16,9 +16,6 @@ var (
 	Dbm *gorp.DbMap
 )
 
-func init() {
-	multitemplate.DefaultLayout[multitemplate.HTML] = "layouts/app.html"
-}
 func InitDB() {
 	db.Init()
 	Dbm = &gorp.DbMap{Db: db.Db, Dialect: gorp.SqliteDialect{}}

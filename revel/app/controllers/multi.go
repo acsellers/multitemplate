@@ -4,6 +4,7 @@ package multitemplate
 
 import (
 	"bytes"
+	"fmt"
 	"html/template"
 	"io"
 	"io/ioutil"
@@ -28,23 +29,30 @@ var (
 	// something special with FUSE and template folders
 	// so you would need this. RefreshPaths will not start
 	// watching folders in DevMode without this.
-	ProdRefresh bool
-	extraPaths  []string
-	refresh     *templateRefresher
-	watch       *revel.Watcher
+	ProdRefresh  bool
+	CurrentError error
+	extraPaths   []string
+	refresh      *templateRefresher
+	watch        *revel.Watcher
 )
 
 type RequestFormat string
 
-func init() {
+func Init() {
+	revel.INFO.Println("Multitemplate starting")
+	DefaultLayout = make(map[RequestFormat]string)
+
 	if revel.DevMode || ProdRefresh {
-		watch := revel.NewWatcher()
+		watch = revel.NewWatcher()
 		refresh = &templateRefresher{}
+		revel.INFO.Println("multitemplate watches start")
 		watch.Listen(refresh, revel.TemplatePaths...)
+		revel.INFO.Println("multitemplate watches stop")
 	}
-	e := RefreshTemplates()
-	if e != nil {
-		revel.ERROR.Println(e)
+
+	CurrentError = RefreshTemplates()
+	if CurrentError != nil {
+		revel.ERROR.Println(CurrentError)
 	}
 }
 
@@ -67,15 +75,12 @@ MoreLoop:
 		watch.Listen(refresh, revel.TemplatePaths...)
 		watch.Listen(refresh, extraPaths...)
 	}
-	e := RefreshTemplates()
-	if e != nil {
-		revel.ERROR.Println(e)
-	}
+	CurrentError = RefreshTemplates()
 }
 
 // This should happen automatically in
 func RefreshTemplates() error {
-	revel.WARN.Println("Start refresh of templates")
+	revel.INFO.Println("Start multitemplate refresh")
 	Template = mt.New("revel_root")
 	Template.Funcs(revel.TemplateFuncs)
 
@@ -86,6 +91,8 @@ func RefreshTemplates() error {
 			if !i.IsDir() {
 				_, err = Template.ParseFiles(path)
 				if err != nil {
+					revel.ERROR.Printf("Parse Error in %s: %v", path, err)
+					CurrentError = err
 					return err
 				}
 			}
@@ -98,21 +105,26 @@ func RefreshTemplates() error {
 			if !i.IsDir() {
 				_, err = Template.ParseFiles(path)
 				if err != nil {
+					revel.ERROR.Printf("Parse Error in %s: %v", path, err)
+					CurrentError = err
 					return err
 				}
 			}
 			return nil
 		})
 	}
-
-	revel.WARN.Println("End refresh of templates")
+	if CurrentError != nil {
+		return CurrentError
+	}
+	revel.INFO.Println("Multitemplate refresh completed successfully")
 	return nil
 }
 
 type templateRefresher struct{}
 
 func (tr *templateRefresher) Refresh() *revel.Error {
-	RefreshTemplates()
+	revel.INFO.Println("multitemplate: refreshing templates")
+	CurrentError = RefreshTemplates()
 	return nil
 }
 
@@ -122,10 +134,6 @@ const (
 	JSON RequestFormat = "json"
 	TXT  RequestFormat = "txt"
 )
-
-func init() {
-	DefaultLayout = make(map[RequestFormat]string)
-}
 
 type Controller struct {
 	*revel.Controller
@@ -150,7 +158,6 @@ func (c *Controller) ContentFor(name, templateName string) {
 }
 
 func (c *Controller) Render(extraRenderArgs ...interface{}) revel.Result {
-	RefreshTemplates()
 	// Get the calling function name.
 	_, _, line, ok := runtime.Caller(1)
 	if !ok {
@@ -187,6 +194,10 @@ func (c *Controller) Render(extraRenderArgs ...interface{}) revel.Result {
 
 	ctx.Main = c.Name + "/" + c.MethodType.Name + "." + c.Request.Format
 
+	if CurrentError != nil {
+		return c.RenderError(CurrentError)
+	}
+
 	return &MultiTemplateResult{ctx}
 }
 
@@ -196,15 +207,13 @@ type MultiTemplateResult struct {
 
 func (mtr *MultiTemplateResult) Apply(req *revel.Request, resp *revel.Response) {
 	// Handle panics when rendering templates.
-	/*
-		defer func() {
-			if err := recover(); err != nil {
-				revel.ERROR.Println(err)
-				revel.PlaintextErrorResult{fmt.Errorf("Template Execution Panic in %s:\n%s",
-					mtr.ctx.Main, err)}.Apply(req, resp)
-			}
-		}()
-	*/
+	defer func() {
+		if err := recover(); err != nil {
+			revel.ERROR.Println(err)
+			revel.PlaintextErrorResult{fmt.Errorf("Template Execution Panic in %s:\n%s",
+				mtr.ctx.Main, err)}.Apply(req, resp)
+		}
+	}()
 
 	chunked := revel.Config.BoolDefault("results.chunked", false)
 
@@ -230,8 +239,6 @@ func (mtr *MultiTemplateResult) Apply(req *revel.Request, resp *revel.Response) 
 	// would carry a 200 status code)
 	var b bytes.Buffer
 
-	revel.WARN.Println("start execute")
-	revel.WARN.Println(mtr.ctx)
 	if Template.Lookup(mtr.ctx.Layout) == nil {
 		mtr.ctx.Layout = strings.ToLower(mtr.ctx.Layout)
 	}
@@ -239,8 +246,11 @@ func (mtr *MultiTemplateResult) Apply(req *revel.Request, resp *revel.Response) 
 		mtr.ctx.Main = strings.ToLower(mtr.ctx.Main)
 	}
 	e := Template.ExecuteContext(&b, mtr.ctx)
-	revel.WARN.Println(e)
-	revel.WARN.Println("end execute")
+	if e != nil {
+		er := &revel.ErrorResult{mtr.ctx.Dot.(map[string]interface{}), e}
+		er.Apply(req, resp)
+		return
+	}
 
 	if !chunked {
 		resp.Out.Header().Set("Content-Length", strconv.Itoa(b.Len()))
@@ -248,4 +258,12 @@ func (mtr *MultiTemplateResult) Apply(req *revel.Request, resp *revel.Response) 
 	resp.WriteHeader(http.StatusOK, "text/html")
 	b.WriteTo(out)
 
+}
+
+var ReloadFilter = func(c *revel.Controller, fc []revel.Filter) {
+	if watch != nil {
+		watch.Notify()
+	}
+
+	fc[0](c, fc[1:])
 }
