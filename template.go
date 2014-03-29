@@ -132,7 +132,6 @@ func (t *Template) Name() string {
 }
 
 func (t *Template) Parse(name, src, parser string) (*Template, error) {
-	fmt.Println(name, parser)
 	p, ok := Parsers[parser]
 	if !ok {
 		p = &defaultParser{}

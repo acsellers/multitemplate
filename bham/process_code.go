@@ -1,13 +1,12 @@
 package bham
 
 import (
-	"bytes"
 	"fmt"
+	"html/template"
 	"regexp"
 	"strconv"
 	"strings"
 	"text/template/parse"
-	"unicode"
 )
 
 var (
@@ -73,166 +72,21 @@ func (pt *protoTree) parseTemplateCode(content string) (*parse.PipeNode, error) 
 			},
 		}, nil
 	default:
-		return processCode(content)
+		return pt.processCode(content)
 	}
 }
 
-func processCode(s string) (*parse.PipeNode, error) {
-	var chars []rune
-	for _, char := range s {
-		chars = append(chars, char)
+func (pt *protoTree) processCode(s string) (*parse.PipeNode, error) {
+	t := template.New("mule").Funcs(pt.funcs)
+	t, err := t.Parse("{{" + s + "}}")
+	if err != nil {
+		return nil, err
 	}
-
-	current, last := 0, len(chars)-1
-	continuing := true
-	work := new(bytes.Buffer)
-	var funcName string
-	var args []string
-	var nodeArgs []parse.Node
-	var nodes []*parse.CommandNode
-	declNodes := []*parse.VariableNode{}
-
-	{
-	begin_command:
-		for current <= last && unicode.IsSpace(chars[current]) {
-			current++
-		}
-		for current <= last && !unicode.IsSpace(chars[current]) {
-			work.WriteRune(chars[current])
-			current++
-		}
-		funcName = work.String()
-		work.Reset()
-		for current <= last && unicode.IsSpace(chars[current]) {
-			current++
-		}
-		if current >= last {
-			goto complete
-		}
-		goto choose_after
-
-	func_arg:
-		if chars[current] == '"' {
-			work.WriteRune(chars[current])
-			current++
-			for current <= last && chars[current] != '"' && chars[current-1] != '\\' {
-				work.WriteRune(chars[current])
-				current++
-			}
-			if chars[current] != '"' {
-				return nil, fmt.Errorf("Unterminated string: %s", work.String())
-			}
-			work.WriteRune(chars[current])
-			current++
-		} else {
-			for current <= last && !unicode.IsSpace(chars[current]) {
-				work.WriteRune(chars[current])
-				current++
-			}
-		}
-
-		for current <= last && unicode.IsSpace(chars[current]) {
-			current++
-		}
-		args = append(args, work.String())
-		work.Reset()
-
-		if current >= last {
-			goto complete
-		}
-
-	choose_after:
-		if chars[current] == '|' {
-			goto push_func
-		} else {
-			if chars[current] == ':' && chars[current+1] == '=' {
-				current = current + 2
-				goto convert_to_assignment
-			} else {
-				goto func_arg
-			}
-		}
-	convert_to_assignment:
-		declNodes = append(declNodes, &parse.VariableNode{
-			NodeType: parse.NodeVariable,
-			Ident:    strings.Split(funcName, "."),
-		})
-		funcName = ""
-		for _, arg := range args {
-			declNodes = append(declNodes, &parse.VariableNode{
-				NodeType: parse.NodeVariable,
-				Ident:    strings.Split(arg, "."),
-			})
-		}
-		args = []string{}
-
-		goto begin_command
-
-	complete:
-		continuing = false
-
-	push_func:
-		nodeArgs = []parse.Node{}
-		switch funcName[0] {
-		case '.':
-			if len(funcName) > 1 {
-				nodeArgs = append(nodeArgs,
-					&parse.FieldNode{
-						NodeType: parse.NodeField,
-						Ident:    strings.Split(funcName[1:], "."),
-					})
-			} else {
-				nodeArgs = append(nodeArgs, &parse.DotNode{})
-			}
-		case '$':
-			nodeArgs = append(nodeArgs,
-				&parse.VariableNode{
-					NodeType: parse.NodeVariable,
-					Ident:    strings.Split(funcName, "."),
-				})
-		case '"':
-			nodeArgs = append(nodeArgs,
-				&parse.StringNode{
-					NodeType: parse.NodeString,
-					Quoted:   funcName,
-					Text:     funcName[1 : len(funcName)-1],
-				},
-			)
-		default:
-			nodeArgs = append(nodeArgs,
-				&parse.IdentifierNode{
-					NodeType: parse.NodeIdentifier,
-					Ident:    funcName,
-				})
-		}
-		for _, arg := range args {
-			nodeArgs = append(nodeArgs, parseFuncArg(arg))
-		}
-		funcName = ""
-		nodes = append(nodes, &parse.CommandNode{
-			NodeType: parse.NodeCommand,
-			Args:     nodeArgs,
-		})
-
-		args = []string{}
-
-		if continuing {
-			goto begin_command
-		}
+	n := t.Tree.Root.Nodes[0]
+	if an, ok := n.(*parse.ActionNode); ok {
+		return an.Pipe, nil
 	}
-
-	if current < last {
-		return nil, fmt.Errorf("Could not complete parse")
-	}
-	if funcName != "" {
-		return nil, fmt.Errorf("Parse was not able to complete")
-	}
-
-	return &parse.PipeNode{
-		NodeType: parse.NodePipe,
-		Decl:     declNodes,
-		Cmds:     nodes,
-	}, nil
+	return nil, fmt.Errorf("Couldn't extract code for:'%s'", s)
 }
 
 func parseFuncArg(arg string) parse.Node {

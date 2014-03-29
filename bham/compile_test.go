@@ -52,13 +52,7 @@ func TestCompile2(t *testing.T) {
 func TestCompile3(t *testing.T) {
 	assert.Within(t, func(test *assert.Test) {
 		tmpl := `= stylesheet "first" "second"`
-		pt := &protoTree{name: "compile", source: tmpl}
-		pt.lex()
-		pt.analyze()
-		pt.compile()
-		test.IsNotNil(pt.outputTree)
-		test.IsNil(pt.err)
-		t := template.New("wat").Funcs(map[string]interface{}{
+		funcs := template.FuncMap{
 			"stylesheet": func(sheets ...string) template.HTML {
 				var output []string
 				for _, sheet := range sheets {
@@ -69,7 +63,14 @@ func TestCompile3(t *testing.T) {
 				}
 				return template.HTML(strings.Join(output, "\n"))
 			},
-		})
+		}
+		pt := &protoTree{name: "compile", source: tmpl, funcs: funcs}
+		pt.lex()
+		pt.analyze()
+		pt.compile()
+		test.IsNotNil(pt.outputTree)
+		test.IsNil(pt.err)
+		t := template.New("wat").Funcs(funcs)
 
 		t.AddParseTree("compile", pt.outputTree)
 		b := new(bytes.Buffer)
@@ -358,17 +359,18 @@ func TestCompile16(t *testing.T) {
 	assert.Within(t, func(test *assert.Test) {
 		tmpl := `= $var := hello "andrew"
 %title= $var`
-		pt := &protoTree{name: "compile", source: tmpl}
+		funcs := template.FuncMap{
+			"hello": func(s string) string {
+				return "Hello " + s
+			},
+		}
+		pt := &protoTree{name: "compile", source: tmpl, funcs: funcs}
 		pt.lex()
 		pt.analyze()
 		pt.compile()
 		test.IsNotNil(pt.outputTree)
 		test.IsNil(pt.err)
-		t := template.New("wat").Funcs(map[string]interface{}{
-			"hello": func(s string) string {
-				return "Hello " + s
-			},
-		})
+		t := template.New("wat").Funcs(funcs)
 
 		t.AddParseTree("compile", pt.outputTree)
 		b := new(bytes.Buffer)
