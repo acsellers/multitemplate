@@ -40,11 +40,8 @@ func Parse(name, text string) (map[string]*parse.Tree, error) {
 	pt.lex()
 	pt.analyze()
 	pt.compile()
-	i := strings.Index(name, ".bham")
 
-	return map[string]*parse.Tree{
-		name[:i] + name[i+5:]: pt.outputTree,
-	}, pt.err
+	return map[string]*parse.Tree{name: pt.outputTree}, pt.err
 }
 
 type protoTree struct {

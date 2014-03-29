@@ -1,6 +1,7 @@
 package app
 
 import (
+	_ "github.com/acsellers/multitemplate/bham"
 	"github.com/acsellers/multitemplate/revel/app/controllers"
 	"github.com/revel/revel"
 )

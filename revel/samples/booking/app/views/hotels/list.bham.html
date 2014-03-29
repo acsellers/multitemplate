@@ -1,0 +1,23 @@
+= if .hotels
+  %table
+    %thead
+      %tr
+        %th Name
+        %th Address
+        %th City, State
+        %th(width="8%")Zip
+        %th(width="13%")Action
+    %tbody
+      = range .hotels
+        %tr
+          %td= .Name
+          %td= .Address
+          %td {{.Name}}, {{.State}}, {{.Country}}
+          %td= .Zip
+          %td
+            %a(href="/hotels/{{ .HotelId }}") View Hotel
+  %p
+    %a#nextPage(href="{{.nextPage}}") More Results
+
+= else
+  %p No more results

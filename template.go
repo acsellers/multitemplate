@@ -132,6 +132,7 @@ func (t *Template) Name() string {
 }
 
 func (t *Template) Parse(name, src, parser string) (*Template, error) {
+	fmt.Println(name, parser)
 	p, ok := Parsers[parser]
 	if !ok {
 		p = &defaultParser{}
@@ -188,11 +189,13 @@ func (t *Template) stripBase(filename string) (name, parser string) {
 	if len(exts) > 0 {
 		for _, ext := range exts {
 			if _, ok := Parsers[ext]; ok {
+				parser = ext
 			} else {
 				base = base + "." + ext
 			}
 		}
 	}
+	name = base
 	return
 }
 
