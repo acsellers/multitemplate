@@ -153,8 +153,8 @@ func newBareFunctionNode(command string) []parse.Node {
 	return nodeArgs
 }
 
-func newStandaloneTag(content string) ([]parse.Node, error) {
-	td, c, err := parseTag(content)
+func (pt *protoTree) newStandaloneTag(content string) ([]parse.Node, error) {
+	td, c, err := pt.parseTag(content)
 	if err != nil {
 		return []parse.Node{}, err
 	}
@@ -173,9 +173,9 @@ const (
 	stateDone
 )
 
-func parseTag(content string) (tagDescription, string, error) {
+func (pt *protoTree) parseTag(content string) (tagDescription, string, error) {
 	chars := []rune{}
-	td := newTagDescription()
+	td := newTagDescription(pt)
 	var current, state int
 	for _, char := range content {
 		chars = append(chars, char)
@@ -292,14 +292,16 @@ func parseTag(content string) (tagDescription, string, error) {
 		return td, value, nil
 	}
 }
-func newTagDescription() tagDescription {
+func newTagDescription(pt *protoTree) tagDescription {
 	return tagDescription{
-		tag: "div",
+		tag:  "div",
+		tree: pt,
 	}
 }
 
 type tagDescription struct {
 	tag        string
+	tree       *protoTree
 	classes    []string
 	idParts    []string
 	attributes []string
@@ -355,7 +357,7 @@ func (td tagDescription) Nodes(content string) ([]parse.Node, error) {
 	if content != "" {
 		if content[0] == '=' {
 			content = strings.TrimSpace(content[1:])
-			node, err := parseTemplateCode(content)
+			node, err := td.tree.parseTemplateCode(content)
 			return append(append(newMaybeTextNode(td.Opening()),
 				&parse.ActionNode{
 					NodeType: parse.NodeAction,

@@ -23,7 +23,7 @@ var Doctypes = map[string]string{
 type multiStruct struct{}
 
 func (ms *multiStruct) ParseTemplate(name, src string, funcs template.FuncMap) (map[string]*parse.Tree, error) {
-	return Parse(name, src)
+	return Parse(name, src, funcs)
 }
 func (ms *multiStruct) String() string {
 	return "bham: Blocky Hypertext Abstraction Markup"
@@ -35,8 +35,8 @@ func init() {
 }
 
 // parse will return a parse tree containing a single
-func Parse(name, text string) (map[string]*parse.Tree, error) {
-	pt := &protoTree{source: text, name: name}
+func Parse(name, text string, funcs template.FuncMap) (map[string]*parse.Tree, error) {
+	pt := &protoTree{source: text, name: name, funcs: funcs}
 	pt.lex()
 	pt.analyze()
 	pt.compile()
@@ -53,6 +53,7 @@ type protoTree struct {
 	tokenList  []token
 	outputTree *parse.Tree
 	err        error
+	funcs      template.FuncMap
 }
 
 type protoNode struct {

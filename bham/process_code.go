@@ -18,7 +18,7 @@ var (
 	simpleFunction = regexp.MustCompile(fmt.Sprintf(`^([^\.^\t^\n^\v^\f^\r^ ]+)( %s)*$`, dotVarField))
 )
 
-func parseTemplateCode(content string) (*parse.PipeNode, error) {
+func (pt *protoTree) parseTemplateCode(content string) (*parse.PipeNode, error) {
 	switch {
 	case content == ".":
 		return &parse.PipeNode{

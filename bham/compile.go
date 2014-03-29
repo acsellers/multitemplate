@@ -30,7 +30,7 @@ func (pt *protoTree) compileToList(arr *parse.ListNode, nodes []protoNode) {
 				arr.Nodes = append(arr.Nodes, newTextNode(content))
 			}
 		case identExecutable:
-			node, err := parseTemplateCode(node.content)
+			node, err := pt.parseTemplateCode(node.content)
 			if err == nil {
 				arr.Nodes = append(arr.Nodes, &parse.ActionNode{
 					NodeType: parse.NodeAction,
@@ -40,14 +40,14 @@ func (pt *protoTree) compileToList(arr *parse.ListNode, nodes []protoNode) {
 				pt.err = err
 			}
 		case identTag:
-			nodes, err := newStandaloneTag(node.content)
+			nodes, err := pt.newStandaloneTag(node.content)
 			if err == nil {
 				arr.Nodes = append(arr.Nodes, nodes...)
 			} else {
 				pt.err = err
 			}
 		case identTagOpen:
-			td, c, err := parseTag(node.content)
+			td, c, err := pt.parseTag(node.content)
 			if err == nil {
 				arr.Nodes = append(arr.Nodes, newTextNode(td.Opening()))
 				if c != "" {
@@ -57,7 +57,7 @@ func (pt *protoTree) compileToList(arr *parse.ListNode, nodes []protoNode) {
 				pt.err = err
 			}
 		case identTagClose:
-			td, _, err := parseTag(node.content)
+			td, _, err := pt.parseTag(node.content)
 			if err == nil {
 				arr.Nodes = append(arr.Nodes, newTextNode(td.Close()))
 			} else {
@@ -66,7 +66,7 @@ func (pt *protoTree) compileToList(arr *parse.ListNode, nodes []protoNode) {
 		case identText:
 			arr.Nodes = append(arr.Nodes, newMaybeTextNode(node.content)...)
 		case identIf:
-			branching, err := parseTemplateCode(node.content)
+			branching, err := pt.parseTemplateCode(node.content)
 			if err == nil {
 				in := &parse.IfNode{
 					parse.BranchNode{
@@ -92,7 +92,7 @@ func (pt *protoTree) compileToList(arr *parse.ListNode, nodes []protoNode) {
 			}
 
 		case identRange:
-			branching, err := parseTemplateCode(node.content)
+			branching, err := pt.parseTemplateCode(node.content)
 			if err == nil {
 				in := &parse.RangeNode{
 					parse.BranchNode{
@@ -118,7 +118,7 @@ func (pt *protoTree) compileToList(arr *parse.ListNode, nodes []protoNode) {
 			}
 
 		case identWith:
-			branching, err := parseTemplateCode(node.content)
+			branching, err := pt.parseTemplateCode(node.content)
 			if err == nil {
 				wn := &parse.WithNode{
 					parse.BranchNode{

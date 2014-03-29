@@ -25,9 +25,9 @@ const (
 func TestLarge(t *testing.T) {
 	assert.Within(t, func(test *assert.Test) {
 		t := template.New("test").Funcs(map[string]interface{}{})
-		tree, err := Parse("test.bham", large)
+		tree, err := Parse("test.bham", large, template.FuncMap{})
 		test.IsNil(err)
-		t, err = t.AddParseTree("tree", tree["test"])
+		t, err = t.AddParseTree("tree", tree["test.bham"])
 		test.IsNil(err)
 
 		b := new(bytes.Buffer)
