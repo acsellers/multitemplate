@@ -137,9 +137,10 @@ const (
 
 type Controller struct {
 	*revel.Controller
-	layout          string
-	nolayout        bool
-	yields, content map[string]string
+	layout   string
+	nolayout bool
+	yields   map[string]string
+	content  map[string]template.HTML
 }
 
 func (c *Controller) SetLayout(name string) {
@@ -148,6 +149,13 @@ func (c *Controller) SetLayout(name string) {
 	} else {
 		c.layout = name
 	}
+}
+
+func (c *Controller) Block(name string, content template.HTML) {
+	if c.content == nil {
+		c.content = make(map[string]template.HTML)
+	}
+	c.content[name] = content
 }
 
 func (c *Controller) ContentFor(name, templateName string) {
@@ -185,7 +193,7 @@ func (c *Controller) Render(extraRenderArgs ...interface{}) revel.Result {
 		ctx.Yields = c.yields
 	}
 	for key, content := range c.content {
-		ctx.Content[key] = template.HTML(content)
+		ctx.Content[key] = content
 	}
 
 	if ctx.Layout == "" && DefaultLayout[RequestFormat(c.Request.Format)] != "" && !c.nolayout {
