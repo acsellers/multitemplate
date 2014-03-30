@@ -1,5 +1,9 @@
 /*
- */
+multitemplate is a package that allows multiple templates written in multiple
+template languages to call between each other. This is the revel connector for
+multitemplate. See godoc.org/github.com/acsellers/multitemplate/revel for the
+integration instructions.
+*/
 package multitemplate
 
 import (
@@ -20,8 +24,12 @@ import (
 )
 
 var (
-	DefaultLayout map[RequestFormat]string
-	Template      *mt.Template
+	// DefaultLayout allows you to set a layout that will automatically be added
+	// per content type.
+	DefaultLayout = make(map[RequestFormat]string)
+	// Template is the template loader used by multitemplate. It will be replaced each
+	// time the templates a refreshed if you are using auto-refresh.
+	Template *mt.Template
 	// In DevMode, multitemplate will automatically
 	// refresh templates using revel's Watcher struct,
 	// in ProductionMode, you can change ProdRefresh to
@@ -29,7 +37,9 @@ var (
 	// something special with FUSE and template folders
 	// so you would need this. RefreshPaths will not start
 	// watching folders in DevMode without this.
-	ProdRefresh  bool
+	ProdRefresh bool
+	// CurrentError will record any errors encountered when loading templates, so it
+	// can be displayed when rendering the page.
 	CurrentError error
 	extraPaths   []string
 	refresh      *templateRefresher
@@ -38,9 +48,9 @@ var (
 
 type RequestFormat string
 
+// Init must be called from within revel's OnAppStart method.
 func Init() {
 	revel.INFO.Println("Multitemplate starting")
-	DefaultLayout = make(map[RequestFormat]string)
 
 	if revel.DevMode || ProdRefresh {
 		watch = revel.NewWatcher()
@@ -78,7 +88,8 @@ MoreLoop:
 	CurrentError = RefreshTemplates()
 }
 
-// This should happen automatically in
+// RefreshTemplates is automatically called by the auto-refresh system
+// or when you call RefreshPaths.
 func RefreshTemplates() error {
 	revel.INFO.Println("Start multitemplate refresh")
 	Template = mt.New("revel_root")
@@ -135,6 +146,8 @@ const (
 	TXT  RequestFormat = "txt"
 )
 
+// Controller can be added to your controller structs in your revel app
+// to use the multitemplate system.
 type Controller struct {
 	*revel.Controller
 	layout   string
@@ -143,6 +156,8 @@ type Controller struct {
 	content  map[string]template.HTML
 }
 
+// SetLayout sets the layout to be executed for this action. Set it to
+// the empty string to disable the layout for this action.
 func (c *Controller) SetLayout(name string) {
 	if name == "" {
 		c.nolayout = true
@@ -151,6 +166,8 @@ func (c *Controller) SetLayout(name string) {
 	}
 }
 
+// Block sets a pre-rendered HTML string that can show up in a yield
+// or block.
 func (c *Controller) Block(name string, content template.HTML) {
 	if c.content == nil {
 		c.content = make(map[string]template.HTML)
@@ -158,6 +175,8 @@ func (c *Controller) Block(name string, content template.HTML) {
 	c.content[name] = content
 }
 
+// ContentFor sets a template to be rendered for a key, this can be used
+// by either a block call or a yield call.
 func (c *Controller) ContentFor(name, templateName string) {
 	if c.yields == nil {
 		c.yields = make(map[string]string)
@@ -165,6 +184,7 @@ func (c *Controller) ContentFor(name, templateName string) {
 	c.yields[name] = templateName
 }
 
+// Standard Render call, this renders the default template for this action.
 func (c *Controller) Render(extraRenderArgs ...interface{}) revel.Result {
 	// Get the calling function name.
 	_, _, line, ok := runtime.Caller(1)
@@ -206,14 +226,39 @@ func (c *Controller) Render(extraRenderArgs ...interface{}) revel.Result {
 		return c.RenderError(CurrentError)
 	}
 
-	return &MultiTemplateResult{ctx}
+	return &templateResult{ctx}
 }
 
-type MultiTemplateResult struct {
+// RenderTemplate renders a specific template by path. If a DefaultLayout value
+// is available for this content type, it will be filled in automatically.
+func (c *Controller) RenderTemplate(templateName string) revel.Result {
+	ctx := mt.NewContext(c.RenderArgs)
+	ctx.Layout = c.layout
+	if len(c.yields) > 0 {
+		ctx.Yields = c.yields
+	}
+	for key, content := range c.content {
+		ctx.Content[key] = content
+	}
+
+	if ctx.Layout == "" && DefaultLayout[RequestFormat(c.Request.Format)] != "" && !c.nolayout {
+		ctx.Layout = DefaultLayout[RequestFormat(c.Request.Format)]
+	}
+
+	ctx.Main = templateName
+
+	if CurrentError != nil {
+		return c.RenderError(CurrentError)
+	}
+
+	return &templateResult{ctx}
+}
+
+type templateResult struct {
 	ctx *mt.Context
 }
 
-func (mtr *MultiTemplateResult) Apply(req *revel.Request, resp *revel.Response) {
+func (mtr *templateResult) Apply(req *revel.Request, resp *revel.Response) {
 	// Handle panics when rendering templates.
 	defer func() {
 		if err := recover(); err != nil {
