@@ -12,6 +12,14 @@ html/template Template struct in the standard library.
 Samples in the revel folder are a selection of samples available from
 github.com/revel/revel, but with templates converted to use multitemplate.
 
+Revel integration
+-----------------
+
+You can find instruction on how to integrate multitemplate and revel at the godoc for
+[github.com/acsellers/multitemplate/revel](godoc.org/github.com/acsellers/multitemplate/revel).
+Information on the replacement controller struct to use with the revel integration is at the godoc for
+[github.com/acsellers/multitemplate/revel/app/controllers](godoc.org/github.com/acsellers/multitemplate/revel/app/controllers).
+
 _Done:_
 
 * Move helpers, mussed, and bham into subdirectories of the same repo.
@@ -22,9 +30,9 @@ _Done:_
 * Fix up yield function to take fallback template name
 * Content_for function with template name
 * Implement block and end_block
+* Write a revel connector
 
 _To Do:_
 
-* Write a revel connector
 * Implement the helpers library
 * Figure out what other libraries (martini?) could use a connector
