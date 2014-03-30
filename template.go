@@ -187,7 +187,7 @@ func (t *Template) stripBase(filename string) (name, parser string) {
 	if filename[0] == '/' || filename[0] == '\\' {
 		name = filename[1:]
 	}
-	base, exts := Extensions(name)
+	base, exts := extensions(name)
 	if len(exts) > 0 {
 		for _, ext := range exts {
 			if _, ok := Parsers[ext]; ok {
@@ -201,7 +201,7 @@ func (t *Template) stripBase(filename string) (name, parser string) {
 	return
 }
 
-func Extensions(filename string) (string, []string) {
+func extensions(filename string) (string, []string) {
 	name := filepath.Base(filename)
 	dirs := filename[:len(filename)-len(name)]
 	ext := filepath.Ext(name)

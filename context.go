@@ -9,13 +9,13 @@ import (
 func NewContext(data interface{}) *Context {
 	c := &Context{}
 	c.Yields = make(map[string]string)
-	c.Content = make(map[string]template.HTML)
+	c.Blocks = make(map[string]template.HTML)
 	c.Dot = data
 	c.output = newPouchWriter()
 	return c
 }
 
-// A Content allows you to setup more specialized template executions,
+// A Context allows you to setup more specialized template executions,
 // like those involving layouts
 type Context struct {
 	// Main template to be rendered, not layout
@@ -26,8 +26,8 @@ type Context struct {
 
 	// Templates set for yields
 	Yields map[string]string
-	// Data (strings), set for yields
-	Content map[string]template.HTML
+	// Blocks (pre-rendered HTML)
+	Blocks map[string]template.HTML
 	// Base RenderArgs for the template
 	Dot interface{}
 
@@ -49,8 +49,8 @@ func (c *Context) execWithFallback(name string, f fallback, dot interface{}) (te
 	if c.Yields[name] != "" {
 		return c.exec(c.Yields[name], dot)
 	}
-	if c.Content[name] != "" {
-		return c.Content[name], nil
+	if c.Blocks[name] != "" {
+		return c.Blocks[name], nil
 	}
 	return c.exec(string(f), dot)
 }

@@ -13,8 +13,8 @@ func generateFuncs(t *Template) template.FuncMap {
 					if t.ctx.Yields[name] != "" {
 						return t.ctx.exec(t.ctx.Yields[name], t.ctx.Dot)
 					}
-					if t.ctx.Content[name] != "" {
-						return t.ctx.Content[name], nil
+					if t.ctx.Blocks[name] != "" {
+						return t.ctx.Blocks[name], nil
 					}
 				}
 				return t.ctx.exec(t.ctx.Main, vals[0])
@@ -28,8 +28,8 @@ func generateFuncs(t *Template) template.FuncMap {
 						if t.ctx.Yields[name] != "" {
 							return t.ctx.exec(t.ctx.Yields[name], vals[0])
 						}
-						if t.ctx.Content[name] != "" {
-							return t.ctx.Content[name], nil
+						if t.ctx.Blocks[name] != "" {
+							return t.ctx.Blocks[name], nil
 						}
 						return template.HTML(""), nil
 					}
@@ -56,7 +56,7 @@ func generateFuncs(t *Template) template.FuncMap {
 			return template.HTML(""), nil
 		},
 		"content_for": func(name string, templateName string) string {
-			if t.ctx.Yields[name] == "" && t.ctx.Content[name] == "" {
+			if t.ctx.Yields[name] == "" && t.ctx.Blocks[name] == "" {
 				t.ctx.Yields[name] = templateName
 			}
 			return ""
@@ -77,7 +77,7 @@ func generateFuncs(t *Template) template.FuncMap {
 					t.ctx.output.Nop()
 					return "", e
 				}
-				if c, ok := t.ctx.Content[name]; ok {
+				if c, ok := t.ctx.Blocks[name]; ok {
 					t.ctx.output.Write([]byte(c))
 					t.ctx.output.Nop()
 				}
@@ -89,9 +89,9 @@ func generateFuncs(t *Template) template.FuncMap {
 			if n == "" {
 				return ""
 			}
-			if _, ok := t.ctx.Content[n]; !ok {
+			if _, ok := t.ctx.Blocks[n]; !ok {
 				if t.ctx.Yields[n] == "" {
-					t.ctx.Content[n] = template.HTML(c)
+					t.ctx.Blocks[n] = template.HTML(c)
 				}
 			}
 			return ""

@@ -9,6 +9,38 @@ syntax, a simplified haml-like language called bham, and a simple
 mustache implementation. Multitemplate has an open interface for
 creating new syntaxes, so external languages can be easily used.
 
+Terminology
+
+Yield's are executing saved templates or blocks. You can add a fallback
+template to yields, but not fallback content. Yielding with a name will return the
+first template set for that name, or the content of the first block that
+had that name.
+
+ContentFor will set a template to be executed on a name. This is similar
+to the template command built in to the go template library, but with
+a layer of indirection.
+
+Blocks are template content that is executed, then saved for a later time.
+Blocks share names with ContentFor and yields, so a yield might outtput
+the content from a block, or a template set with ContentFor.
+
+Inherited templates are templates that use the inherits function to
+define that after it is executed, then another template should be
+executed as well. These templates should only be made up of non-writing
+functions and blocks.
+
+Context's are the way to use the more advanced features of the multitemplate
+library. With Context's, you can set two templates to be executed, a Main
+template (executed first), and a Layout template (executed after Main). You
+can also set Templates for Yields and Block content. Since you can't pass
+RenderArgs in the ExecuteContext, you should put your RenderArgs in the Dot
+variable.
+
+Layouts are templates executed after a Main template. Context's are the way
+to define Layouts to be executed. The Main template should set up content
+that can then be yielded using the Main template. Yielding without a name
+will cause the main template's content to be output.
+
 Integrations
 
 While multitemplate is available to use as a library in all
@@ -66,7 +98,10 @@ Block functionality
 
 The following code describes two templates that use the inherits
 function to utilize template inheritence. It works similarly to
-the yield example.
+the yield example. Note that the inherits call should be the first
+call of the view, any code before the inherits call may be sent to
+the writer added to the Execute call.
+
 
 app_controller.go
   templates.ExecuteTemplate(writer, "app/index.html", renderArgs)
@@ -108,7 +143,8 @@ Yield and Block functionality
 
 As both yields and blocks are built on the same underlying mechanisms, they can be
 combined in interesting ways. Implementation wise, blocks are like yields that have
-embedded fallback content, while yields have to have separate template fallbacks.
+embedded fallback content, while yields have to have separate template fallbacks. Both
+Layouts and the Main template can extend other templates.
 
 app_controller.go
   templates.ExecuteTemplate(writer, "app/index.html", renderArgs)
@@ -212,11 +248,11 @@ to output a pre-set template or block, or to render the main template with the d
 as the data.
 
 Assigning the same key in a Context for both Yields and Content means that the
-Content will be ignored. Calling content_for and block with the same key has lock-out
+Content will be ignored. Calling content_for and block (in templates) with the same key has lock-out
 protection within the template functions. In this case, we will use the template
 named in the Yields map. Within the templates, the rule is the first to claim the key,
 wins. Any integrations that hide the Context, will operate under the assumption that the
-last claim before execution should win.
+last claim before template execution should win.
 
 Bham is a beta-quality library. I've tried to fix the bugs that I'm aware of, but I'm
 sure that there's more lurking out there.
@@ -229,18 +265,15 @@ Version plans
 First release is 0.1, which has bham and html/templates available as first-class languages.
 Blocks and yields are supported, along with layouts.
 
-Second release is 0.5, which adds the helpers library, and the super_block function. Also
-a whole bunch of new tests for yields, blocks and their interactions.
+Second release is 0.5, which adds the helpers library, and the super_block and main_block
+functions. Also a whole bunch of new tests for yields, blocks and their interactions.
 
-Third release will probably be around a 0.6, adding things I forgot, fixing bugs
-discovered and things I that need to be fixed. Mustache will get more tests, function
-calling, maybe blocks. If there were relatively few bugs to fix, then this will become
-1.0.
+Third release will be either a 0.6 or a 1.0, adding things I forgot, fixing bugs
+discovered and things that need to be fixed. Mustache will get integration tests, function
+calling, blocks. If there were relatively few bugs to fix, then this will be 1.0.
 
-Releases after the third will either be fixing issues needed before issuing a 1.0, or
-adding functions and/or languages after 1.0. Template languages I'm interested in
+Releases after 1.0, will be adding functions or languages. Template languages I'm interested in
 investigating adding are: jade/slim, full haml, some sort of lispy thing, handlebars,
-jinja2, Razor, and more that I can't think of at the moment.
-
+jinja2, and Razor.
 */
 package multitemplate
