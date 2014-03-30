@@ -4,19 +4,19 @@ import "bytes"
 
 // A specialized Writer struct I'm using to make blocks work.
 // I'm not sure whether I should keep this public, or make it private.
-func NewPouchWriter() *PouchWriter {
-	p := &PouchWriter{}
+func newPouchWriter() *pouchWriter {
+	p := &pouchWriter{}
 	return p
 }
 
-type PouchWriter struct {
+type pouchWriter struct {
 	names   []string
 	root    bytes.Buffer
 	buffers []bytes.Buffer
 	discard bool
 }
 
-func (pw *PouchWriter) Write(p []byte) (n int, err error) {
+func (pw *pouchWriter) Write(p []byte) (n int, err error) {
 	if len(pw.buffers) > 0 {
 		return pw.buffers[len(pw.buffers)-1].Write(p)
 	}
@@ -27,27 +27,27 @@ func (pw *PouchWriter) Write(p []byte) (n int, err error) {
 	return len(p), nil
 }
 
-func (pw *PouchWriter) Nop() {
+func (pw *pouchWriter) Nop() {
 	pw.names = append(pw.names, "")
 	pw.buffers = append(pw.buffers, bytes.Buffer{})
 }
 
-func (pw *PouchWriter) NoRoot() {
+func (pw *pouchWriter) NoRoot() {
 	pw.discard = true
 }
 
-func (pw *PouchWriter) Reset() {
+func (pw *pouchWriter) Reset() {
 	pw.discard = false
 	pw.names = []string{}
 	pw.buffers = []bytes.Buffer{}
 }
 
-func (pw *PouchWriter) Open(name string) {
+func (pw *pouchWriter) Open(name string) {
 	pw.names = append(pw.names, name)
 	pw.buffers = append(pw.buffers, bytes.Buffer{})
 }
 
-func (pw *PouchWriter) Close() (name, content string) {
+func (pw *pouchWriter) Close() (name, content string) {
 	if len(pw.names) > 0 {
 		name = pw.names[len(pw.names)-1]
 		content = pw.buffers[len(pw.buffers)-1].String()

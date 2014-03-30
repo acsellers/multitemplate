@@ -11,7 +11,7 @@ func NewContext(data interface{}) *Context {
 	c.Yields = make(map[string]string)
 	c.Content = make(map[string]template.HTML)
 	c.Dot = data
-	c.output = NewPouchWriter()
+	c.output = newPouchWriter()
 	return c
 }
 
@@ -36,7 +36,7 @@ type Context struct {
 	// internal, for exec
 	tmpl *Template
 	// blocks need this
-	output *PouchWriter
+	output *pouchWriter
 }
 
 func (c *Context) exec(name string, dot interface{}) (template.HTML, error) {
@@ -45,7 +45,7 @@ func (c *Context) exec(name string, dot interface{}) (template.HTML, error) {
 	return template.HTML(b.String()), e
 }
 
-func (c *Context) execWithFallback(name string, f Fallback, dot interface{}) (template.HTML, error) {
+func (c *Context) execWithFallback(name string, f fallback, dot interface{}) (template.HTML, error) {
 	if c.Yields[name] != "" {
 		return c.exec(c.Yields[name], dot)
 	}
@@ -72,4 +72,4 @@ func (c *Context) close(w io.Writer) error {
 	return e
 }
 
-type Fallback string
+type fallback string

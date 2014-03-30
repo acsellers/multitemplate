@@ -9,6 +9,21 @@ syntax, a simplified haml-like language called bham, and a simple
 mustache implementation. Multitemplate has an open interface for
 creating new syntaxes, so external languages can be easily used.
 
+Integrations
+
+While multitemplate is available to use as a library in all
+Go applications, it also includes integrations libraries that
+will integrate multitemplate into external frameworks without
+requiring the user to learn how to integrate this library.
+
+The Revel integration is (as far as I know) a drop-in
+replacement for the Revel template library. Instructions on
+how to integrate are available in the godoc for the
+github.com/acsellers/multitemplate/revel subdirectory, while
+the integration code is in
+github.com/acsellers/multitemplate/revel/app/controllers due
+to how revel deals with modules.
+
 Yield functionality
 
 The following code demonstrates the common types of yield statements.
@@ -190,22 +205,42 @@ that there is no content set for the key of the yield.
 
   {{ yield "footer" . (fallback "include/old_footer.html") }}
 
-Known Issues
+Things to know about
 
 yield . is ambiguous when dot is currently a string. It could be either a request
 to output a pre-set template or block, or to render the main template with the dot
 as the data.
 
-Using the same name for a block and yield will lead to ambiguous results when rendering.
-Depending on how you are outputting the code (yield "name" vs block "name") will determine
-which version outputs. This should only appear when you are setting the same key using
-both a block and a yield in non-final templates, that are then rendered in the final
-template.
+Assigning the same key in a Context for both Yields and Content means that the
+Content will be ignored. Calling content_for and block with the same key has lock-out
+protection within the template functions. In this case, we will use the template
+named in the Yields map. Within the templates, the rule is the first to claim the key,
+wins. Any integrations that hide the Context, will operate under the assumption that the
+last claim before execution should win.
 
-Using a fallback argument for the main template will not work. This is due to the fact
-that the fallback function is an experimental feature that may show up quite a bit in
-the helpers library.
+Bham is a beta-quality library. I've tried to fix the bugs that I'm aware of, but I'm
+sure that there's more lurking out there.
 
-Fallback may not be parsed correctly in the bham library.
+The Mustache implementation here is alpha quality. It's low on the totem pole for
+improvements.
+
+Version plans
+
+First release is 0.1, which has bham and html/templates available as first-class languages.
+Blocks and yields are supported, along with layouts.
+
+Second release is 0.5, which adds the helpers library, and the super_block function. Also
+a whole bunch of new tests for yields, blocks and their interactions.
+
+Third release will probably be around a 0.6, adding things I forgot, fixing bugs
+discovered and things I that need to be fixed. Mustache will get more tests, function
+calling, maybe blocks. If there were relatively few bugs to fix, then this will become
+1.0.
+
+Releases after the third will either be fixing issues needed before issuing a 1.0, or
+adding functions and/or languages after 1.0. Template languages I'm interested in
+investigating adding are: jade/slim, full haml, some sort of lispy thing, handlebars,
+jinja2, Razor, and more that I can't think of at the moment.
+
 */
 package multitemplate

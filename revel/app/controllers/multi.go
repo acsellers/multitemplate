@@ -172,6 +172,9 @@ func (c *Controller) Block(name string, content template.HTML) {
 	if c.content == nil {
 		c.content = make(map[string]template.HTML)
 	}
+	if c.yields[name] != "" {
+		delete(c.yields, name)
+	}
 	c.content[name] = content
 }
 
@@ -180,6 +183,9 @@ func (c *Controller) Block(name string, content template.HTML) {
 func (c *Controller) ContentFor(name, templateName string) {
 	if c.yields == nil {
 		c.yields = make(map[string]string)
+	}
+	if c.content[name] != "" {
+		delete(c.content, name)
 	}
 	c.yields[name] = templateName
 }

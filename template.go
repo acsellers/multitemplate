@@ -10,8 +10,11 @@ import (
 	"text/template/parse"
 )
 
+// To Register a parser, set it in this map for each extension that would
+// correspond to it.
 var Parsers = make(map[string]Parser)
 
+// The interface you must have to implement a Parser
 type Parser interface {
 	ParseTemplate(name, src string, funcs template.FuncMap) (map[string]*parse.Tree, error)
 	String() string
@@ -61,7 +64,7 @@ func (t *Template) Context(ctx *Context) (*Template, error) {
 	}
 	tmpl.ctx = ctx
 	ctx.tmpl = tmpl
-	return tmpl.Funcs(GenerateFuncs(tmpl)), nil
+	return tmpl.Funcs(generateFuncs(tmpl)), nil
 }
 
 func (t *Template) Execute(w io.Writer, data interface{}) error {
@@ -138,7 +141,7 @@ func (t *Template) Parse(name, src, parser string) (*Template, error) {
 	}
 
 	t2, _ := t.Clone()
-	trees, err := p.ParseTemplate(name, src, t2.Funcs(GenerateFuncs(t)).funcs)
+	trees, err := p.ParseTemplate(name, src, t2.Funcs(generateFuncs(t)).funcs)
 	if err != nil {
 		return nil, err
 	}

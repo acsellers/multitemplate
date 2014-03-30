@@ -5,6 +5,7 @@ import (
 	"text/template/parse"
 )
 
+// Delimeters for the standard Go template parser
 var GoLeftDelim, GoRightDelim string
 
 type defaultParser struct {
