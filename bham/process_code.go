@@ -2,10 +2,10 @@ package bham
 
 import (
 	"fmt"
-	"html/template"
 	"regexp"
 	"strconv"
 	"strings"
+	textTmpl "text/template"
 	"text/template/parse"
 )
 
@@ -77,7 +77,7 @@ func (pt *protoTree) parseTemplateCode(content string) (*parse.PipeNode, error) 
 }
 
 func (pt *protoTree) processCode(s string) (*parse.PipeNode, error) {
-	t := template.New("mule").Funcs(pt.funcs)
+	t := textTmpl.New("mule").Funcs(textTmpl.FuncMap(pt.funcs))
 	t, err := t.Parse("{{" + s + "}}")
 	if err != nil {
 		return nil, err
