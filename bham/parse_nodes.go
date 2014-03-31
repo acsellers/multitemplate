@@ -268,8 +268,15 @@ func (pt *protoTree) parseTag(content string) (tagDescription, string, error) {
 		if current < limit && chars[current] == '"' {
 			value = value + "\""
 			current++
-
-			if string(chars[current:current+len(LeftDelim)]) == LeftDelim {
+			quoteIndex := strings.Index(string(chars[current:]), "\"")
+			delimIndex := strings.Index(string(chars[current:]), LeftDelim)
+			if delimIndex > 0 && quoteIndex > delimIndex {
+				leftLen := len([]rune(LeftDelim))
+				fmt.Println("here", string(chars[current:]))
+				for string(chars[current:current+leftLen]) != LeftDelim {
+					value = value + string(chars[current])
+					current += 1
+				}
 				value = value + LeftDelim
 				current += len(LeftDelim)
 				rightLen := len([]rune(RightDelim))
