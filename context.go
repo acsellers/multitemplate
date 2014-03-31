@@ -40,6 +40,10 @@ type Context struct {
 	output *pouchWriter
 }
 
+func (c *Context) openableScope() bool {
+	return !c.output.nesting() && (c.parent != "" || (c.Layout != "" && !c.executingLayout))
+}
+
 func (c *Context) exec(name string, dot interface{}) (template.HTML, error) {
 	b := bytes.Buffer{}
 	e := c.tmpl.ExecuteTemplate(&b, name, dot)

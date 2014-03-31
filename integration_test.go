@@ -86,6 +86,19 @@ var tableTests = []tableTest{
 			"layout": `layout {{ block "block1" }}layout{{ end_block }} {{ block "block2" }}layout{{ end_block }} layout`,
 		},
 	},
+
+	tableTest{
+		Name:        "Nested blocks in Parent templates",
+		Description: "Blocks must not nest, and inner blocks should execute as if it was the last template",
+		Expected:    "layout parent child layout",
+		Main:        "child",
+		Layout:      "layout",
+		Templates: map[string]string{
+			"child":  `{{ extends "parent" }}{{ block "child_block" }}child{{ end_block }}`,
+			"parent": `{{ block "test_block" }}parent {{ block "child_block" }}parent{{ end_block }}{{ end_block }}`,
+			"layout": `layout {{ block "test_block" }}layout{{ end_block }} layout`,
+		},
+	},
 }
 
 func TestTables(t *testing.T) {

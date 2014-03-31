@@ -16,6 +16,10 @@ type pouchWriter struct {
 	discard bool
 }
 
+func (pw *pouchWriter) nesting() bool {
+	return len(pw.buffers) > 0
+}
+
 func (pw *pouchWriter) Write(p []byte) (n int, err error) {
 	if len(pw.buffers) > 0 {
 		return pw.buffers[len(pw.buffers)-1].Write(p)

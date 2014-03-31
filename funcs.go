@@ -68,7 +68,7 @@ func generateFuncs(t *Template) template.FuncMap {
 			return t.ctx.exec(templateName, dot)
 		},
 		"block": func(name string) (string, error) {
-			if t.ctx.parent != "" || (t.ctx.Layout != "" && !t.ctx.executingLayout) {
+			if t.ctx.openableScope() {
 				t.ctx.output.Open(name)
 			} else {
 				if _, ok := t.ctx.Yields[name]; ok {
