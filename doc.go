@@ -254,6 +254,14 @@ named in the Yields map. Within the templates, the rule is the first to claim th
 wins. Any integrations that hide the Context, will operate under the assumption that the
 last claim before template execution should win.
 
+Getting an error about a stack overflow during template execution is most likely a
+template that is yielding itself.
+
+There are tests in integration_test.go that spell out how yields and block interact in
+all the situations that I could think of. The test cases are spelled out with minimal
+templates, names for each test case, and a description of what the situation that the case
+is testing.
+
 Bham is a beta-quality library. I've tried to fix the bugs that I'm aware of, but I'm
 sure that there's more lurking out there.
 

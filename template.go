@@ -75,12 +75,13 @@ func (t *Template) Execute(w io.Writer, data interface{}) error {
 
 	e := tt.Tmpl.Execute(tt.ctx.output, data)
 	if e == nil {
-		return tt.ctx.close(w)
+		return tt.ctx.Close(w)
 	}
 	return e
 }
 
 func (t *Template) ExecuteContext(w io.Writer, ctx *Context) error {
+	ctx.executingLayout = false
 	tt, e := t.Context(ctx)
 	if e != nil {
 		return e
@@ -93,8 +94,9 @@ func (t *Template) ExecuteContext(w io.Writer, ctx *Context) error {
 			return e
 		}
 		main = ctx.Layout
+		tt.ctx.executingLayout = true
 	}
-	return tt.Tmpl.ExecuteTemplate(w, main, ctx.Dot)
+	return tt.ExecuteTemplate(w, main, ctx.Dot)
 }
 
 func (t *Template) ExecuteTemplate(w io.Writer, name string, data interface{}) error {
@@ -105,7 +107,7 @@ func (t *Template) ExecuteTemplate(w io.Writer, name string, data interface{}) e
 
 	e := tt.Tmpl.ExecuteTemplate(tt.ctx.output, name, data)
 	if e == nil {
-		return tt.ctx.close(w)
+		return tt.ctx.Close(w)
 	}
 	return e
 }

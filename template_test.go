@@ -33,21 +33,7 @@ var simpleTest = templateTest{
 
 func TestBlock(tst *testing.T) {
 	Within(tst, func(test *Test) {
-		for p, s := range blockTest.Cases {
-			t, e := New("view.html").Parse("view.html", s, p)
-			test.IsNil(e)
-			b := &bytes.Buffer{}
-			test.NoError(t.ExecuteTemplate(b, "view.html", nil))
-			test.AreEqual(b.String(), blockTest.Expected)
-		}
-
-	})
-}
-
-var blockTest = templateTest{
-	Expected: "\n<before>\n<styles>\n<after>",
-	Cases: map[string]string{
-		"stdlib": `{{ define "view.html" }}
+		code := `{{ define "view.html" }}
 {{ extends "base.html" }}
 
 {{ block "header" }}<styles>{{ end_block }}
@@ -56,6 +42,12 @@ var blockTest = templateTest{
 {{ block "header"}}<links>{{ end_block }}
 <after>{{ end }}
 
-`,
-	},
+`
+		t, e := New("view.html").Parse("view.html", code, "stdlib")
+		test.IsNil(e)
+		b := &bytes.Buffer{}
+		test.NoError(t.ExecuteTemplate(b, "view.html", nil))
+		test.AreEqual(b.String(), "\n<before>\n<styles>\n<after>")
+
+	})
 }

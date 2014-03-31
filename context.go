@@ -22,7 +22,8 @@ type Context struct {
 	Main        string
 	mainContent template.HTML
 	// Layout for rendering
-	Layout string
+	Layout          string
+	executingLayout bool
 
 	// Templates set for yields
 	Yields map[string]string
@@ -55,20 +56,20 @@ func (c *Context) execWithFallback(name string, f fallback, dot interface{}) (te
 	return c.exec(string(f), dot)
 }
 
-func (c *Context) close(w io.Writer) error {
+func (c *Context) Close(w io.Writer) error {
 	if c.parent != "" {
 		temp := c.parent
 		c.parent = ""
 		for temp != "" {
 			c.output.Reset()
-			e := c.tmpl.ExecuteTemplate(w, temp, c.Dot)
+			e := c.tmpl.Tmpl.ExecuteTemplate(c.output, temp, c.Dot)
 			if e != nil {
 				return e
 			}
 			temp = c.parent
 		}
 	}
-	_, e := c.output.root.WriteTo(w)
+	_, e := io.WriteString(w, c.output.root.String())
 	return e
 }
 
