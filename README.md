@@ -9,16 +9,19 @@ Multitemplate is a set of parsers, a html function library, template
 interoperation functions, and an implementation of a Template similar to the
 html/template Template struct in the standard library.
 
-Samples in the revel folder are a selection of samples available from
-github.com/revel/revel, but with templates converted to use multitemplate.
+Current documentation is available at [godoc.org](http://godoc.org/github.com/acsellers/multitemplate).
 
 Revel integration
 -----------------
 
 You can find instruction on how to integrate multitemplate and revel at the godoc for
-[github.com/acsellers/multitemplate/revel](godoc.org/github.com/acsellers/multitemplate/revel).
+[github.com/acsellers/multitemplate/revel](http://godoc.org/github.com/acsellers/multitemplate/revel).
 Information on the replacement controller struct to use with the revel integration is at the godoc for
-[github.com/acsellers/multitemplate/revel/app/controllers](godoc.org/github.com/acsellers/multitemplate/revel/app/controllers).
+[github.com/acsellers/multitemplate/revel/app/controllers](http://godoc.org/github.com/acsellers/multitemplate/revel/app/controllers).
+
+Samples in the revel folder are a selection of samples available from
+github.com/revel/revel, but with templates converted to use multitemplate. (Yes I
+know there's only one there now, I'll add more soon).
 
 _Done:_
 
