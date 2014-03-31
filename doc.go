@@ -257,6 +257,15 @@ last claim before template execution should win.
 Getting an error about a stack overflow during template execution is most likely a
 template that is yielding itself.
 
+The block function has two related functions, define_block and exec_block. If you need
+to define a block, even when it would normally execute the block (for instance, if you
+are in the main layout, and which to ensure a block exists before yielding or executing
+a template), define_block will save the content of the block and not output the content.
+This will not override any content already saved for that block name. exec_block is the
+reverse function, it will force the block to be executed. If you need to start the main
+template with a block, and you are using a template, exec_block will cause the block
+to be executed correctly. You should use the standard block call in nearly all situations.
+
 There are tests in integration_test.go that spell out how yields and block interact in
 all the situations that I could think of. The test cases are spelled out with minimal
 templates, names for each test case, and a description of what the situation that the case

@@ -84,6 +84,22 @@ func generateFuncs(t *Template) template.FuncMap {
 			}
 			return "", nil
 		},
+		"exec_block": func(name string) (string, error) {
+			if _, ok := t.ctx.Yields[name]; ok {
+				c, e := t.ctx.exec(t.ctx.Yields[name], t.ctx.Dot)
+				t.ctx.output.Write([]byte(c))
+				t.ctx.output.Nop()
+				return "", e
+			} else if c, ok := t.ctx.Blocks[name]; ok {
+				t.ctx.output.Write([]byte(c))
+				t.ctx.output.Nop()
+			}
+			return "", nil
+		},
+		"define_block": func(name string) string {
+			t.ctx.output.Open(name)
+			return ""
+		},
 		"end_block": func() string {
 			n, c := t.ctx.output.Close()
 			if n == "" {

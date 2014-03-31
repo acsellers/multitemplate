@@ -99,6 +99,45 @@ var tableTests = []tableTest{
 			"layout": `layout {{ block "test_block" }}layout{{ end_block }} layout`,
 		},
 	},
+
+	tableTest{
+		Name:        "Extended templates in both Main and Layout templates",
+		Description: "Both Main and Layout templates should be able to be extended",
+		Expected:    "one two three four",
+		Main:        "main_child",
+		Layout:      "layout_child",
+		Templates: map[string]string{
+			"layout_child":  `{{ extends "layout_parent" }}{{ block "child_layout" }}two{{ end_block }}`,
+			"layout_parent": `one {{ yield "child_layout" }} {{ yield "parent_main" }} {{ yield "child_main" }}`,
+			"main_child":    `{{ extends "main_parent" }}{{ block "child_main" }}four{{ end_block }}`,
+			"main_parent":   `{{ block "parent_main" }}three{{ end_block }}`,
+		},
+	},
+
+	tableTest{
+		Name:        "Default content in layout template",
+		Description: "If a a block was not set in the main template, we should see the default content",
+		Expected:    "layout default main",
+		Main:        "main",
+		Layout:      "layout",
+		Templates: map[string]string{
+			"layout": `layout {{ block "nonexistent" }}default{{ end_block }} {{ block "content" }}content{{ end_block }}`,
+			"main":   `{{ block "content" }}main{{ end_block }}`,
+		},
+	},
+
+	tableTest{
+		Name:        "Extended Main Templates with Layouts",
+		Description: "Main template must be able to be yielded in a layout",
+		Expected:    "lay ext child end out",
+		Main:        "main_child",
+		Layout:      "layout",
+		Templates: map[string]string{
+			"main_child":  `{{ extends "main_parent" }}{{ block "content" }}child{{ end_block }}`,
+			"main_parent": `ext {{ block "content" }}error{{ end_block }} end`,
+			"layout":      `lay {{ yield }} out`,
+		},
+	},
 }
 
 func TestTables(t *testing.T) {

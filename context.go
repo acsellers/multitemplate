@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"html/template"
 	"io"
+	"strings"
 )
 
 func NewContext(data interface{}) *Context {
@@ -41,12 +42,25 @@ type Context struct {
 }
 
 func (c *Context) openableScope() bool {
-	return !c.output.nesting() && (c.parent != "" || (c.Layout != "" && !c.executingLayout))
+	canNest := !c.output.nesting()
+
+	hasParent := c.parent != ""
+	forthcomingLayout := c.Layout != "" && !c.executingLayout
+	inactiveView := strings.TrimSpace(c.output.root.String()) == ""
+	openableTemplate := hasParent || (forthcomingLayout && inactiveView)
+
+	return canNest && openableTemplate
 }
 
 func (c *Context) exec(name string, dot interface{}) (template.HTML, error) {
 	b := bytes.Buffer{}
+	// Replace the output buffer so we don't have stale data hanging around
+	// We need to have the rest of the context hanging around.
+	temp := c.output
+	c.output = newPouchWriter()
+
 	e := c.tmpl.ExecuteTemplate(&b, name, dot)
+	c.output = temp
 	return template.HTML(b.String()), e
 }
 
