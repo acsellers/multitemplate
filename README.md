@@ -13,6 +13,32 @@ html/template Template struct in the standard library.
 
 Current documentation is available at [godoc.org](http://godoc.org/github.com/acsellers/multitemplate).
 
+Bham documentation
+------------------
+
+I am continuing to add to the [godoc documentation](http://godoc.org/github.com/acsellers/multitemplate/bham),
+but a quick taste of bham (as of 0.2) is as follows:
+
+```
+  !!!
+  %html
+    %head
+      = yield "head"
+    %body
+      = block "header"
+        #header
+          = if .user
+            #options
+              Connected as {{.user.Username}} |
+              %a(href="{{ url "Hotels.Index" }}") Search
+              |
+              %a(href="{{ url "Hotels.Settings" }}") Settings
+              |
+              %a(href="{{ url "Application.Logout" }}") Logout
+      = end_block
+      = yield "content"
+```
+
 Revel integration
 -----------------
 
