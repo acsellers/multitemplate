@@ -273,8 +273,9 @@ Version plans
 First release is 0.1, which has bham and html/templates available as first-class languages.
 Blocks and yields are supported, along with layouts.
 
-Second release is 0.5, which adds the helpers library, and the super_block and main_block
-functions. Also a whole bunch of new tests for yields, blocks and their interactions.
+Second release is 0.5, which adds the helpers library, and the super_block, main_block and
+define_block functions. Also a whole bunch of new tests for yields, blocks and their
+interactions.
 
 Third release will be either a 0.6 or a 1.0, adding things I forgot, fixing bugs
 discovered and things that need to be fixed. Mustache will get integration tests, function
