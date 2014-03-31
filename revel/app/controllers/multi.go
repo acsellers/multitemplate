@@ -219,7 +219,7 @@ func (c *Controller) Render(extraRenderArgs ...interface{}) revel.Result {
 		ctx.Yields = c.yields
 	}
 	for key, content := range c.content {
-		ctx.Content[key] = content
+		ctx.Blocks[key] = content
 	}
 
 	if ctx.Layout == "" && DefaultLayout[RequestFormat(c.Request.Format)] != "" && !c.nolayout {
@@ -244,7 +244,7 @@ func (c *Controller) RenderTemplate(templateName string) revel.Result {
 		ctx.Yields = c.yields
 	}
 	for key, content := range c.content {
-		ctx.Content[key] = content
+		ctx.Blocks[key] = content
 	}
 
 	if ctx.Layout == "" && DefaultLayout[RequestFormat(c.Request.Format)] != "" && !c.nolayout {

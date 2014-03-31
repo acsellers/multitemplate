@@ -49,9 +49,13 @@ func (pt *protoTree) compileToList(arr *parse.ListNode, nodes []protoNode) {
 		case identTagOpen:
 			td, c, err := pt.parseTag(node.content)
 			if err == nil {
-				arr.Nodes = append(arr.Nodes, newTextNode(td.Opening()))
+				if td.executableOpen {
+					arr.Nodes = append(arr.Nodes, pt.newMaybeTextNode(td.Opening())...)
+				} else {
+					arr.Nodes = append(arr.Nodes, newTextNode(td.Opening()))
+				}
 				if c != "" {
-					arr.Nodes = append(arr.Nodes, newMaybeTextNode(c)...)
+					arr.Nodes = append(arr.Nodes, pt.newMaybeTextNode(c)...)
 				}
 			} else {
 				pt.err = err
@@ -64,7 +68,7 @@ func (pt *protoTree) compileToList(arr *parse.ListNode, nodes []protoNode) {
 				pt.err = err
 			}
 		case identText:
-			arr.Nodes = append(arr.Nodes, newMaybeTextNode(node.content)...)
+			arr.Nodes = append(arr.Nodes, pt.newMaybeTextNode(node.content)...)
 		case identIf:
 			branching, err := pt.parseTemplateCode(node.content)
 			if err == nil {

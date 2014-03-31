@@ -28,22 +28,15 @@ func containsDelimeters(s string) bool {
 		strings.Contains(string(s), LeftDelim)
 }
 
-func safeAction(s string) (*parse.ActionNode, error) {
-	// take the simplest way of getting text/template to parse it
-	// and then steal the result
-	if varUse.MatchString(s) {
-		for _, varUser := range varUse.FindAllStringSubmatch(s, -1) {
-			s = "{{ " + varUser[0] + " := 0 }}" + s
-		}
+func (pt *protoTree) safeAction(s string) (*parse.ActionNode, error) {
+	t := template.New("mule").Funcs(template.FuncMap(pt.funcs))
+	t, err := t.Parse(s)
+	if err != nil {
+		return nil, err
 	}
-	t, e := template.New("mule").Parse(s)
-	if e != nil {
-		return nil, e
-	}
-	main := t.Tree.Root.Nodes[len(t.Tree.Root.Nodes)-1]
-	if an, ok := main.(*parse.ActionNode); ok {
+	n := t.Tree.Root.Nodes[0]
+	if an, ok := n.(*parse.ActionNode); ok {
 		return an, nil
-	} else {
-		return nil, fmt.Errorf("Couldn't find action node")
 	}
+	return nil, fmt.Errorf("Couldn't extract code for:'%s'", s)
 }

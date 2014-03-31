@@ -22,7 +22,7 @@ func newTextNode(text string) parse.Node {
 	}
 }
 
-func newMaybeTextNode(text string) []parse.Node {
+func (pt *protoTree) newMaybeTextNode(text string) []parse.Node {
 	if strings.Contains(text, LeftDelim) && strings.Contains(text, RightDelim) {
 		output := make([]parse.Node, 0)
 		workingText := text
@@ -35,7 +35,7 @@ func newMaybeTextNode(text string) []parse.Node {
 			pipeText := workingText[:index+len(RightDelim)]
 			workingText = workingText[index+len(RightDelim):]
 
-			action, e := safeAction(pipeText)
+			action, e := pt.safeAction(pipeText)
 			if e != nil {
 				output = append(output, newTextNode(pipeText+" "))
 			} else {
@@ -158,7 +158,7 @@ func (pt *protoTree) newStandaloneTag(content string) ([]parse.Node, error) {
 	if err != nil {
 		return []parse.Node{}, err
 	}
-	return td.Nodes(c)
+	return td.Nodes(pt, c)
 }
 
 const (
@@ -269,6 +269,23 @@ func (pt *protoTree) parseTag(content string) (tagDescription, string, error) {
 			value = value + "\""
 			current++
 
+			if string(chars[current:current+len(LeftDelim)]) == LeftDelim {
+				value = value + LeftDelim
+				current += len(LeftDelim)
+				rightLen := len([]rune(RightDelim))
+				searching := true
+				for current < limit-rightLen && searching {
+					if string(chars[current:current+rightLen]) == RightDelim {
+						searching = false
+						value = value + RightDelim
+						current += rightLen
+						td.executableOpen = true
+					} else {
+						value = value + string(chars[current])
+						current++
+					}
+				}
+			}
 			for current < limit {
 				if chars[current] == '"' {
 					td.attributes = append(td.attributes, value+"\"")
@@ -300,11 +317,12 @@ func newTagDescription(pt *protoTree) tagDescription {
 }
 
 type tagDescription struct {
-	tag        string
-	tree       *protoTree
-	classes    []string
-	idParts    []string
-	attributes []string
+	tag            string
+	tree           *protoTree
+	executableOpen bool
+	classes        []string
+	idParts        []string
+	attributes     []string
 }
 
 func (td *tagDescription) Add(content string, state int) {
@@ -353,22 +371,22 @@ func (td tagDescription) Close() string {
 	return fmt.Sprintf("</%s>", td.tag)
 }
 
-func (td tagDescription) Nodes(content string) ([]parse.Node, error) {
+func (td tagDescription) Nodes(pt *protoTree, content string) ([]parse.Node, error) {
 	if content != "" {
 		if content[0] == '=' {
 			content = strings.TrimSpace(content[1:])
 			node, err := td.tree.parseTemplateCode(content)
-			return append(append(newMaybeTextNode(td.Opening()),
+			return append(append(pt.newMaybeTextNode(td.Opening()),
 				&parse.ActionNode{
 					NodeType: parse.NodeAction,
 					Pipe:     node,
 				}),
-				newMaybeTextNode(td.Close())...,
+				pt.newMaybeTextNode(td.Close())...,
 			), err
 		} else {
-			output := newMaybeTextNode(td.Opening())
-			output = append(output, newMaybeTextNode(content)...)
-			return append(output, newMaybeTextNode(td.Close())...), nil
+			output := pt.newMaybeTextNode(td.Opening())
+			output = append(output, pt.newMaybeTextNode(content)...)
+			return append(output, pt.newMaybeTextNode(td.Close())...), nil
 		}
 	} else {
 		return []parse.Node{

@@ -1,0 +1,27 @@
+!!!
+
+%html
+  %head
+    {{ yield "head" }}
+  %body
+    {{ block "header" }}
+      #header
+        = if .user
+          #options
+            Connected as {{.user.Username}} |
+            %a(href="{{ url "Hotels.Index" }}") Search
+            |
+            %a(href="{{ url "Hotels.Settings" }}") Settings
+            |
+            %a(href="{{ url "Application.Logout" }}") Logout
+    {{ end_block }}
+    {{ yield "content" }}
+    {{ block "footer" }}
+      #footer
+        Created with the 
+        %a(href="http://github.com/revel/revel") Revel framework
+        and really inspirated from the booking sample application provided by
+        %a(href="http://www.playframework.org") play framework,
+        which was really inspired by the booking sample application provided by the 
+        %a(href="http://seamframework.org/") seam framework.
+    {{ end_block }}
