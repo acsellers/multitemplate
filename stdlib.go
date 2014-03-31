@@ -2,6 +2,7 @@ package multitemplate
 
 import (
 	"html/template"
+	textTmpl "text/template"
 	"text/template/parse"
 )
 
@@ -13,12 +14,13 @@ type defaultParser struct {
 }
 
 func (ms *defaultParser) ParseTemplate(name, src string, funcs template.FuncMap) (map[string]*parse.Tree, error) {
-	var t *template.Template
+	var t *textTmpl.Template
 	var e error
+	tf := textTmpl.FuncMap(funcs)
 	if GoRightDelim != "" || GoLeftDelim != "" {
-		t, e = template.New(name).Funcs(funcs).Delims(GoLeftDelim, GoRightDelim).Parse(src)
+		t, e = textTmpl.New(name).Funcs(tf).Delims(GoLeftDelim, GoRightDelim).Parse(src)
 	} else {
-		t, e = template.New(name).Funcs(funcs).Parse(src)
+		t, e = textTmpl.New(name).Funcs(tf).Parse(src)
 	}
 	if e != nil {
 		return nil, e

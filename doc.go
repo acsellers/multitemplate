@@ -9,10 +9,6 @@ syntax, a simplified haml-like language called bham, and a simple
 mustache implementation. Multitemplate has an open interface for
 creating new syntaxes, so external languages can be easily used.
 
-Note that multitemplate is Go 1.2+ at the moment, due to a bad assumption
-in the stdlib parser. I will be getting that fixed soon, at which point
-it will be 1.1+.
-
 Terminology
 
 Yield's are executing saved templates or blocks. You can add a fallback
