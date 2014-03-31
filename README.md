@@ -39,6 +39,32 @@ but a quick taste of bham (as of 0.2) is as follows:
       = yield "content"
 ```
 
+
+Using the library
+-----------------
+
+Like database/sql, you can load in dialects (or parsers in this case) like the following
+
+```
+import (
+  _ "github.com/acsellers/multitemplate/bham"
+  "github.com/acsellers/multitemplate"
+)
+```
+
+multitemplate uses extensions to detect which parser to use, a file named layout.bham.html
+would be shortened to layout.html as a template and parsed using the bham parser.
+
+The simplest way to parse files, it to simply pass an array of file names to ParseFiles or 
+Template.ParseFiles (which will determine parsers, remove extenstions for you), but you can 
+also pass the name, source and parser name to the Parse function, but Parse will not remove
+extensions or detect parsers for you.
+
+In addition to Execute and ExecuteTemplate, there is also an ExecuteContext, which it the
+way to configure layouts, and pre-set blocks and template to yield or output during execution.
+
+
+
 Revel integration
 -----------------
 
@@ -50,6 +76,10 @@ Information on the replacement controller struct to use with the revel integrati
 Samples in the revel folder are a selection of samples available from
 github.com/revel/revel, but with templates converted to use multitemplate. (Yes I
 know there's only one there now, I'll add more soon).
+
+
+Development Status
+------------------
 
 _Done:_
 
