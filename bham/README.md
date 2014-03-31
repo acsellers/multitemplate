@@ -12,7 +12,7 @@ escaping functionality.
 
 ## Documentation
 
-Full syntax documentation is on [Godoc.org](http://godoc.org/github.com/acsellers/unitemplate/bham)
+Full syntax documentation is on [Godoc.org](http://godoc.org/github.com/acsellers/multitemplate/bham)
 
 ## Implemented Features
 
