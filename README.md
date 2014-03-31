@@ -1,6 +1,8 @@
 Multitemplate
 =============
 
+[![Build Status](https://travis-ci.org/acsellers/multitemplate.svg?branch=master)](https://travis-ci.org/acsellers/multitemplate)
+
 While there are multiple template libraries for Go, I wanted one that would allow
 me to mix different styles of templates, without having to create some kind of
 lookup table to see which library a template was created in.
