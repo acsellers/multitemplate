@@ -2,7 +2,9 @@
 Multitemplate is a library to allow you to write html templates in
 multiple languages, then allowing those templates to work with each
 other using either a Rails-like yield/content_for paradigm or a
-Django style block/extends paradigm.
+Django style block/extends paradigm. Multitemplate is built on
+html/template, so it gets all of the auto-escaping logic from that
+library.
 
 Multitemplate at the moment has 3 languages, the standard Go template
 syntax, a simplified haml-like language called bham, and a simple
