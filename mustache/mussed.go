@@ -31,7 +31,10 @@ func init() {
 
 func Parse(templateName, templateContent string, funcs ht.FuncMap) (map[string]*parse.Tree, error) {
 	i := strings.Index(templateName, ".mustache")
-	name := templateName[:i] + templateName[i+len(".mustache"):]
+	name := templateName
+	if i > 0 {
+		name = templateName[:i] + templateName[i+len(".mustache"):]
+	}
 
 	proto := &protoTree{
 		source:     templateContent,
