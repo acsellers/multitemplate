@@ -3,9 +3,10 @@ package mustache
 import (
 	"bytes"
 	"encoding/json"
-	"github.com/acsellers/assert"
 	"html/template"
 	"testing"
+
+	"github.com/acsellers/assert"
 )
 
 /*
@@ -43,7 +44,7 @@ func TestINTERPOLATION0(t *testing.T) {
 	assert.Within(t, func(test *assert.Test) {
 		t := template.New("test").Funcs(testFuncs)
 		trees, err := Parse("test.mustache", `Hello from {Mustache}!
-`)
+`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
@@ -65,7 +66,7 @@ func TestINTERPOLATION1(t *testing.T) {
 	assert.Within(t, func(test *assert.Test) {
 		t := template.New("test").Funcs(testFuncs)
 		trees, err := Parse("test.mustache", `Hello, {{subject}}!
-`)
+`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
@@ -87,7 +88,7 @@ func TestINTERPOLATION2(t *testing.T) {
 	assert.Within(t, func(test *assert.Test) {
 		t := template.New("test").Funcs(testFuncs)
 		trees, err := Parse("test.mustache", `These characters should be HTML escaped: {{forbidden}}
-`)
+`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
@@ -109,7 +110,7 @@ func TestINTERPOLATION3(t *testing.T) {
 	assert.Within(t, func(test *assert.Test) {
 		t := template.New("test").Funcs(testFuncs)
 		trees, err := Parse("test.mustache", `These characters should not be HTML escaped: {{{forbidden}}}
-`)
+`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
@@ -131,7 +132,7 @@ func TestINTERPOLATION4(t *testing.T) {
 	assert.Within(t, func(test *assert.Test) {
 		t := template.New("test").Funcs(testFuncs)
 		trees, err := Parse("test.mustache", `These characters should not be HTML escaped: {{&forbidden}}
-`)
+`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
@@ -152,7 +153,7 @@ func TestINTERPOLATION5(t *testing.T) {
 
 	assert.Within(t, func(test *assert.Test) {
 		t := template.New("test").Funcs(testFuncs)
-		trees, err := Parse("test.mustache", `"{{mph}} miles an hour!"`)
+		trees, err := Parse("test.mustache", `"{{mph}} miles an hour!"`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
@@ -172,7 +173,7 @@ func TestINTERPOLATION6(t *testing.T) {
 
 	assert.Within(t, func(test *assert.Test) {
 		t := template.New("test").Funcs(testFuncs)
-		trees, err := Parse("test.mustache", `"{{{mph}}} miles an hour!"`)
+		trees, err := Parse("test.mustache", `"{{{mph}}} miles an hour!"`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
@@ -192,7 +193,7 @@ func TestINTERPOLATION7(t *testing.T) {
 
 	assert.Within(t, func(test *assert.Test) {
 		t := template.New("test").Funcs(testFuncs)
-		trees, err := Parse("test.mustache", `"{{&mph}} miles an hour!"`)
+		trees, err := Parse("test.mustache", `"{{&mph}} miles an hour!"`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
@@ -212,7 +213,7 @@ func TestINTERPOLATION8(t *testing.T) {
 
 	assert.Within(t, func(test *assert.Test) {
 		t := template.New("test").Funcs(testFuncs)
-		trees, err := Parse("test.mustache", `"{{power}} jiggawatts!"`)
+		trees, err := Parse("test.mustache", `"{{power}} jiggawatts!"`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
@@ -232,7 +233,7 @@ func TestINTERPOLATION9(t *testing.T) {
 
 	assert.Within(t, func(test *assert.Test) {
 		t := template.New("test").Funcs(testFuncs)
-		trees, err := Parse("test.mustache", `"{{{power}}} jiggawatts!"`)
+		trees, err := Parse("test.mustache", `"{{{power}}} jiggawatts!"`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
@@ -252,7 +253,7 @@ func TestINTERPOLATION10(t *testing.T) {
 
 	assert.Within(t, func(test *assert.Test) {
 		t := template.New("test").Funcs(testFuncs)
-		trees, err := Parse("test.mustache", `"{{&power}} jiggawatts!"`)
+		trees, err := Parse("test.mustache", `"{{&power}} jiggawatts!"`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
@@ -272,7 +273,7 @@ func TestINTERPOLATION11(t *testing.T) {
 
 	assert.Within(t, func(test *assert.Test) {
 		t := template.New("test").Funcs(testFuncs)
-		trees, err := Parse("test.mustache", `I ({{cannot}}) be seen!`)
+		trees, err := Parse("test.mustache", `I ({{cannot}}) be seen!`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
@@ -292,7 +293,7 @@ func TestINTERPOLATION12(t *testing.T) {
 
 	assert.Within(t, func(test *assert.Test) {
 		t := template.New("test").Funcs(testFuncs)
-		trees, err := Parse("test.mustache", `I ({{{cannot}}}) be seen!`)
+		trees, err := Parse("test.mustache", `I ({{{cannot}}}) be seen!`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
@@ -312,7 +313,7 @@ func TestINTERPOLATION13(t *testing.T) {
 
 	assert.Within(t, func(test *assert.Test) {
 		t := template.New("test").Funcs(testFuncs)
-		trees, err := Parse("test.mustache", `I ({{&cannot}}) be seen!`)
+		trees, err := Parse("test.mustache", `I ({{&cannot}}) be seen!`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
@@ -332,7 +333,7 @@ func TestINTERPOLATION14(t *testing.T) {
 
 	assert.Within(t, func(test *assert.Test) {
 		t := template.New("test").Funcs(testFuncs)
-		trees, err := Parse("test.mustache", `"{{person.name}}" == "{{#person}}{{name}}{{/person}}"`)
+		trees, err := Parse("test.mustache", `"{{person.name}}" == "{{#person}}{{name}}{{/person}}"`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
@@ -352,7 +353,7 @@ func TestINTERPOLATION15(t *testing.T) {
 
 	assert.Within(t, func(test *assert.Test) {
 		t := template.New("test").Funcs(testFuncs)
-		trees, err := Parse("test.mustache", `"{{{person.name}}}" == "{{#person}}{{{name}}}{{/person}}"`)
+		trees, err := Parse("test.mustache", `"{{{person.name}}}" == "{{#person}}{{{name}}}{{/person}}"`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
@@ -372,7 +373,7 @@ func TestINTERPOLATION16(t *testing.T) {
 
 	assert.Within(t, func(test *assert.Test) {
 		t := template.New("test").Funcs(testFuncs)
-		trees, err := Parse("test.mustache", `"{{&person.name}}" == "{{#person}}{{&name}}{{/person}}"`)
+		trees, err := Parse("test.mustache", `"{{&person.name}}" == "{{#person}}{{&name}}{{/person}}"`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
@@ -392,7 +393,7 @@ func TestINTERPOLATION17(t *testing.T) {
 
 	assert.Within(t, func(test *assert.Test) {
 		t := template.New("test").Funcs(testFuncs)
-		trees, err := Parse("test.mustache", `"{{a.b.c.d.e.name}}" == "Phil"`)
+		trees, err := Parse("test.mustache", `"{{a.b.c.d.e.name}}" == "Phil"`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
@@ -412,7 +413,7 @@ func TestINTERPOLATION18(t *testing.T) {
 
 	assert.Within(t, func(test *assert.Test) {
 		t := template.New("test").Funcs(testFuncs)
-		trees, err := Parse("test.mustache", `"{{a.b.c}}" == ""`)
+		trees, err := Parse("test.mustache", `"{{a.b.c}}" == ""`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
@@ -432,7 +433,7 @@ func TestINTERPOLATION19(t *testing.T) {
 
 	assert.Within(t, func(test *assert.Test) {
 		t := template.New("test").Funcs(testFuncs)
-		trees, err := Parse("test.mustache", `"{{a.b.c.name}}" == ""`)
+		trees, err := Parse("test.mustache", `"{{a.b.c.name}}" == ""`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
@@ -452,7 +453,7 @@ func TestINTERPOLATION20(t *testing.T) {
 
 	assert.Within(t, func(test *assert.Test) {
 		t := template.New("test").Funcs(testFuncs)
-		trees, err := Parse("test.mustache", `"{{#a}}{{b.c.d.e.name}}{{/a}}" == "Phil"`)
+		trees, err := Parse("test.mustache", `"{{#a}}{{b.c.d.e.name}}{{/a}}" == "Phil"`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
@@ -472,7 +473,7 @@ func TestINTERPOLATION21(t *testing.T) {
 
 	assert.Within(t, func(test *assert.Test) {
 		t := template.New("test").Funcs(testFuncs)
-		trees, err := Parse("test.mustache", `| {{string}} |`)
+		trees, err := Parse("test.mustache", `| {{string}} |`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
@@ -492,7 +493,7 @@ func TestINTERPOLATION22(t *testing.T) {
 
 	assert.Within(t, func(test *assert.Test) {
 		t := template.New("test").Funcs(testFuncs)
-		trees, err := Parse("test.mustache", `| {{{string}}} |`)
+		trees, err := Parse("test.mustache", `| {{{string}}} |`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
@@ -512,7 +513,7 @@ func TestINTERPOLATION23(t *testing.T) {
 
 	assert.Within(t, func(test *assert.Test) {
 		t := template.New("test").Funcs(testFuncs)
-		trees, err := Parse("test.mustache", `| {{&string}} |`)
+		trees, err := Parse("test.mustache", `| {{&string}} |`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
@@ -533,7 +534,7 @@ func TestINTERPOLATION24(t *testing.T) {
 	assert.Within(t, func(test *assert.Test) {
 		t := template.New("test").Funcs(testFuncs)
 		trees, err := Parse("test.mustache", `  {{string}}
-`)
+`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
@@ -555,7 +556,7 @@ func TestINTERPOLATION25(t *testing.T) {
 	assert.Within(t, func(test *assert.Test) {
 		t := template.New("test").Funcs(testFuncs)
 		trees, err := Parse("test.mustache", `  {{{string}}}
-`)
+`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
@@ -577,7 +578,7 @@ func TestINTERPOLATION26(t *testing.T) {
 	assert.Within(t, func(test *assert.Test) {
 		t := template.New("test").Funcs(testFuncs)
 		trees, err := Parse("test.mustache", `  {{&string}}
-`)
+`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
@@ -598,7 +599,7 @@ func TestINTERPOLATION27(t *testing.T) {
 
 	assert.Within(t, func(test *assert.Test) {
 		t := template.New("test").Funcs(testFuncs)
-		trees, err := Parse("test.mustache", `|{{ string }}|`)
+		trees, err := Parse("test.mustache", `|{{ string }}|`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
@@ -618,7 +619,7 @@ func TestINTERPOLATION28(t *testing.T) {
 
 	assert.Within(t, func(test *assert.Test) {
 		t := template.New("test").Funcs(testFuncs)
-		trees, err := Parse("test.mustache", `|{{{ string }}}|`)
+		trees, err := Parse("test.mustache", `|{{{ string }}}|`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
@@ -638,7 +639,7 @@ func TestINTERPOLATION29(t *testing.T) {
 
 	assert.Within(t, func(test *assert.Test) {
 		t := template.New("test").Funcs(testFuncs)
-		trees, err := Parse("test.mustache", `|{{& string }}|`)
+		trees, err := Parse("test.mustache", `|{{& string }}|`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)

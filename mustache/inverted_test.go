@@ -3,9 +3,10 @@ package mustache
 import (
 	"bytes"
 	"encoding/json"
-	"github.com/acsellers/assert"
 	"html/template"
 	"testing"
+
+	"github.com/acsellers/assert"
 )
 
 /*
@@ -51,7 +52,7 @@ func TestINVERTED0(t *testing.T) {
 
 	assert.Within(t, func(test *assert.Test) {
 		t := template.New("test").Funcs(testFuncs)
-		trees, err := Parse("test.mustache", `"{{^boolean}}This should be rendered.{{/boolean}}"`)
+		trees, err := Parse("test.mustache", `"{{^boolean}}This should be rendered.{{/boolean}}"`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
@@ -71,7 +72,7 @@ func TestINVERTED1(t *testing.T) {
 
 	assert.Within(t, func(test *assert.Test) {
 		t := template.New("test").Funcs(testFuncs)
-		trees, err := Parse("test.mustache", `"{{^boolean}}This should not be rendered.{{/boolean}}"`)
+		trees, err := Parse("test.mustache", `"{{^boolean}}This should not be rendered.{{/boolean}}"`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
@@ -91,7 +92,7 @@ func TestINVERTED2(t *testing.T) {
 
 	assert.Within(t, func(test *assert.Test) {
 		t := template.New("test").Funcs(testFuncs)
-		trees, err := Parse("test.mustache", `"{{^context}}Hi {{name}}.{{/context}}"`)
+		trees, err := Parse("test.mustache", `"{{^context}}Hi {{name}}.{{/context}}"`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
@@ -111,7 +112,7 @@ func TestINVERTED3(t *testing.T) {
 
 	assert.Within(t, func(test *assert.Test) {
 		t := template.New("test").Funcs(testFuncs)
-		trees, err := Parse("test.mustache", `"{{^list}}{{n}}{{/list}}"`)
+		trees, err := Parse("test.mustache", `"{{^list}}{{n}}{{/list}}"`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
@@ -131,7 +132,7 @@ func TestINVERTED4(t *testing.T) {
 
 	assert.Within(t, func(test *assert.Test) {
 		t := template.New("test").Funcs(testFuncs)
-		trees, err := Parse("test.mustache", `"{{^list}}Yay lists!{{/list}}"`)
+		trees, err := Parse("test.mustache", `"{{^list}}Yay lists!{{/list}}"`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
@@ -158,7 +159,7 @@ func TestINVERTED5(t *testing.T) {
 {{^bool}}
 * third
 {{/bool}}
-`)
+`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
@@ -181,7 +182,7 @@ func TestINVERTED6(t *testing.T) {
 
 	assert.Within(t, func(test *assert.Test) {
 		t := template.New("test").Funcs(testFuncs)
-		trees, err := Parse("test.mustache", `| A {{^bool}}B {{^bool}}C{{/bool}} D{{/bool}} E |`)
+		trees, err := Parse("test.mustache", `| A {{^bool}}B {{^bool}}C{{/bool}} D{{/bool}} E |`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
@@ -201,7 +202,7 @@ func TestINVERTED7(t *testing.T) {
 
 	assert.Within(t, func(test *assert.Test) {
 		t := template.New("test").Funcs(testFuncs)
-		trees, err := Parse("test.mustache", `| A {{^bool}}B {{^bool}}C{{/bool}} D{{/bool}} E |`)
+		trees, err := Parse("test.mustache", `| A {{^bool}}B {{^bool}}C{{/bool}} D{{/bool}} E |`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
@@ -221,7 +222,7 @@ func TestINVERTED8(t *testing.T) {
 
 	assert.Within(t, func(test *assert.Test) {
 		t := template.New("test").Funcs(testFuncs)
-		trees, err := Parse("test.mustache", `[{{^missing}}Cannot find key 'missing'!{{/missing}}]`)
+		trees, err := Parse("test.mustache", `[{{^missing}}Cannot find key 'missing'!{{/missing}}]`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
@@ -241,7 +242,7 @@ func TestINVERTED9(t *testing.T) {
 
 	assert.Within(t, func(test *assert.Test) {
 		t := template.New("test").Funcs(testFuncs)
-		trees, err := Parse("test.mustache", `"{{^a.b.c}}Not Here{{/a.b.c}}" == ""`)
+		trees, err := Parse("test.mustache", `"{{^a.b.c}}Not Here{{/a.b.c}}" == ""`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
@@ -261,7 +262,7 @@ func TestINVERTED10(t *testing.T) {
 
 	assert.Within(t, func(test *assert.Test) {
 		t := template.New("test").Funcs(testFuncs)
-		trees, err := Parse("test.mustache", `"{{^a.b.c}}Not Here{{/a.b.c}}" == "Not Here"`)
+		trees, err := Parse("test.mustache", `"{{^a.b.c}}Not Here{{/a.b.c}}" == "Not Here"`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
@@ -281,7 +282,7 @@ func TestINVERTED11(t *testing.T) {
 
 	assert.Within(t, func(test *assert.Test) {
 		t := template.New("test").Funcs(testFuncs)
-		trees, err := Parse("test.mustache", `"{{^a.b.c}}Not Here{{/a.b.c}}" == "Not Here"`)
+		trees, err := Parse("test.mustache", `"{{^a.b.c}}Not Here{{/a.b.c}}" == "Not Here"`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
@@ -302,7 +303,7 @@ func TestINVERTED12(t *testing.T) {
 	assert.Within(t, func(test *assert.Test) {
 		t := template.New("test").Funcs(testFuncs)
 		trees, err := Parse("test.mustache", ` | {{^boolean}}	|	{{/boolean}} | 
-`)
+`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
@@ -325,7 +326,7 @@ func TestINVERTED13(t *testing.T) {
 		t := template.New("test").Funcs(testFuncs)
 		trees, err := Parse("test.mustache", ` | {{^boolean}} {{! Important Whitespace }}
  {{/boolean}} | 
-`)
+`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
@@ -349,7 +350,7 @@ func TestINVERTED14(t *testing.T) {
 		t := template.New("test").Funcs(testFuncs)
 		trees, err := Parse("test.mustache", ` {{^boolean}}NO{{/boolean}}
  {{^boolean}}WAY{{/boolean}}
-`)
+`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
@@ -376,7 +377,7 @@ func TestINVERTED15(t *testing.T) {
 |
 {{/boolean}}
 | A Line
-`)
+`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
@@ -404,7 +405,7 @@ func TestINVERTED16(t *testing.T) {
 |
   {{/boolean}}
 | A Line
-`)
+`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
@@ -430,7 +431,7 @@ func TestINVERTED17(t *testing.T) {
 		trees, err := Parse("test.mustache", `|
 {{^boolean}}
 {{/boolean}}
-|`)
+|`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
@@ -453,7 +454,7 @@ func TestINVERTED18(t *testing.T) {
 		t := template.New("test").Funcs(testFuncs)
 		trees, err := Parse("test.mustache", `  {{^boolean}}
 ^{{/boolean}}
-/`)
+/`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
@@ -476,7 +477,7 @@ func TestINVERTED19(t *testing.T) {
 		t := template.New("test").Funcs(testFuncs)
 		trees, err := Parse("test.mustache", `^{{^boolean}}
 /
-  {{/boolean}}`)
+  {{/boolean}}`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
@@ -498,7 +499,7 @@ func TestINVERTED20(t *testing.T) {
 
 	assert.Within(t, func(test *assert.Test) {
 		t := template.New("test").Funcs(testFuncs)
-		trees, err := Parse("test.mustache", `|{{^ boolean }}={{/ boolean }}|`)
+		trees, err := Parse("test.mustache", `|{{^ boolean }}={{/ boolean }}|`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)

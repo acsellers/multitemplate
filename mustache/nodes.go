@@ -31,6 +31,18 @@ func newTemplateNode(w string) *parse.TemplateNode {
 	}
 }
 
+func (pt *protoTree) newFuncNode(w string) *parse.CommandNode {
+	in := &parse.IdentifierNode{
+		NodeType: parse.NodeIdentifier,
+		Ident:    pt.extract(w),
+	}
+
+	return &parse.CommandNode{
+		NodeType: parse.NodeCommand,
+		Args:     []parse.Node{in},
+	}
+}
+
 func newBlockNode(a string) (*parse.Tree, *parse.IfNode, *parse.ListNode) {
 	tmplName := fmt.Sprintf("mustacheAnonymous%d", mangleNum)
 	mangleNum++

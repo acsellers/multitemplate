@@ -3,9 +3,10 @@ package mustache
 import (
 	"bytes"
 	"encoding/json"
-	"github.com/acsellers/assert"
 	"html/template"
 	"testing"
+
+	"github.com/acsellers/assert"
 )
 
 /*
@@ -31,14 +32,14 @@ func TestPARTIALS0(t *testing.T) {
 
 	assert.Within(t, func(test *assert.Test) {
 		t := template.New("test").Funcs(testFuncs)
-		trees, err := Parse("test.mustache", `"{{>text}}"`)
+		trees, err := Parse("test.mustache", `"{{>text}}"`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
 			test.IsNil(err)
 		}
 
-		trees, err = Parse("text.mustache", `from partial`)
+		trees, err = Parse("text.mustache", `from partial`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
@@ -58,14 +59,14 @@ func TestPARTIALS2(t *testing.T) {
 
 	assert.Within(t, func(test *assert.Test) {
 		t := template.New("test").Funcs(testFuncs)
-		trees, err := Parse("test.mustache", `"{{>partial}}"`)
+		trees, err := Parse("test.mustache", `"{{>partial}}"`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
 			test.IsNil(err)
 		}
 
-		trees, err = Parse("partial.mustache", `*{{text}}*`)
+		trees, err = Parse("partial.mustache", `*{{text}}*`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
@@ -85,14 +86,14 @@ func TestPARTIALS3(t *testing.T) {
 
 	assert.Within(t, func(test *assert.Test) {
 		t := template.New("test").Funcs(testFuncs)
-		trees, err := Parse("test.mustache", `{{>node}}`)
+		trees, err := Parse("test.mustache", `{{>node}}`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
 			test.IsNil(err)
 		}
 
-		trees, err = Parse("node.mustache", `{{content}}<{{#nodes}}{{>node}}{{/nodes}}>`)
+		trees, err = Parse("node.mustache", `{{content}}<{{#nodes}}{{>node}}{{/nodes}}>`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
@@ -112,14 +113,14 @@ func TestPARTIALS4(t *testing.T) {
 
 	assert.Within(t, func(test *assert.Test) {
 		t := template.New("test").Funcs(testFuncs)
-		trees, err := Parse("test.mustache", `| {{>partial}} |`)
+		trees, err := Parse("test.mustache", `| {{>partial}} |`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
 			test.IsNil(err)
 		}
 
-		trees, err = Parse("partial.mustache", `	|	`)
+		trees, err = Parse("partial.mustache", `	|	`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
@@ -140,7 +141,7 @@ func TestPARTIALS5(t *testing.T) {
 	assert.Within(t, func(test *assert.Test) {
 		t := template.New("test").Funcs(testFuncs)
 		trees, err := Parse("test.mustache", `  {{data}}  {{> partial}}
-`)
+`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
@@ -148,7 +149,7 @@ func TestPARTIALS5(t *testing.T) {
 		}
 
 		trees, err = Parse("partial.mustache", `>
->`)
+>`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
@@ -172,14 +173,14 @@ func TestPARTIALS6(t *testing.T) {
 		t := template.New("test").Funcs(testFuncs)
 		trees, err := Parse("test.mustache", `|
 {{>partial}}
-|`)
+|`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
 			test.IsNil(err)
 		}
 
-		trees, err = Parse("partial.mustache", `>`)
+		trees, err = Parse("partial.mustache", `>`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
@@ -201,7 +202,7 @@ func TestPARTIALS7(t *testing.T) {
 	assert.Within(t, func(test *assert.Test) {
 		t := template.New("test").Funcs(testFuncs)
 		trees, err := Parse("test.mustache", `  {{>partial}}
->`)
+>`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
@@ -209,7 +210,7 @@ func TestPARTIALS7(t *testing.T) {
 		}
 
 		trees, err = Parse("partial.mustache", `>
->`)
+>`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
@@ -231,7 +232,7 @@ func TestPARTIALS8(t *testing.T) {
 	assert.Within(t, func(test *assert.Test) {
 		t := template.New("test").Funcs(testFuncs)
 		trees, err := Parse("test.mustache", `>
-  {{>partial}}`)
+  {{>partial}}`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
@@ -239,7 +240,7 @@ func TestPARTIALS8(t *testing.T) {
 		}
 
 		trees, err = Parse("partial.mustache", `>
->`)
+>`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
@@ -264,7 +265,7 @@ func TestPARTIALS9(t *testing.T) {
 		trees, err := Parse("test.mustache", `\
  {{>partial}}
 /
-`)
+`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
@@ -274,7 +275,7 @@ func TestPARTIALS9(t *testing.T) {
 		trees, err = Parse("partial.mustache", `|
 {{{content}}}
 |
-`)
+`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
@@ -300,14 +301,14 @@ func TestPARTIALS10(t *testing.T) {
 
 	assert.Within(t, func(test *assert.Test) {
 		t := template.New("test").Funcs(testFuncs)
-		trees, err := Parse("test.mustache", `|{{> partial }}|`)
+		trees, err := Parse("test.mustache", `|{{> partial }}|`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
 			test.IsNil(err)
 		}
 
-		trees, err = Parse("partial.mustache", `[]`)
+		trees, err = Parse("partial.mustache", `[]`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)

@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"strings"
+	"text/template/parse"
 )
 
 const (
@@ -56,13 +57,21 @@ func (pt *protoTree) parse() {
 
 			switch pt.actionPurpose(action) {
 			case ident:
-				pt.insertIdentNode(action)
+				if _, ok := pt.funcs[pt.extract(action)]; ok {
+					pt.insertFuncNode(action)
+				} else {
+					pt.insertIdentNode(action)
+				}
 			case templateCall:
 				pt.insertTemplateNode(action)
 			case yield:
 				pt.insertYieldNode(action)
 			case openBlock:
-				pt.startBlock(action)
+				if _, ok := pt.funcs[pt.extract(action)]; ok {
+					pt.startFuncBlock(action)
+				} else {
+					pt.startBlock(action)
+				}
 			case closeBlock:
 				pt.endBlock(action)
 			case elseBlock:
@@ -163,6 +172,10 @@ func (pt *protoTree) extract(s string) string {
 	return strings.TrimSpace(s)
 }
 
+func (pt *protoTree) insertFuncNode(a string) {
+	pt.list.Nodes = append(pt.list.Nodes, newActionNodeForCommands(pt.newFuncNode(a)))
+}
+
 func (pt *protoTree) insertIdentNode(a string) {
 	if pt.unescapedAction(a) {
 		un := newUnescapedIdentNode(pt.extract(a))
@@ -191,6 +204,18 @@ func (pt *protoTree) startBlock(a string) {
 	tmpl, call, list := newBlockNode(pt.extract(a))
 	pt.childTrees = append(pt.childTrees, tmpl)
 	pt.list.Nodes = append(pt.list.Nodes, call)
+	pt.push(pt.list)
+	pt.list = list
+}
+func (pt *protoTree) startFuncBlock(a string) {
+	tmpl, call, list := newBlockNode(pt.extract(a))
+	call.Pipe = &parse.PipeNode{
+		NodeType: parse.NodePipe,
+		Cmds:     []*parse.CommandNode{pt.newFuncNode(a)},
+	}
+	call2 := &parse.WithNode{BranchNode: call.BranchNode}
+	pt.childTrees = append(pt.childTrees, tmpl)
+	pt.list.Nodes = append(pt.list.Nodes, call2)
 	pt.push(pt.list)
 	pt.list = list
 }

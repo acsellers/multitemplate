@@ -18,7 +18,7 @@ var (
 type multiStruct struct{}
 
 func (ms *multiStruct) ParseTemplate(name, src string, funcs ht.FuncMap) (map[string]*parse.Tree, error) {
-	return Parse(name, src)
+	return Parse(name, src, funcs)
 }
 func (ms *multiStruct) String() string {
 	return "mustache: Logic-less templates"
@@ -29,7 +29,7 @@ func init() {
 	multitemplate.Parsers["mustache"] = &ms
 }
 
-func Parse(templateName, templateContent string) (map[string]*parse.Tree, error) {
+func Parse(templateName, templateContent string, funcs ht.FuncMap) (map[string]*parse.Tree, error) {
 	i := strings.Index(templateName, ".mustache")
 	name := templateName[:i] + templateName[i+len(".mustache"):]
 
@@ -37,6 +37,7 @@ func Parse(templateName, templateContent string) (map[string]*parse.Tree, error)
 		source:     templateContent,
 		localRight: RightDelim,
 		localLeft:  LeftDelim,
+		funcs:      funcs,
 		tree: &parse.Tree{
 			Name:      name,
 			ParseName: templateName,

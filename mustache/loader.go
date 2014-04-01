@@ -11,7 +11,7 @@ import (
 type MustacheParser string
 
 func (mp MustacheParser) ParseFile(name, content string) (map[string]*parse.Tree, error) {
-	return Parse(name, content)
+	return Parse(name, content, htmlTemplate.FuncMap{})
 }
 func (mp MustacheParser) RequiredHtmlFuncs() htmlTemplate.FuncMap {
 	return htmlTemplate.FuncMap{

@@ -3,9 +3,10 @@ package mustache
 import (
 	"bytes"
 	"encoding/json"
-	"github.com/acsellers/assert"
 	"html/template"
 	"testing"
+
+	"github.com/acsellers/assert"
 )
 
 /*
@@ -24,7 +25,7 @@ func TestCOMMENTS0(t *testing.T) {
 
 	assert.Within(t, func(test *assert.Test) {
 		t := template.New("test").Funcs(testFuncs)
-		trees, err := Parse("test.mustache", `12345{{! Comment Block! }}67890`)
+		trees, err := Parse("test.mustache", `12345{{! Comment Block! }}67890`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
@@ -48,7 +49,7 @@ func TestCOMMENTS1(t *testing.T) {
   This is a
   multi-line comment...
 }}67890
-`)
+`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
@@ -72,7 +73,7 @@ func TestCOMMENTS2(t *testing.T) {
 		trees, err := Parse("test.mustache", `Begin.
 {{! Comment Block! }}
 End.
-`)
+`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
@@ -97,7 +98,7 @@ func TestCOMMENTS3(t *testing.T) {
 		trees, err := Parse("test.mustache", `Begin.
   {{! Indented Comment Block! }}
 End.
-`)
+`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
@@ -121,7 +122,7 @@ func TestCOMMENTS4(t *testing.T) {
 		t := template.New("test").Funcs(testFuncs)
 		trees, err := Parse("test.mustache", `|
 {{! Standalone Comment }}
-|`)
+|`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
@@ -143,7 +144,7 @@ func TestCOMMENTS5(t *testing.T) {
 	assert.Within(t, func(test *assert.Test) {
 		t := template.New("test").Funcs(testFuncs)
 		trees, err := Parse("test.mustache", `  {{! I'm Still Standalone }}
-!`)
+!`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
@@ -164,7 +165,7 @@ func TestCOMMENTS6(t *testing.T) {
 	assert.Within(t, func(test *assert.Test) {
 		t := template.New("test").Funcs(testFuncs)
 		trees, err := Parse("test.mustache", `!
-  {{! I'm Still Standalone }}`)
+  {{! I'm Still Standalone }}`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
@@ -190,7 +191,7 @@ func TestCOMMENTS7(t *testing.T) {
 Something's going on here...
 }}
 End.
-`)
+`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
@@ -217,7 +218,7 @@ func TestCOMMENTS8(t *testing.T) {
     Something's going on here...
   }}
 End.
-`)
+`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
@@ -240,7 +241,7 @@ func TestCOMMENTS9(t *testing.T) {
 	assert.Within(t, func(test *assert.Test) {
 		t := template.New("test").Funcs(testFuncs)
 		trees, err := Parse("test.mustache", `  12 {{! 34 }}
-`)
+`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
@@ -261,7 +262,7 @@ func TestCOMMENTS10(t *testing.T) {
 
 	assert.Within(t, func(test *assert.Test) {
 		t := template.New("test").Funcs(testFuncs)
-		trees, err := Parse("test.mustache", `12345 {{! Comment Block! }} 67890`)
+		trees, err := Parse("test.mustache", `12345 {{! Comment Block! }} 67890`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)

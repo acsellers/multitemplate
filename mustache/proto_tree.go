@@ -1,6 +1,7 @@
 package mustache
 
 import (
+	ht "html/template"
 	"text/template/parse"
 )
 
@@ -15,6 +16,7 @@ type protoTree struct {
 	err        error
 	localLeft  string
 	localRight string
+	funcs      ht.FuncMap
 }
 
 func (pt *protoTree) templates() map[string]*parse.Tree {

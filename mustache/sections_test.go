@@ -3,9 +3,10 @@ package mustache
 import (
 	"bytes"
 	"encoding/json"
-	"github.com/acsellers/assert"
 	"html/template"
 	"testing"
+
+	"github.com/acsellers/assert"
 )
 
 /*
@@ -52,7 +53,7 @@ func TestSECTIONS0(t *testing.T) {
 
 	assert.Within(t, func(test *assert.Test) {
 		t := template.New("test").Funcs(testFuncs)
-		trees, err := Parse("test.mustache", `"{{#boolean}}This should be rendered.{{/boolean}}"`)
+		trees, err := Parse("test.mustache", `"{{#boolean}}This should be rendered.{{/boolean}}"`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
@@ -72,7 +73,7 @@ func TestSECTIONS1(t *testing.T) {
 
 	assert.Within(t, func(test *assert.Test) {
 		t := template.New("test").Funcs(testFuncs)
-		trees, err := Parse("test.mustache", `"{{#boolean}}This should not be rendered.{{/boolean}}"`)
+		trees, err := Parse("test.mustache", `"{{#boolean}}This should not be rendered.{{/boolean}}"`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
@@ -92,7 +93,7 @@ func TestSECTIONS2(t *testing.T) {
 
 	assert.Within(t, func(test *assert.Test) {
 		t := template.New("test").Funcs(testFuncs)
-		trees, err := Parse("test.mustache", `"{{#context}}Hi {{name}}.{{/context}}"`)
+		trees, err := Parse("test.mustache", `"{{#context}}Hi {{name}}.{{/context}}"`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
@@ -131,7 +132,7 @@ func TestSECTIONS3(t *testing.T) {
 {{/b}}
 {{one}}
 {{/a}}
-`)
+`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
@@ -160,7 +161,7 @@ func TestSECTIONS4(t *testing.T) {
 
 	assert.Within(t, func(test *assert.Test) {
 		t := template.New("test").Funcs(testFuncs)
-		trees, err := Parse("test.mustache", `"{{#list}}{{item}}{{/list}}"`)
+		trees, err := Parse("test.mustache", `"{{#list}}{{item}}{{/list}}"`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
@@ -180,7 +181,7 @@ func TestSECTIONS5(t *testing.T) {
 
 	assert.Within(t, func(test *assert.Test) {
 		t := template.New("test").Funcs(testFuncs)
-		trees, err := Parse("test.mustache", `"{{#list}}Yay lists!{{/list}}"`)
+		trees, err := Parse("test.mustache", `"{{#list}}Yay lists!{{/list}}"`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
@@ -207,7 +208,7 @@ func TestSECTIONS6(t *testing.T) {
 {{#bool}}
 * third
 {{/bool}}
-`)
+`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
@@ -230,7 +231,7 @@ func TestSECTIONS7(t *testing.T) {
 
 	assert.Within(t, func(test *assert.Test) {
 		t := template.New("test").Funcs(testFuncs)
-		trees, err := Parse("test.mustache", `| A {{#bool}}B {{#bool}}C{{/bool}} D{{/bool}} E |`)
+		trees, err := Parse("test.mustache", `| A {{#bool}}B {{#bool}}C{{/bool}} D{{/bool}} E |`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
@@ -250,7 +251,7 @@ func TestSECTIONS8(t *testing.T) {
 
 	assert.Within(t, func(test *assert.Test) {
 		t := template.New("test").Funcs(testFuncs)
-		trees, err := Parse("test.mustache", `| A {{#bool}}B {{#bool}}C{{/bool}} D{{/bool}} E |`)
+		trees, err := Parse("test.mustache", `| A {{#bool}}B {{#bool}}C{{/bool}} D{{/bool}} E |`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
@@ -270,7 +271,7 @@ func TestSECTIONS9(t *testing.T) {
 
 	assert.Within(t, func(test *assert.Test) {
 		t := template.New("test").Funcs(testFuncs)
-		trees, err := Parse("test.mustache", `[{{#missing}}Found key 'missing'!{{/missing}}]`)
+		trees, err := Parse("test.mustache", `[{{#missing}}Found key 'missing'!{{/missing}}]`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
@@ -290,7 +291,7 @@ func TestSECTIONS10(t *testing.T) {
 
 	assert.Within(t, func(test *assert.Test) {
 		t := template.New("test").Funcs(testFuncs)
-		trees, err := Parse("test.mustache", `"{{#list}}({{.}}){{/list}}"`)
+		trees, err := Parse("test.mustache", `"{{#list}}({{.}}){{/list}}"`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
@@ -310,7 +311,7 @@ func TestSECTIONS11(t *testing.T) {
 
 	assert.Within(t, func(test *assert.Test) {
 		t := template.New("test").Funcs(testFuncs)
-		trees, err := Parse("test.mustache", `"{{#list}}({{.}}){{/list}}"`)
+		trees, err := Parse("test.mustache", `"{{#list}}({{.}}){{/list}}"`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
@@ -330,7 +331,7 @@ func TestSECTIONS12(t *testing.T) {
 
 	assert.Within(t, func(test *assert.Test) {
 		t := template.New("test").Funcs(testFuncs)
-		trees, err := Parse("test.mustache", `"{{#list}}({{.}}){{/list}}"`)
+		trees, err := Parse("test.mustache", `"{{#list}}({{.}}){{/list}}"`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
@@ -350,7 +351,7 @@ func TestSECTIONS13(t *testing.T) {
 
 	assert.Within(t, func(test *assert.Test) {
 		t := template.New("test").Funcs(testFuncs)
-		trees, err := Parse("test.mustache", `"{{#a.b.c}}Here{{/a.b.c}}" == "Here"`)
+		trees, err := Parse("test.mustache", `"{{#a.b.c}}Here{{/a.b.c}}" == "Here"`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
@@ -370,7 +371,7 @@ func TestSECTIONS14(t *testing.T) {
 
 	assert.Within(t, func(test *assert.Test) {
 		t := template.New("test").Funcs(testFuncs)
-		trees, err := Parse("test.mustache", `"{{#a.b.c}}Here{{/a.b.c}}" == ""`)
+		trees, err := Parse("test.mustache", `"{{#a.b.c}}Here{{/a.b.c}}" == ""`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
@@ -390,7 +391,7 @@ func TestSECTIONS15(t *testing.T) {
 
 	assert.Within(t, func(test *assert.Test) {
 		t := template.New("test").Funcs(testFuncs)
-		trees, err := Parse("test.mustache", `"{{#a.b.c}}Here{{/a.b.c}}" == ""`)
+		trees, err := Parse("test.mustache", `"{{#a.b.c}}Here{{/a.b.c}}" == ""`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
@@ -411,7 +412,7 @@ func TestSECTIONS16(t *testing.T) {
 	assert.Within(t, func(test *assert.Test) {
 		t := template.New("test").Funcs(testFuncs)
 		trees, err := Parse("test.mustache", ` | {{#boolean}}	|	{{/boolean}} | 
-`)
+`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
@@ -434,7 +435,7 @@ func TestSECTIONS17(t *testing.T) {
 		t := template.New("test").Funcs(testFuncs)
 		trees, err := Parse("test.mustache", ` | {{#boolean}} {{! Important Whitespace }}
  {{/boolean}} | 
-`)
+`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
@@ -458,7 +459,7 @@ func TestSECTIONS18(t *testing.T) {
 		t := template.New("test").Funcs(testFuncs)
 		trees, err := Parse("test.mustache", ` {{#boolean}}YES{{/boolean}}
  {{#boolean}}GOOD{{/boolean}}
-`)
+`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
@@ -485,7 +486,7 @@ func TestSECTIONS19(t *testing.T) {
 |
 {{/boolean}}
 | A Line
-`)
+`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
@@ -513,7 +514,7 @@ func TestSECTIONS20(t *testing.T) {
 |
   {{/boolean}}
 | A Line
-`)
+`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
@@ -539,7 +540,7 @@ func TestSECTIONS21(t *testing.T) {
 		trees, err := Parse("test.mustache", `|
 {{#boolean}}
 {{/boolean}}
-|`)
+|`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
@@ -562,7 +563,7 @@ func TestSECTIONS22(t *testing.T) {
 		t := template.New("test").Funcs(testFuncs)
 		trees, err := Parse("test.mustache", `  {{#boolean}}
 #{{/boolean}}
-/`)
+/`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
@@ -585,7 +586,7 @@ func TestSECTIONS23(t *testing.T) {
 		t := template.New("test").Funcs(testFuncs)
 		trees, err := Parse("test.mustache", `#{{#boolean}}
 /
-  {{/boolean}}`)
+  {{/boolean}}`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
@@ -607,7 +608,7 @@ func TestSECTIONS24(t *testing.T) {
 
 	assert.Within(t, func(test *assert.Test) {
 		t := template.New("test").Funcs(testFuncs)
-		trees, err := Parse("test.mustache", `|{{# boolean }}={{/ boolean }}|`)
+		trees, err := Parse("test.mustache", `|{{# boolean }}={{/ boolean }}|`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)

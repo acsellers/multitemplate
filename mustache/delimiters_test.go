@@ -3,9 +3,10 @@ package mustache
 import (
 	"bytes"
 	"encoding/json"
-	"github.com/acsellers/assert"
 	"html/template"
 	"testing"
+
+	"github.com/acsellers/assert"
 )
 
 /*
@@ -25,7 +26,7 @@ func TestDELIMITERS0(t *testing.T) {
 
 	assert.Within(t, func(test *assert.Test) {
 		t := template.New("test").Funcs(testFuncs)
-		trees, err := Parse("test.mustache", `{{=<% %>=}}(<%text%>)`)
+		trees, err := Parse("test.mustache", `{{=<% %>=}}(<%text%>)`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
@@ -45,7 +46,7 @@ func TestDELIMITERS1(t *testing.T) {
 
 	assert.Within(t, func(test *assert.Test) {
 		t := template.New("test").Funcs(testFuncs)
-		trees, err := Parse("test.mustache", `({{=[ ]=}}[text])`)
+		trees, err := Parse("test.mustache", `({{=[ ]=}}[text])`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
@@ -77,7 +78,7 @@ func TestDELIMITERS2(t *testing.T) {
   |data|
 |/section|
 ]
-`)
+`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
@@ -116,7 +117,7 @@ func TestDELIMITERS3(t *testing.T) {
   |data|
 |/section|
 ]
-`)
+`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
@@ -146,14 +147,14 @@ func TestDELIMITERS4(t *testing.T) {
 		trees, err := Parse("test.mustache", `[ {{>include}} ]
 {{= | | =}}
 [ |>include| ]
-`)
+`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
 			test.IsNil(err)
 		}
 
-		trees, err = Parse("include.mustache", `.{{value}}.`)
+		trees, err = Parse("include.mustache", `.{{value}}.`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
@@ -177,14 +178,14 @@ func TestDELIMITERS5(t *testing.T) {
 		t := template.New("test").Funcs(testFuncs)
 		trees, err := Parse("test.mustache", `[ {{>include}} ]
 [ .{{value}}.  .|value|. ]
-`)
+`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
 			test.IsNil(err)
 		}
 
-		trees, err = Parse("include.mustache", `.{{value}}. {{= | | =}} .|value|.`)
+		trees, err = Parse("include.mustache", `.{{value}}. {{= | | =}} .|value|.`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
@@ -206,7 +207,7 @@ func TestDELIMITERS6(t *testing.T) {
 
 	assert.Within(t, func(test *assert.Test) {
 		t := template.New("test").Funcs(testFuncs)
-		trees, err := Parse("test.mustache", `| {{=@ @=}} |`)
+		trees, err := Parse("test.mustache", `| {{=@ @=}} |`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
@@ -227,7 +228,7 @@ func TestDELIMITERS7(t *testing.T) {
 	assert.Within(t, func(test *assert.Test) {
 		t := template.New("test").Funcs(testFuncs)
 		trees, err := Parse("test.mustache", ` | {{=@ @=}}
-`)
+`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
@@ -251,7 +252,7 @@ func TestDELIMITERS8(t *testing.T) {
 		trees, err := Parse("test.mustache", `Begin.
 {{=@ @=}}
 End.
-`)
+`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
@@ -276,7 +277,7 @@ func TestDELIMITERS9(t *testing.T) {
 		trees, err := Parse("test.mustache", `Begin.
   {{=@ @=}}
 End.
-`)
+`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
@@ -300,7 +301,7 @@ func TestDELIMITERS10(t *testing.T) {
 		t := template.New("test").Funcs(testFuncs)
 		trees, err := Parse("test.mustache", `|
 {{= @ @ =}}
-|`)
+|`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
@@ -322,7 +323,7 @@ func TestDELIMITERS11(t *testing.T) {
 	assert.Within(t, func(test *assert.Test) {
 		t := template.New("test").Funcs(testFuncs)
 		trees, err := Parse("test.mustache", `  {{=@ @=}}
-=`)
+=`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
@@ -343,7 +344,7 @@ func TestDELIMITERS12(t *testing.T) {
 	assert.Within(t, func(test *assert.Test) {
 		t := template.New("test").Funcs(testFuncs)
 		trees, err := Parse("test.mustache", `=
-  {{=@ @=}}`)
+  {{=@ @=}}`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
@@ -364,7 +365,7 @@ func TestDELIMITERS13(t *testing.T) {
 
 	assert.Within(t, func(test *assert.Test) {
 		t := template.New("test").Funcs(testFuncs)
-		trees, err := Parse("test.mustache", `|{{= @   @ =}}|`)
+		trees, err := Parse("test.mustache", `|{{= @   @ =}}|`, template.FuncMap{})
 		test.IsNil(err)
 		for name, tree := range trees {
 			t, err = t.AddParseTree(name, tree)
