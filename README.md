@@ -9,7 +9,10 @@ lookup table to see which library a template was created in.
 
 Multitemplate is a set of parsers, a html function library, template
 interoperation functions, and an implementation of a Template similar to the
-html/template Template struct in the standard library.
+html/template Template struct in the standard library. The execution backend
+of this is the html/template package from the standard library, multitemplate
+is a set of functions, parsers, and glue that adds a larger set of functionality 
+on top of the standard library.
 
 Current documentation is available at [godoc.org](http://godoc.org/github.com/acsellers/multitemplate).
 
