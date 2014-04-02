@@ -271,12 +271,7 @@ func (pt *protoTree) parseTag(content string) (tagDescription, string, error) {
 			quoteIndex := strings.Index(string(chars[current:]), "\"")
 			delimIndex := strings.Index(string(chars[current:]), LeftDelim)
 			if delimIndex > 0 && quoteIndex > delimIndex {
-				leftLen := len([]rune(LeftDelim))
-				fmt.Println("here", string(chars[current:]))
-				for string(chars[current:current+leftLen]) != LeftDelim {
-					value = value + string(chars[current])
-					current += 1
-				}
+				value = value + string(chars[current:current+delimIndex])
 				value = value + LeftDelim
 				current += len(LeftDelim)
 				rightLen := len([]rune(RightDelim))
