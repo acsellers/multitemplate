@@ -4,34 +4,46 @@ import "html/template"
 
 func generateFuncs(t *Template) template.FuncMap {
 	return template.FuncMap{
-		"yield": func(vals ...interface{}) (template.HTML, error) {
+		"yield": func(vals ...interface{}) (string, error) {
+			var e error
 			switch len(vals) {
 			case 0:
-				return t.ctx.mainContent, nil
+				t.ctx.output.next = t.ctx.mainContent
+				t.ctx.output.check = true
+				return "<\"'.", nil
 			case 1:
 				if name, ok := vals[0].(string); ok {
 					if t.ctx.Yields[name] != "" {
-						return t.ctx.exec(t.ctx.Yields[name], t.ctx.Dot)
+						t.ctx.output.next, e = t.ctx.exec(t.ctx.Yields[name], t.ctx.Dot)
+						if e != nil {
+							return "<\"'.", e
+						}
 					}
-					if t.ctx.Blocks[name] != "" {
-						return t.ctx.Blocks[name], nil
+					if rb, ok := t.ctx.Blocks[name]; ok {
+						t.ctx.output.next = rb
+						t.ctx.output.check = true
+						return "<\"'.", nil
 					}
 				}
-				return t.ctx.exec(t.ctx.Main, vals[0])
+				t.ctx.output.next, e = t.ctx.exec(t.ctx.Main, vals[0])
+				return "<\"'.", e
 			case 2:
 				if name, ok := vals[0].(string); ok {
 					// Use provided fallback if necessary
 					if f, ok := vals[0].(fallback); ok {
-						return t.ctx.execWithFallback(name, f, t.ctx.Dot)
+						t.ctx.output.next, e = t.ctx.execWithFallback(name, f, t.ctx.Dot)
+						return "<\"'.", e
 						// Provided data to run
 					} else {
 						if t.ctx.Yields[name] != "" {
-							return t.ctx.exec(t.ctx.Yields[name], vals[0])
+							t.ctx.output.next, e = t.ctx.exec(t.ctx.Yields[name], vals[0])
+							return "<\"'.", e
 						}
-						if t.ctx.Blocks[name] != "" {
-							return t.ctx.Blocks[name], nil
+						if rb, ok := t.ctx.Blocks[name]; ok {
+							t.ctx.output.next = rb
+							return "<\"'.", nil
 						}
-						return template.HTML(""), nil
+						return "", nil
 					}
 				}
 			default:
@@ -50,68 +62,75 @@ func generateFuncs(t *Template) template.FuncMap {
 							}
 						}
 					}
-					return t.ctx.exec(name, d)
+					t.ctx.output.next, e = t.ctx.exec(name, d)
+					return "<\"'.", e
 				}
 			}
-			return template.HTML(""), nil
+			return "", nil
 		},
 		"content_for": func(name string, templateName string) string {
-			if t.ctx.Yields[name] == "" && t.ctx.Blocks[name] == "" {
-				t.ctx.Yields[name] = templateName
+			if t.ctx.Yields[name] == "" {
+				if _, ok := t.ctx.Blocks[name]; !ok {
+					t.ctx.Yields[name] = templateName
+				}
 			}
 			return ""
 		},
 		"root_dot": func() interface{} {
 			return t.ctx.Dot
 		},
-		"exec": func(templateName string, dot interface{}) (template.HTML, error) {
-			return t.ctx.exec(templateName, dot)
+		"exec": func(templateName string, dot interface{}) (string, error) {
+			rb, e := t.ctx.exec(templateName, dot)
+			t.ctx.output.next = rb
+			return "<\"'.", e
 		},
 		"block": func(name string) (string, error) {
 			if t.ctx.openableScope() {
 				t.ctx.output.Open(name)
 			} else {
 				if _, ok := t.ctx.Yields[name]; ok {
-					c, e := t.ctx.exec(t.ctx.Yields[name], t.ctx.Dot)
-					t.ctx.output.Write([]byte(c))
+					rb, e := t.ctx.exec(t.ctx.Yields[name], t.ctx.Dot)
+					t.ctx.output.next = rb
 					t.ctx.output.Nop()
 					return "", e
-				}
-				if c, ok := t.ctx.Blocks[name]; ok {
-					t.ctx.output.Write([]byte(c))
+				} else if rb, ok := t.ctx.Blocks[name]; ok {
+					t.ctx.output.next = rb
 					t.ctx.output.Nop()
+				} else {
+					return "", nil
 				}
 			}
-			return "", nil
+			return "<\"'.", nil
 		},
 		"exec_block": func(name string) (string, error) {
 			if _, ok := t.ctx.Yields[name]; ok {
-				c, e := t.ctx.exec(t.ctx.Yields[name], t.ctx.Dot)
-				t.ctx.output.Write([]byte(c))
+				rb, e := t.ctx.exec(t.ctx.Yields[name], t.ctx.Dot)
+				t.ctx.output.next = rb
 				t.ctx.output.Nop()
-				return "", e
-			} else if c, ok := t.ctx.Blocks[name]; ok {
-				t.ctx.output.Write([]byte(c))
+				return "<\"'.", e
+			} else if rb, ok := t.ctx.Blocks[name]; ok {
+				t.ctx.output.next = rb
 				t.ctx.output.Nop()
 			}
-			return "", nil
+			return "<\"'.", nil
 		},
 		"define_block": func(name string) string {
 			t.ctx.output.Open(name)
-			return ""
+			return "<\"'."
 		},
 		"end_block": func() string {
-			n, c := t.ctx.output.Close()
+			n, rb := t.ctx.output.Close()
 			if n == "" {
 				return ""
 			}
 			if _, ok := t.ctx.Blocks[n]; !ok {
 				if t.ctx.Yields[n] == "" {
-					t.ctx.Blocks[n] = template.HTML(c)
+					t.ctx.Blocks[n] = rb
 				}
 			}
 			return ""
 		},
+
 		"extends": func(parent string) string {
 			t.ctx.output.NoRoot()
 			t.ctx.parent = parent

@@ -105,11 +105,10 @@ func (t *Template) ExecuteTemplate(w io.Writer, name string, data interface{}) e
 		tt, _ = t.Context(NewContext(data))
 	}
 
-	e := tt.Tmpl.ExecuteTemplate(tt.ctx.output, name, data)
-	if e == nil {
-		return tt.ctx.Close(w)
+	if e := tt.Tmpl.ExecuteTemplate(tt.ctx.output, name, data); e != nil {
+		return e
 	}
-	return e
+	return tt.ctx.Close(w)
 }
 
 func (t *Template) Funcs(fm template.FuncMap) *Template {

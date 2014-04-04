@@ -154,7 +154,7 @@ func TestTables(t *testing.T) {
 			c.Main = tt.Main
 			c.Layout = tt.Layout
 			for k, b := range tt.Blocks {
-				c.Blocks[k] = template.HTML(b)
+				c.Blocks[k] = RenderedBlock{template.HTML(b), User}
 			}
 			for k, t := range tt.Yields {
 				c.Yields[k] = t

@@ -10,26 +10,41 @@ import (
 func NewContext(data interface{}) *Context {
 	c := &Context{}
 	c.Yields = make(map[string]string)
-	c.Blocks = make(map[string]template.HTML)
+	c.Blocks = make(map[string]RenderedBlock)
 	c.Dot = data
 	c.output = newPouchWriter()
 	return c
 }
+
+type RenderedBlock struct {
+	Content template.HTML
+	Type    Ruleset
+}
+
+type Ruleset string
+
+const (
+	User Ruleset = ""
+	HTML Ruleset = "&lt;&#34;&#39;."
+	CSS  Ruleset = "ZgotmplZ"
+	JS   Ruleset = `"\u003c\"'."`
+)
 
 // A Context allows you to setup more specialized template executions,
 // like those involving layouts
 type Context struct {
 	// Main template to be rendered, not layout
 	Main        string
-	mainContent template.HTML
+	mainContent RenderedBlock
 	// Layout for rendering
 	Layout          string
 	executingLayout bool
+	currentMode     string
 
 	// Templates set for yields
 	Yields map[string]string
 	// Blocks (pre-rendered HTML)
-	Blocks map[string]template.HTML
+	Blocks map[string]RenderedBlock
 	// Base RenderArgs for the template
 	Dot interface{}
 
@@ -52,7 +67,7 @@ func (c *Context) openableScope() bool {
 	return canNest && openableTemplate
 }
 
-func (c *Context) exec(name string, dot interface{}) (template.HTML, error) {
+func (c *Context) exec(name string, dot interface{}) (RenderedBlock, error) {
 	b := bytes.Buffer{}
 	// Replace the output buffer so we don't have stale data hanging around
 	// We need to have the rest of the context hanging around.
@@ -61,15 +76,15 @@ func (c *Context) exec(name string, dot interface{}) (template.HTML, error) {
 
 	e := c.tmpl.ExecuteTemplate(&b, name, dot)
 	c.output = temp
-	return template.HTML(b.String()), e
+	return RenderedBlock{template.HTML(b.String()), HTML}, e
 }
 
-func (c *Context) execWithFallback(name string, f fallback, dot interface{}) (template.HTML, error) {
+func (c *Context) execWithFallback(name string, f fallback, dot interface{}) (RenderedBlock, error) {
 	if c.Yields[name] != "" {
 		return c.exec(c.Yields[name], dot)
 	}
-	if c.Blocks[name] != "" {
-		return c.Blocks[name], nil
+	if rb, ok := c.Blocks[name]; ok {
+		return rb, nil
 	}
 	return c.exec(string(f), dot)
 }
@@ -86,6 +101,9 @@ func (c *Context) Close(w io.Writer) error {
 			}
 			temp = c.parent
 		}
+	}
+	if c.output.err != nil {
+		return c.output.err
 	}
 	_, e := io.WriteString(w, c.output.root.String())
 	return e
