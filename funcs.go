@@ -146,3 +146,6 @@ var StaticFuncs = template.FuncMap{
 		return fallback(s)
 	},
 }
+
+// LoadedFuncs is the place to load functions to be loaded.
+var LoadedFuncs = template.FuncMap{}

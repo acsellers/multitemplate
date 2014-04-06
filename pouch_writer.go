@@ -57,11 +57,13 @@ func (pw *pouchWriter) Write(p []byte) (n int, err error) {
 		if rl == pw.next.Type || pw.next.Type == User {
 			if len(pw.buffers) > 1 {
 				return pw.buffers[len(pw.buffers)-2].Write([]byte(pw.next.Content))
+			} else if len(pw.buffers) == 1 {
+				return pw.buffers[0].Write([]byte(pw.next.Content))
 			} else {
 				pw.root.Write([]byte(pw.next.Content))
 			}
 		} else {
-			pw.err = fmt.Errorf("Mismatched block contexts")
+			pw.err = fmt.Errorf("Mismatched block contexts for block content: %s", pw.next.Content)
 			return 0, pw.err
 		}
 
