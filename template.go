@@ -35,7 +35,19 @@ func Must(t *Template, err error) *Template {
 }
 
 func New(name string) *Template {
-	return &Template{Tmpl: template.New(name).Funcs(template.FuncMap{}), Base: name}
+	t := &Template{Tmpl: template.New(name).Funcs(template.FuncMap{}), Base: name}
+	t.Funcs(baseFuncMap())
+	return t
+}
+func baseFuncMap() template.FuncMap {
+	fm := template.FuncMap{}
+	for k, v := range StaticFuncs {
+		fm[k] = v
+	}
+	for k, v := range LoadedFuncs {
+		fm[k] = v
+	}
+	return fm
 }
 
 func ParseFiles(filenames ...string) (*Template, error) {
