@@ -8,24 +8,24 @@ func generateFuncs(t *Template) template.FuncMap {
 			var e error
 			switch len(vals) {
 			case 0:
-				t.ctx.output.next = t.ctx.mainContent
-				t.ctx.output.check = true
+				t.ctx.output.Immediate(t.ctx.mainContent)
 				return "<\"'.", nil
 			case 1:
 				if name, ok := vals[0].(string); ok {
 					if t.ctx.Yields[name] != "" {
-						t.ctx.output.next, e = t.ctx.exec(t.ctx.Yields[name], t.ctx.Dot)
+						rb, e := t.ctx.exec(t.ctx.Yields[name], t.ctx.Dot)
+						t.ctx.output.Immediate(rb)
 						if e != nil {
 							return "<\"'.", e
 						}
 					}
 					if rb, ok := t.ctx.Blocks[name]; ok {
-						t.ctx.output.next = rb
-						t.ctx.output.check = true
+						t.ctx.output.Immediate(rb)
 						return "<\"'.", nil
 					}
 				}
-				t.ctx.output.next, e = t.ctx.exec(t.ctx.Main, vals[0])
+				rb, e := t.ctx.exec(t.ctx.Main, vals[0])
+				t.ctx.output.Immediate(rb)
 				return "<\"'.", e
 			case 2:
 				if name, ok := vals[0].(string); ok {
@@ -90,12 +90,10 @@ func generateFuncs(t *Template) template.FuncMap {
 			} else {
 				if _, ok := t.ctx.Yields[name]; ok {
 					rb, e := t.ctx.exec(t.ctx.Yields[name], t.ctx.Dot)
-					t.ctx.output.next = rb
-					t.ctx.output.Nop()
+					t.ctx.output.Nop(rb)
 					return "", e
 				} else if rb, ok := t.ctx.Blocks[name]; ok {
-					t.ctx.output.next = rb
-					t.ctx.output.Nop()
+					t.ctx.output.Nop(rb)
 				} else {
 					return "", nil
 				}
@@ -105,12 +103,10 @@ func generateFuncs(t *Template) template.FuncMap {
 		"exec_block": func(name string) (string, error) {
 			if _, ok := t.ctx.Yields[name]; ok {
 				rb, e := t.ctx.exec(t.ctx.Yields[name], t.ctx.Dot)
-				t.ctx.output.next = rb
-				t.ctx.output.Nop()
+				t.ctx.output.Nop(rb)
 				return "<\"'.", e
 			} else if rb, ok := t.ctx.Blocks[name]; ok {
-				t.ctx.output.next = rb
-				t.ctx.output.Nop()
+				t.ctx.output.Nop(rb)
 			}
 			return "<\"'.", nil
 		},

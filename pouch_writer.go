@@ -14,14 +14,15 @@ func newPouchWriter() *pouchWriter {
 }
 
 type pouchWriter struct {
-	names    []string
-	root     bytes.Buffer
-	buffers  []bytes.Buffer
-	rulesets []Ruleset
-	discard  bool
-	next     RenderedBlock
-	check    bool
-	err      error
+	names     []string
+	root      bytes.Buffer
+	buffers   []bytes.Buffer
+	rulesets  []Ruleset
+	discard   bool
+	next      RenderedBlock
+	check     bool
+	immediate bool
+	err       error
 }
 
 func (pw *pouchWriter) nesting() bool {
@@ -55,12 +56,18 @@ func (pw *pouchWriter) Write(p []byte) (n int, err error) {
 		}
 		pw.rulesets = append(pw.rulesets, rl)
 		if rl == pw.next.Type || pw.next.Type == User {
-			if len(pw.buffers) > 1 {
-				return pw.buffers[len(pw.buffers)-2].Write([]byte(pw.next.Content))
-			} else if len(pw.buffers) == 1 {
-				return pw.buffers[0].Write([]byte(pw.next.Content))
+			if pw.immediate {
+				if len(pw.buffers) > 0 {
+					return pw.buffers[len(pw.buffers)-1].Write([]byte(pw.next.Content))
+				} else {
+					pw.root.Write([]byte(pw.next.Content))
+				}
 			} else {
-				pw.root.Write([]byte(pw.next.Content))
+				if len(pw.buffers) > 1 {
+					return pw.buffers[len(pw.buffers)-2].Write([]byte(pw.next.Content))
+				} else {
+					pw.root.Write([]byte(pw.next.Content))
+				}
 			}
 		} else {
 			pw.err = fmt.Errorf("Mismatched block contexts for block content: %s", pw.next.Content)
@@ -83,10 +90,17 @@ func (pw *pouchWriter) Write(p []byte) (n int, err error) {
 	return len(p), nil
 }
 
-func (pw *pouchWriter) Nop() {
+func (pw *pouchWriter) Nop(rb RenderedBlock) {
 	pw.names = append(pw.names, "")
 	pw.buffers = append(pw.buffers, bytes.Buffer{})
 	pw.check = true
+	pw.next = rb
+}
+
+func (pw *pouchWriter) Immediate(rb RenderedBlock) {
+	pw.check = true
+	pw.immediate = true
+	pw.next = rb
 }
 
 func (pw *pouchWriter) NoRoot() {
