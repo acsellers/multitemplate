@@ -12,7 +12,7 @@ import (
 var (
 	dotVarField = `([\.|\$][^\t^\n^\v^\f^\r^ ]+)+`
 
-	simpleValue    = regexp.MustCompile(`true|false|nil`)
+	simpleValue    = regexp.MustCompile(`^true|false|nil$`)
 	simpleField    = regexp.MustCompile(fmt.Sprintf(`^%s$`, dotVarField))
 	simpleFunction = regexp.MustCompile(fmt.Sprintf(`^([^\.^\t^\n^\v^\f^\r^ ]+)( %s)*$`, dotVarField))
 )

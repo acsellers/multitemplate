@@ -194,6 +194,7 @@ func (t *Template) ParseGlob(pattern string) (*Template, error) {
 }
 
 func (t *Template) stripBase(filename string) (name, parser string) {
+	name = filename
 	if strings.HasPrefix(filename, t.Base) {
 		filename = filename[len(t.Base):]
 	}
