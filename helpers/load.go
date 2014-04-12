@@ -12,9 +12,14 @@ func LoadHelpers(modules ...string) {
 		switch module {
 		case "all":
 			loadFuncs(formTagFunctions)
-			loadFuncs(jsTagFunctions)
+			loadFuncs(generalFuncs)
+			loadFuncs(linkFuncs)
 		case "forms":
 			loadFuncs(formTagFunctions)
+		case "general":
+			loadFuncs(generalFuncs)
+		case "link":
+			loadFuncs(linkFuncs)
 		}
 	}
 }

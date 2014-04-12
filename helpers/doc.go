@@ -77,7 +77,7 @@
 
   - utf8_tag
 
-  Django Functions
+  General Functions
 
   - add_slashes: Wherever s has a single or double quote, add a backslash before the quote mark
 
@@ -113,8 +113,6 @@
 
   - length_is: Tests that the length of l is equal, then returns a bool
 
-  - link_to: Return a clickable link from an address of the first string with the text as the second string
-
   - ljust: Converts i to a string, then left aligns it within a area of length n
 
   - lower: Convert a string to lowercase
@@ -145,11 +143,18 @@
 
   - upper: Convert string s to uppercase letters
 
+  Link Functions
+
+  - link_to: Return a clickable link from an address of the first string with the text as the second string
+
+  - link_to_function: Return a clickable link that runs a javascript function instead of a web address.
+
   - url_encode: Encodes a value for use in a url
 
   - urlize: Return a clickable link from an url address string
 
   - urlize_truncate: Returns a clickable link from an address s where the clickable text is truncated to a number of characters
+
 */
 
 package helpers

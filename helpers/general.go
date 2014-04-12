@@ -3,7 +3,6 @@ package filters
 import (
 	"fmt"
 	"math/rand"
-	"net/url"
 	"reflect"
 	"strings"
 	"text/template"
@@ -16,7 +15,7 @@ import (
 
 // These functions come from Django
 
-var filterFuncs = template.FuncMap{
+var generalFuncs = template.FuncMap{
 	"add_slashes": func(s string) string {
 		output := make([]byte, len(s)*2)
 		index := 0
@@ -221,16 +220,6 @@ var filterFuncs = template.FuncMap{
 		}
 		return 1 == n
 	},
-	"link_to": func(link, name string) template.HTML {
-		u, e := url.Parse(link)
-		if e != nil {
-			return ""
-		}
-
-		return template.HTML(
-			fmt.Sprintf(`<a href="%s">%s</a>`, u.String(), name),
-		)
-	},
 	"ljust": func(s string, num int) string {
 		sRunes := []rune(s)
 		if len(sRunes) >= num {
@@ -315,32 +304,5 @@ var filterFuncs = template.FuncMap{
 		}
 		return s[:n]
 	},
-	"upper":      strings.ToUpper,
-	"url_encode": url.QueryEscape,
-	"urlize": func(link string) template.HTML {
-		u, e := url.Parse(link)
-		if e != nil {
-			return ""
-		}
-
-		return template.HTML(
-			fmt.Sprintf(`<a href="%s">%s</a>`, u.String(), link),
-		)
-	},
-	"urlize_truncate": func(link string, num int) template.HTML {
-		chars := []rune(link)
-		u, e := url.Parse(link)
-		if e != nil {
-			return ""
-		}
-		if num >= len(chars) {
-
-			return template.HTML(
-				fmt.Sprintf(`<a href="%s">%s</a>`, u.String(), link),
-			)
-		}
-		return template.HTML(
-			fmt.Sprintf(`<a href="%s">%s</a>`, u.String(), chars[:num]),
-		)
-	},
+	"upper": strings.ToUpper,
 }
