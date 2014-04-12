@@ -77,5 +77,79 @@
 
   - utf8_tag
 
+  Django Functions
+
+  - add_slashes: Wherever s has a single or double quote, add a backslash before the quote mark
+
+  - cap_first: Capitalize the first letter in the string, ignoring further words and
+
+  - center: Take the string value s and center it within a string of length num that is filled with spaces
+
+  - cut: Remove all characters in cutset from the string s
+
+  - default: When x is empty string, nil, etc., then output y otherwise output x
+
+  - default_if_nil: When x is nil, return y, otherwise return x
+
+  - escape: Return the string s after is was html escaped
+
+  - escape_js: Return the string after it was escaped for javascript use
+
+  - filesize_format: Given the size in bytes, return the smallest format that would be greater than 1 when output
+
+  - first: Return the first value of a slice of items
+
+  - float_format: Return a string where f has exactly n places after the decimal point
+
+  - force_escape: Run html escape on a string
+
+  - get_digit: Return the nth rightmost digit from i
+
+  - join: Join the values in the slice l with j and return the resulting string
+
+  - last: Returns the last item in a slice or array
+
+  - length: Returns the length of an array, slice, map, or string
+
+  - length_is: Tests that the length of l is equal, then returns a bool
+
+  - link_to: Return a clickable link from an address of the first string with the text as the second string
+
+  - ljust: Converts i to a string, then left aligns it within a area of length n
+
+  - lower: Convert a string to lowercase
+
+  - number_lines: Add the line number to each line in s in the form "1. "
+
+  - pluralize: Pluralize a string
+
+  - pprint: Print out a piece of data, for debugging purposes
+
+  - pytime: Formats time according to Python time formatting syntax
+
+  - quick_format: Escapes content, then converts newline characters into <br>'s
+
+  - random: Returns a random item from a slice
+
+  - rjust: Right align a value in a string of length n
+
+  - safe: Mark a string to template.HTML so it will not be escaped
+
+  - safe_seq: Convert all items in a slice to template.HTML marked strings
+
+  - slugify: Returns a lowercased version of that removes non-alphabetic characters and spaces are now hyphens
+
+  - title: Title case the string
+
+  - truncate: Truncate a string to a certain number characters, the count includes the three-character ellipsis
+
+  - upper: Convert string s to uppercase letters
+
+  - url_encode: Encodes a value for use in a url
+
+  - urlize: Return a clickable link from an url address string
+
+  - urlize_truncate: Returns a clickable link from an address s where the clickable text is truncated to a number of characters
 */
+
 package helpers
