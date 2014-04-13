@@ -5,7 +5,7 @@ import (
 	"html/template"
 )
 
-var coreFunctions = template.FuncMap{
+var coreFuncs = template.FuncMap{
 	"attr": func(name string, value interface{}) Attr {
 		return Attr{name, value}
 	},

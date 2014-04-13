@@ -1,11 +1,11 @@
-package filters
+package helpers
 
 import (
 	"fmt"
+	"html/template"
 	"math/rand"
 	"reflect"
 	"strings"
-	"text/template"
 	"unicode"
 
 	"github.com/acsellers/inflections"

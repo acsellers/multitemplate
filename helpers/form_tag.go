@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-var formTagFunctions = template.FuncMap{
+var formTagFuncs = template.FuncMap{
 	"button_tag": func(text string, options ...AttrList) template.HTML {
 		al := combine("", "", options)
 		tc := template.HTML(template.HTMLEscapeString(text))

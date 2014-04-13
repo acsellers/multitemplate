@@ -7,19 +7,24 @@ import (
 )
 
 func LoadHelpers(modules ...string) {
-	loadFuncs(coreFunctions)
+	loadFuncs(coreFuncs)
 	for _, module := range modules {
 		switch module {
 		case "all":
-			loadFuncs(formTagFunctions)
+			loadFuncs(formTagFuncs)
+			loadFuncs(selectTagFuncs)
 			loadFuncs(generalFuncs)
 			loadFuncs(linkFuncs)
+			loadFuncs(assetFuncs)
 		case "forms":
-			loadFuncs(formTagFunctions)
+			loadFuncs(formTagFuncs)
+			loadFuncs(selectTagFuncs)
 		case "general":
 			loadFuncs(generalFuncs)
 		case "link":
 			loadFuncs(linkFuncs)
+		case "asset":
+			loadFuncs(assetFuncs)
 		}
 	}
 }

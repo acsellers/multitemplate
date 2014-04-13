@@ -5,7 +5,7 @@ import (
 	"html/template"
 )
 
-var selectTagFunctions = template.FuncMap{
+var selectTagFuncs = template.FuncMap{
 	"select_tag": func(name string, optionThing interface{}, options ...AttrList) template.HTML {
 		al := combine(name, "", options)
 		if _, ok := al["name"]; !ok {
@@ -122,10 +122,4 @@ func optionFor(ot interface{}) OptionList {
 	}
 
 	return OptionList{}
-}
-
-func init() {
-	for k, v := range selectTagFunctions {
-		formTagFunctions[k] = v
-	}
 }
