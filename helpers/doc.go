@@ -155,6 +155,18 @@
 
   - urlize_truncate: Returns a clickable link from an address s where the clickable text is truncated to a number of characters
 
-*/
+  Asset Functions
 
+  - atom_link: Returns a link tag for a rss feed based on the RootURL + the path you send.
+
+  - favicon_link: Returns the link to a favicon. Note that the favicon should be located in the ImageRoot.
+
+  - image_tag: Returns the img tag for an image in the ImageRoot.
+
+  - javascript_link: Returns the script tags for one or more javascript files in JavascriptRoot
+
+  - rss_link: Returns a link tag for a rss feed based on the RootURL + the path you send.
+
+  - stylesheet_link: Return the link tags for one or more stylesheets base on the StylesheetRoot + paths given.
+*/
 package helpers
