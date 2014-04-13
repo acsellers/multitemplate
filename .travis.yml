@@ -7,6 +7,9 @@ go:
 
 install:
   - go get github.com/acsellers/assert
+  - go get github.com/acsellers/inflections
+  - go get github.com/davecgh/go-spew/spew
+  - go get github.com/tebeka/strftime
 
 script:
   - go test github.com/acsellers/multitemplate
