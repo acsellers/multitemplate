@@ -12,4 +12,4 @@ script:
   - go test github.com/acsellers/multitemplate
   - go test github.com/acsellers/multitemplate/bham
   - go test github.com/acsellers/multitemplate/mustache
-
+  - go test github.com/acsellers/multitemplate/helpers
