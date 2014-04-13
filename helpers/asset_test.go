@@ -47,9 +47,13 @@ var assetTests = []helperTest{
 		Expected: `<link rel="alternate" type="application/atom+xml" title="ATOM" href="http://localhost/api/atom" />`,
 	},
 	helperTest{
-		Helper:   "favicon_link",
-		Args:     []string{"favicon.png"},
-		Expected: `<link rel="shortcut icon" type="image/png" href="/img/favicon.png" />`,
+		Helper: "favicon_link",
+		Args:   []string{"favicon.png"},
+		Expected: string(buildTag("link", "", AttrList{
+			"rel":  "shortcut icon",
+			"type": "image/png",
+			"href": "/img/favicon.png",
+		})),
 	},
 	helperTest{
 		Helper:   "favicon_link",
@@ -99,9 +103,14 @@ var assetTests = []helperTest{
 		Expected: `<script src="http://ajaxcdn.net/jquery/1.2.3/jquery.min.js"> </script>`,
 	},
 	helperTest{
-		Helper:   "rss_link",
-		Args:     []string{"/api/rss"},
-		Expected: `<link rel="alternate" type="application/rss+xml" title="RSS" href="http://localhost/api/rss" />`,
+		Helper: "rss_link",
+		Args:   []string{"/api/rss"},
+		Expected: string(buildTag("link", "", AttrList{
+			"rel":   "alternate",
+			"type":  "application/rss+xml",
+			"title": "RSS",
+			"href":  "http://localhost/api/rss",
+		})),
 	},
 	helperTest{
 		Helper:   "rss_link",

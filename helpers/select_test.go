@@ -10,7 +10,7 @@ func TestSelectTag(t *testing.T) {
 	Within(t, func(test *Test) {
 		f := selectTagFuncs["select_tag"].(func(string, interface{}, ...AttrList) template.HTML)
 		r := string(f("wat", OptionList{Option{"a", "a"}}))
-		test.AreEqual(`<select name="wat" id="wat"><option value="a">a</option></select>`, r)
+		test.AreEqual(r, buildTag("select", `<option value="a">a</option>`, AttrList{"name": "wat", "id": "wat"}))
 	})
 }
 

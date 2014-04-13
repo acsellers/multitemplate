@@ -8,9 +8,6 @@ import (
 var selectTagFuncs = template.FuncMap{
 	"select_tag": func(name string, optionThing interface{}, options ...AttrList) template.HTML {
 		al := combine(name, "", options)
-		if _, ok := al["name"]; !ok {
-			al["name"] = name
-		}
 		oc := optionFor(optionThing)
 		return buildTag("select", oc.ToHTML(), al)
 	},
