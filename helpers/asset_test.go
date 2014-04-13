@@ -40,13 +40,6 @@ func TestAsset(t *testing.T) {
 	})
 }
 
-type helperTest struct {
-	Helper   string
-	Args     []string
-	Attrs    []AttrList
-	Expected string
-}
-
 var assetTests = []helperTest{
 	helperTest{
 		Helper:   "atom_link",

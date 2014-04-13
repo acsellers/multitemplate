@@ -26,20 +26,35 @@ var selectTagFuncs = template.FuncMap{
 	"options": func(vals ...interface{}) OptionList {
 		ol := OptionList{}
 		for _, val := range vals {
-			if vc, ok := val.(template.HTML); ok {
+			switch av := val.(type) {
+			case template.HTML:
 				ol = append(ol, Option{
-					Name:  vc,
-					Value: fmt.Sprint(val),
+					Name:  av,
+					Value: template.JSEscapeString(string(av)),
 				})
-			} else {
+			case string:
+				ol = append(ol, Option{
+					Name:  template.HTML(template.HTMLEscapeString(av)),
+					Value: template.JSEscapeString(av),
+				})
+			case Option:
+				ol = append(ol, av)
+			default:
 				vs := fmt.Sprint(val)
 				ol = append(ol, Option{
 					Name:  template.HTML(template.HTMLEscapeString(vs)),
-					Value: vs,
+					Value: template.JSEscapeString(vs),
 				})
 			}
 		}
 		return ol
+	},
+	"group_options": func(label string, ol OptionList) OptionGroup {
+		options := []Option{}
+		for _, oi := range ol {
+			options = append(options, oi.Options()...)
+		}
+		return OptionGroup{label, options}
 	},
 	"options_with_values": func(vals ...interface{}) OptionList {
 		ol := OptionList{}
@@ -96,6 +111,14 @@ func (ol OptionList) ToHTML() template.HTML {
 		content += o.ToHTML()
 	}
 	return content
+}
+
+func (og OptionList) Options() []Option {
+	options := []Option{}
+	for _, oi := range og {
+		options = append(options, oi.Options()...)
+	}
+	return options
 }
 
 type OptionGroup struct {

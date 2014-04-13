@@ -30,7 +30,7 @@
   - data: A special case of the attrs function, this will append "data-" before the keys to simplify
   the creation of HTML5 data sttributes.
 
-      {{ select_tag "reviewer" .AuthorListing (data "placeholder" "Select a reviewer for the article") }}
+      {{ text_field_tag "reviewer" .Author (data "placeholder" "Select a reviewer for the article") }}
 
 
   FormTag functions
@@ -142,6 +142,20 @@
   - truncate: Truncate a string to a certain number characters, the count includes the three-character ellipsis
 
   - upper: Convert string s to uppercase letters
+
+  Select Tag Functions
+
+  The functions for select tags are loaded as part of the Form Tags module.
+
+  - option: Turn two values into an Option pair, the first value is the name for the option while the second value becomes the value for the option.
+
+  - options: Turns a set of values into a list of options. Each value is set to both then name and value of the option. Any Option's from the option function are passed through.
+
+  - group_options: Take an OptionList from options or options_with_values and enclose them with an optgroup with the label of the first argument.
+
+  - options_with_values: Turns a variable number of values into a list of options. This is equivalent to calling Option on each pair then passing the results to options.
+
+  - select_tag: First value is a string for the name of the select tag, second is as Option List of a mix Options and/or OptionGroups, followed by AttrList's to set other options about the select tag.
 
   Link Functions
 
