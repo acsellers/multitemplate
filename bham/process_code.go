@@ -76,13 +76,23 @@ func (pt *protoTree) parseTemplateCode(content string) (*parse.PipeNode, error) 
 	}
 }
 
+var assignRegex = regexp.MustCompile("^(\\$[a-zA-Z0-9-_]+) *(\\$[a-zA-Z0-9-_]+)* ?:=")
+
 func (pt *protoTree) processCode(s string) (*parse.PipeNode, error) {
 	t := textTmpl.New("mule").Funcs(textTmpl.FuncMap(pt.funcs))
-	t, err := t.Parse("{{" + s + "}}")
+	t, err := t.Parse(pt.prelude + "{{" + s + "}}")
 	if err != nil {
 		return nil, err
 	}
-	n := t.Tree.Root.Nodes[0]
+	if assignRegex.MatchString(s) {
+		tvar := assignRegex.FindStringSubmatch(s)[1:]
+		for _, tvi := range tvar {
+			if tvi != "" {
+				pt.prelude += "{{ " + tvi + " := $ }}"
+			}
+		}
+	}
+	n := t.Tree.Root.Nodes[len(t.Tree.Root.Nodes)-1]
 	if an, ok := n.(*parse.ActionNode); ok {
 		return an.Pipe, nil
 	}

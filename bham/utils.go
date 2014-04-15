@@ -30,11 +30,12 @@ func containsDelimeters(s string) bool {
 
 func (pt *protoTree) safeAction(s string) (*parse.ActionNode, error) {
 	t := template.New("mule").Funcs(template.FuncMap(pt.funcs))
-	t, err := t.Parse(s)
+	t, err := t.Parse(pt.prelude + s)
 	if err != nil {
 		return nil, err
 	}
-	n := t.Tree.Root.Nodes[0]
+
+	n := t.Tree.Root.Nodes[len(t.Tree.Root.Nodes)-1]
 	if an, ok := n.(*parse.ActionNode); ok {
 		return an, nil
 	}

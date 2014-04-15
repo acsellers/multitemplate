@@ -54,6 +54,7 @@ type protoTree struct {
 	outputTree *parse.Tree
 	err        error
 	funcs      template.FuncMap
+	prelude    string
 }
 
 type protoNode struct {
