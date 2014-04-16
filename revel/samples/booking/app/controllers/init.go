@@ -8,7 +8,7 @@ import (
 func init() {
 	revel.OnAppStart(func() {
 		InitDB()
-		multitemplate.Init()
+		multitemplate.Init("all")
 	})
 	revel.InterceptMethod((*GorpController).Begin, revel.BEFORE)
 	revel.InterceptMethod(Application.AddUser, revel.BEFORE)
