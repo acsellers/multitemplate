@@ -73,9 +73,9 @@
 
   - text_field_tag
 
-  - url_field_tag
+  - url_field_tag: Create an input for a url.
 
-  - utf8_tag
+  - utf8_tag: Add a hidden input with a value that is a valid UTF8 character ouside of ASCII.
 
   General Functions
 

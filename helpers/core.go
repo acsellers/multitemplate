@@ -3,6 +3,7 @@ package helpers
 import (
 	"fmt"
 	"html/template"
+	"strings"
 )
 
 var coreFuncs = template.FuncMap{
@@ -58,4 +59,26 @@ func makeAttrList(args ...interface{}) (AttrList, error) {
 		}
 	}
 	return al, nil
+}
+
+func combine(name, value string, opts []AttrList) AttrList {
+	al := AttrList{}
+	for _, attrs := range opts {
+		for k, v := range attrs {
+			if _, ok := al[k]; !ok {
+				al[k] = v
+			}
+		}
+	}
+	if name != "" {
+		al["name"] = strings.Map(nameFilter, name)
+		if _, ok := al["id"]; !ok {
+			al["id"] = strings.Map(nameFilter, name)
+		}
+	}
+	if value != "" {
+		al["value"] = value
+	}
+
+	return al
 }
