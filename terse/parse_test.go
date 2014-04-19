@@ -59,6 +59,21 @@ var parseTests = []parseTest{
 		Content:  "!! Strict",
 		Expected: `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">`,
 	},
+	parseTest{
+		Name:     "Text in template",
+		Content:  "blah blah",
+		Expected: "blah blah",
+	},
+	parseTest{
+		Name:     "Text in template",
+		Content:  "blah blah\nnerr",
+		Expected: "blah blah\nnerr",
+	},
+	parseTest{
+		Name:     "Text in template",
+		Content:  "bleh\n  wat",
+		Expected: "bleh\n  wat",
+	},
 }
 
 type parseTest struct {

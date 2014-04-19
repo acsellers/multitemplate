@@ -1,6 +1,9 @@
 package terse
 
-import "fmt"
+import (
+	"fmt"
+	"strings"
+)
 
 var Doctypes = map[string]string{
 	"":             `<!DOCTYPE html>`,
@@ -44,7 +47,6 @@ func execToken(node *rawNode) (*token, error) {
 }
 
 func verbatimToken(node *rawNode) (*token, error) {
-
 	return errorToken, fmt.Errorf("Not Implemented")
 }
 
@@ -113,5 +115,17 @@ func idClassToken(node *rawNode) (*token, error) {
 }
 
 func textToken(node *rawNode) (*token, error) {
-	return errorToken, fmt.Errorf("Not Implemented")
+	if strings.Contains(node.Code, LeftDelim) && strings.Contains(node.Code, RightDelim) {
+		return errorToken, fmt.Errorf("Not Implemented")
+	}
+	td := &token{Type: TextToken, Content: node.Code}
+	for _, child := range node.Children {
+		if strings.Contains(node.Code, LeftDelim) && strings.Contains(node.Code, RightDelim) {
+			return errorToken, fmt.Errorf("Not Implemented")
+		} else {
+			td.Content += "\n  " + child.Print("")
+		}
+	}
+
+	return td, nil
 }

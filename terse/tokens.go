@@ -26,19 +26,19 @@ const (
 	CommentToken
 )
 
-func (t *token) Compile() parse.Node {
+func (t *token) Compile(prefix string) parse.Node {
 	switch t.Type {
 	case ErrorToken:
 		panic("Error token's should not make it to compilation")
 	case TextToken:
 		return &parse.TextNode{
 			NodeType: parse.NodeText,
-			Text:     []byte(t.Content),
+			Text:     []byte(prefix + t.Content),
 		}
 	case HTMLToken:
 		return &parse.TextNode{
 			NodeType: parse.NodeText,
-			Text:     []byte(t.Content),
+			Text:     []byte(prefix + t.Content),
 		}
 	case CommentToken:
 	default:
