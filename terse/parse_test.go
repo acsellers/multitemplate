@@ -49,6 +49,16 @@ var parseTests = []parseTest{
 	parseTest{
 		Name: "Blank Template",
 	},
+	parseTest{
+		Name:     "Doctype Template Blank",
+		Content:  "!!",
+		Expected: "<!DOCTYPE html>",
+	},
+	parseTest{
+		Name:     "Doctype Template Named",
+		Content:  "!! Strict",
+		Expected: `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">`,
+	},
 }
 
 type parseTest struct {
