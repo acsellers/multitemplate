@@ -2,15 +2,19 @@ package terse
 
 func tokenize(rt rawTree) tokenTree {
 	tt := tokenTree{}
-	var current token
+	var current *token
 	for _, root := range rt.Children {
-		tt.roots = append(tt.roots, codeTokenizer(root.Code)(root))
+		current, tt.err = codeTokenizer(root.Code)(root)
+		if tt.err != nil {
+			return tt
+		}
+		tt.roots = append(tt.roots, current)
 	}
 
 	return tt
 }
 
-func codeTokenizer(code string) func(*rawNode) (token, error) {
+func codeTokenizer(code string) func(*rawNode) (*token, error) {
 	switch {
 	case doctypeCode(code):
 		return doctypeToken

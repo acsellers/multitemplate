@@ -1,66 +1,49 @@
 package terse
 
+import "text/template/parse"
+
 type tokenTree struct {
-	roots []token
+	roots []*token
+	err   error
 }
 
-type token interface {
-	Opening() []token
-	Closing() []token
-	Children() []token
-	Type() tokenType
-	String() string
+type token struct {
+	Opening  []*token
+	Closing  []*token
+	Children []*token
+	Type     tokenType
+	Content  string
 }
+
+var errorToken = &token{Type: ErrorToken}
 
 type tokenType int
 
 const (
-	errorTokenType tokenType = iota
-	textTokenType
-	conditionalTokenType
-	codeTokenType
-	tagTokenType
-	ifTokenType
-	elseTokenType
+	ErrorToken tokenType = iota
+	TextToken
+	HTMLToken
+	CommentToken
 )
 
-type errorToken struct{}
-
-func (*errorToken) Opening() []token {
-	return []token{}
-}
-
-func (*errorToken) Closing() []token {
-	return []token{}
-}
-func (*errorToken) Children() []token {
-	return []token{}
-}
-func (*errorToken) Type() tokenType {
-	return errorTokenType
-}
-
-func (*errorToken) String() string {
-	return "PARSE ERROR"
-}
-
-type tokenDoctype struct {
-	Text     string
-	Comments string
-}
-
-func (td *tokenDoctype) Opening() []token {
-	return []token{}
-}
-func (td *tokenDoctype) Children() []token {
-	return []token{}
-}
-func (td *tokenDoctype) Closing() []token {
-	return []token{}
-}
-func (td *tokenDoctype) Type() tokenType {
-	return textTokenType
-}
-
-func (td *tokenDoctype) String() string {
+func (t *token) Compile() parse.Node {
+	switch t.Type {
+	case ErrorToken:
+		panic("Error token's should not make it to compilation")
+	case TextToken:
+		return &parse.TextNode{
+			NodeType: parse.NodeText,
+			Text:     []byte(t.Content),
+		}
+	case HTMLToken:
+		return &parse.TextNode{
+			NodeType: parse.NodeText,
+			Text:     []byte(t.Content),
+		}
+	case CommentToken:
+	default:
+	}
+	return &parse.TextNode{
+		NodeType: parse.NodeText,
+	}
 }
