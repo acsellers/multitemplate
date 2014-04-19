@@ -1,19 +1,15 @@
-{{set . "title" "Search"}}
+{{ set . "title" "Search" }}
 
 <h1>Search Hotels</h1>
 
 <p>
-  <input type="text" id="search" size="30">
-  <input type="submit" id="submit" value="Find Hotels">
+  {{ text_field_tag "search" "" (attrs "size" "30") }}
+  {{ submit_tag "submit" (attrs "value" "Find Hotels") }}
 
   <br>
 
   Maximum results:
-  <select id="size">
-    <option value="5">5</option>
-    <option value="10">10</option>
-    <option value="20">20</option>
-  </select>
+  {{ select_tag "size" (options 5 10 20) }}
 </p>
 
 <div id="result">
