@@ -31,7 +31,7 @@ var formTagFuncs = template.FuncMap{
 		al["MT_skip_close"] = true
 		return buildTag(
 			"fieldset",
-			template.HTML("<template"+template.HTMLEscapeString(name)+"</template>"),
+			buildTag("legend", template.HTML(template.HTMLEscapeString(name)), AttrList{}),
 			al,
 		)
 	},

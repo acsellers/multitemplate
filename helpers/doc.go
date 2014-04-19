@@ -35,43 +35,43 @@
 
   FormTag functions
 
-  - button_tag
+  - button_tag: Create a button tag
 
-  - check_box_tag
+  - check_box_tag: Create an input tag with a type of checkbox
 
-  - email_field_tag
+  - email_field_tag: Create an input tag with a type of email
 
-  - fieldset_tag
+  - fieldset_tag: Open a fieldset tag with a legend with the name you passed
 
-  - end_fieldset_tag
+  - end_fieldset_tag: Close a fieldset tag, for auto-closing template languages
 
-  - file_field_tag
+  - file_field_tag: Input field with a type of file, make sure that the form tag has an enctype of "multipart/form-data"
 
-  - form_tag
+  - form_tag: Open a form tag, this does not yet add any csrf protection, though it is planned.
 
-  - end_form_tag
+  - end_form_tag: Closes a form tag, for auto-closing template languages
 
-  - hidden_field_tag
+  - hidden_field_tag: Creates a hidden input field, this can be modified client-side
 
-  - label_tag
+  - label_tag: Creates a label tag
 
-  - number_field_tag
+  - number_field_tag: Creates an input field with a type of number
 
-  - password_field_tag
+  - password_field_tag: Creates a password field input, this will hide the characters users type in.
 
-  - phone_field_tag
+  - phone_field_tag: Creates an input with a type of tel, this is great for mobile
 
-  - radio_button_tag
+  - radio_button_tag: Creates a radio button input element.
 
-  - range_field_tag
+  - range_field_tag: Creates a input with a type of range. That means it's a slider.
 
-  - search_field_tag
+  - search_field_tag: Createa an input tag with a type of search
 
-  - submit_tag
+  - submit_tag: Create an input tag with a type of submit
 
-  - text_area_tag
+  - text_area_tag: Create a textarea tag
 
-  - text_field_tag
+  - text_field_tag: Create a normal text field input
 
   - url_field_tag: Create an input for a url.
 
@@ -170,6 +170,9 @@
   - urlize_truncate: Returns a clickable link from an address s where the clickable text is truncated to a number of characters
 
   Asset Functions
+
+  Note that Asset Functions don't use integrations to discover assets, they are configured with the
+  package variable AppInfo which contains the information to create the necessary links.
 
   - atom_link: Returns a link tag for a rss feed based on the RootURL + the path you send.
 

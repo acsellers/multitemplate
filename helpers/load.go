@@ -6,6 +6,7 @@ import (
 	"github.com/acsellers/multitemplate"
 )
 
+// Available helper modules "forms", "general", "link", "asset"
 func LoadHelpers(modules ...string) {
 	loadFuncs(coreFuncs)
 	for _, module := range modules {
