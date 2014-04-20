@@ -102,7 +102,7 @@ var parseTests = []parseTest{
 	parseTest{
 		Name:     "If/Else Statement (False)",
 		Content:  "?false\n  no\n!?\n  yes",
-		Expected: "\nyes",
+		Expected: "yes",
 	},
 	parseTest{
 		Name:     "If/Else Statement (True)",

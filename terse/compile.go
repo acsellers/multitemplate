@@ -52,7 +52,9 @@ func compile(name string, funcs template.FuncMap, tt tokenTree) (map[string]*par
 			default:
 				nodes = append(nodes, rn.Compile(prefix)...)
 			}
-			prefix = "\n"
+			if !cf {
+				prefix = "\n"
+			}
 		}
 		if len(hold) > 0 {
 			nodes = append(nodes, hold...)
