@@ -2,7 +2,8 @@ Doctype Line
 !! (doctype[])
 
 Tag Line
-'%'?(tagName) (
+'%'?(tagName)\(wat attr="value" attr=$code) blah
+'%'?(tagName)\(wat attr="value" attr=$code)= $value
 
 Executable Line
 = 
@@ -42,3 +43,14 @@ Id/Class Line
 
 Text Line
 .*
+
+Nesting in strange situations
+
+Text:
+  Text can have nested text inside it, but the only type of special text it will detect is 
+  Comment tags
+
+Doctype:
+  You can nest comment tags, but 
+
+Comment:

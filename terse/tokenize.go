@@ -14,6 +14,23 @@ func tokenize(rt rawTree) tokenTree {
 	return tt
 }
 
+func childTokenize(node *rawNode) ([]*token, error) {
+	if len(node.Children) == 0 {
+		return []*token{}, nil
+	}
+
+	tokens := []*token{}
+	for _, child := range node.Children {
+		current, err := codeTokenizer(child.Code)(child)
+		if err != nil {
+			return []*token{}, err
+		}
+		tokens = append(tokens, current)
+	}
+
+	return tokens, nil
+}
+
 func codeTokenizer(code string) func(*rawNode) (*token, error) {
 	switch {
 	case doctypeCode(code):

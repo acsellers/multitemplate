@@ -24,7 +24,14 @@ const (
 	ErrorToken tokenType = iota
 	TextToken
 	HTMLToken
+	ExecToken
 	CommentToken
+	IfToken
+	ElseToken
+	RangeToken
+	TagToken
+	TagOpenToken
+	TagCloseToken
 )
 
 func (t *token) Compile(prefix string) []parse.Node {
@@ -48,6 +55,23 @@ func (t *token) Compile(prefix string) []parse.Node {
 					Text:     []byte(prefix + t.Content),
 				},
 			}
+		case IfToken:
+			bn := parse.BranchNode{
+				NodeType: parse.NodeIf,
+				Pos:      parse.Pos(t.Pos),
+			}
+
+			an, _ := actionNode(t.Content, &resources{})
+			bn.Pipe = an.Pipe
+			bn.List = &parse.ListNode{
+				NodeType: parse.NodeList,
+				Pos:      parse.Pos(t.Children[0].Pos),
+				Nodes:    t.ChildCompile(prefix),
+			}
+
+			return []parse.Node{
+				&parse.IfNode{bn},
+			}
 		}
 	} else {
 		switch t.Type {
@@ -65,6 +89,15 @@ func (t *token) Compile(prefix string) []parse.Node {
 	return []parse.Node{}
 }
 
+func (t *token) FollowupToken() (bool, tokenType) {
+	switch t.Type {
+	case IfToken:
+		return true, ElseToken
+	case RangeToken:
+		return true, ElseToken
+	}
+	return false, ErrorToken
+}
 func (t *token) OpeningCompile(prefix string) []parse.Node {
 	ns := []parse.Node{}
 	for _, ot := range t.Opening {
@@ -82,7 +115,7 @@ func (t *token) ClosingCompile(prefix string) []parse.Node {
 }
 
 func (t *token) ChildCompile(prefix string) []parse.Node {
-	if prefix[0] != '\n' {
+	if len(prefix) > 0 && prefix[0] != '\n' {
 		prefix = "\n" + prefix
 	}
 	if len(t.Children) == 0 {

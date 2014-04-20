@@ -94,6 +94,11 @@ var parseTests = []parseTest{
 		Content:  "First\n  Second\n    Third\n      Fourth",
 		Expected: "First\n  Second\n    Third\n      Fourth",
 	},
+	parseTest{
+		Name:     "If Statement",
+		Content:  "?true\n  show",
+		Expected: "show",
+	},
 }
 
 type parseTest struct {

@@ -31,9 +31,12 @@ func doctypeToken(node *rawNode) (*token, error) {
 	}
 	line = strippedLine(line[2:])
 	if dt, ok := Doctypes[line]; ok {
-		td := &token{Content: dt, Type: HTMLToken}
+		td := &token{Content: dt, Type: HTMLToken, Pos: node.Pos}
 		ct := &token{Type: CommentToken}
 		for _, child := range node.Children {
+			if ct.Pos == 0 {
+				ct.Pos = node.Pos
+			}
 			ct.Content += child.Print("\n")
 		}
 		td.Children = []*token{ct}
@@ -51,7 +54,7 @@ func verbatimToken(node *rawNode) (*token, error) {
 }
 
 func commentToken(node *rawNode) (*token, error) {
-	ct := &token{Type: CommentToken, Content: node.Code}
+	ct := &token{Type: CommentToken, Content: node.Code, Pos: node.Pos}
 	for _, c := range node.Children {
 		ct.Content += "\n" + c.Code
 	}
@@ -90,8 +93,19 @@ func yieldToken(node *rawNode) (*token, error) {
 }
 
 func ifToken(node *rawNode) (*token, error) {
+	if node.Code[0] == '?' {
+		node.Code = node.Code[1:]
+	}
 
-	return errorToken, fmt.Errorf("Not Implemented")
+	it := &token{Type: IfToken, Pos: node.Pos, Content: node.Code}
+
+	var e error
+	it.Children, e = childTokenize(node)
+	if e != nil {
+		return errorToken, e
+	}
+
+	return it, nil
 }
 
 func elseToken(node *rawNode) (*token, error) {
