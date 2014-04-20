@@ -26,6 +26,7 @@ func (rt rawTree) String() string {
 type rawNode struct {
 	Code     string
 	Children []*rawNode
+	Pos      int
 }
 
 func (rn rawNode) Print(prefix string) string {

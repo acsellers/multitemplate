@@ -12,9 +12,9 @@ func compile(name string, funcs template.FuncMap, tt tokenTree) (map[string]*par
 
 	var nodes []parse.Node
 	if len(tt.roots) > 0 {
-		nodes = []parse.Node{tt.roots[0].Compile("")}
+		nodes = tt.roots[0].Compile("")
 		for _, rn := range tt.roots[1:] {
-			nodes = append(nodes, rn.Compile("\n"))
+			nodes = append(nodes, rn.Compile("\n")...)
 		}
 	}
 

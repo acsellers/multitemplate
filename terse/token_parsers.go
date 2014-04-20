@@ -115,17 +115,35 @@ func idClassToken(node *rawNode) (*token, error) {
 }
 
 func textToken(node *rawNode) (*token, error) {
+	// interpolated text isn't supported yet, so bail out
 	if strings.Contains(node.Code, LeftDelim) && strings.Contains(node.Code, RightDelim) {
 		return errorToken, fmt.Errorf("Not Implemented")
 	}
-	td := &token{Type: TextToken, Content: node.Code}
-	for _, child := range node.Children {
-		if strings.Contains(node.Code, LeftDelim) && strings.Contains(node.Code, RightDelim) {
-			return errorToken, fmt.Errorf("Not Implemented")
-		} else {
-			td.Content += "\n  " + child.Print("")
-		}
+
+	// simplest possible text
+	if len(node.Children) == 0 {
+		return &token{Type: TextToken, Content: node.Code, Pos: node.Pos}, nil
 	}
 
+	td := &token{Type: TextToken}
+	td.Opening = []*token{
+		&token{Type: TextToken, Content: node.Code, Pos: node.Pos},
+	}
+
+	for _, child := range node.Children {
+		if commentCode(child.Code) {
+			t, e := commentToken(child)
+			if e != nil {
+				return nil, e
+			}
+			td.Children = append(td.Children, t)
+		} else {
+			t, e := textToken(child)
+			if e != nil {
+				return errorToken, fmt.Errorf("Not Implemented")
+			}
+			td.Children = append(td.Children, t)
+		}
+	}
 	return td, nil
 }

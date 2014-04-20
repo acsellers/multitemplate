@@ -74,6 +74,26 @@ var parseTests = []parseTest{
 		Content:  "bleh\n  wat",
 		Expected: "bleh\n  wat",
 	},
+	parseTest{
+		Name:     "Comment in template",
+		Content:  "blah\n// don't show",
+		Expected: "blah",
+	},
+	parseTest{
+		Name:     "Nested Comment",
+		Content:  "blah\n  // don't show",
+		Expected: "blah",
+	},
+	parseTest{
+		Name:     "Triple Nested Text",
+		Content:  "first\n  second\n    third\n  fourth",
+		Expected: "first\n  second\n    third\n  fourth",
+	},
+	parseTest{
+		Name:     "Quadruple Nested Text",
+		Content:  "First\n  Second\n    Third\n      Fourth",
+		Expected: "First\n  Second\n    Third\n      Fourth",
+	},
 }
 
 type parseTest struct {

@@ -4,12 +4,11 @@
   Takes in the raw string of the template and turns it into the tree form
   that we'll need. We don't care whether you prefer tabs or spaces here.
 
-2: Tokenize (the big code)
+2: Tokenize (main logic)
   Takes in the tree created by scan and turns it into a tree of tokens.
-  Note that some lines are ambiguous without more information, so we'll
-  need to add in a parameter to push in the html elements and template
-  functions to reduce the abiguity.
+  Tokens either have content, or they have opening tokens, closing tokens,
+  children tokens. All tokens have a type, which is used by compile.
 
-3: Compile 
-  Takes the tree output from tokenize and add in some minor processing
-  like function auto-closes and outputs a text/template/parse tree.
+3: Compile (minor logic)
+  Takes the tree of tokens from Tokenize, then runs some simple rules to 
+  turn it into a parse.Tree.
