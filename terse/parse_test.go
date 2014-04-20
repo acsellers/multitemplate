@@ -99,6 +99,16 @@ var parseTests = []parseTest{
 		Content:  "?true\n  show",
 		Expected: "show",
 	},
+	parseTest{
+		Name:     "If/Else Statement (False)",
+		Content:  "?false\n  no\n!?\n  yes",
+		Expected: "\nyes",
+	},
+	parseTest{
+		Name:     "If/Else Statement (True)",
+		Content:  "?true\n  yes\n!?\n  no",
+		Expected: "yes",
+	},
 }
 
 type parseTest struct {

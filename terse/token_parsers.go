@@ -109,8 +109,15 @@ func ifToken(node *rawNode) (*token, error) {
 }
 
 func elseToken(node *rawNode) (*token, error) {
+	et := &token{Type: ElseIfToken, Pos: node.Pos}
 
-	return errorToken, fmt.Errorf("Not Implemented")
+	var e error
+	et.Children, e = childTokenize(node)
+	if e != nil {
+		return errorToken, e
+	}
+
+	return et, nil
 }
 
 func rangeToken(node *rawNode) (*token, error) {

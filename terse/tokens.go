@@ -27,8 +27,9 @@ const (
 	ExecToken
 	CommentToken
 	IfToken
-	ElseToken
+	ElseIfToken
 	RangeToken
+	ElseRangeToken
 	TagToken
 	TagOpenToken
 	TagCloseToken
@@ -84,6 +85,8 @@ func (t *token) Compile(prefix string) []parse.Node {
 			ps = append(ps, t.OpeningCompile(prefix)...)
 			ps = append(ps, t.ChildCompile(prefix+"  ")...)
 			return append(ps, t.ClosingCompile(prefix)...)
+		case ElseIfToken:
+			return t.ChildCompile(prefix)
 		}
 	}
 	return []parse.Node{}
@@ -92,9 +95,9 @@ func (t *token) Compile(prefix string) []parse.Node {
 func (t *token) FollowupToken() (bool, tokenType) {
 	switch t.Type {
 	case IfToken:
-		return true, ElseToken
+		return true, ElseIfToken
 	case RangeToken:
-		return true, ElseToken
+		return true, ElseRangeToken
 	}
 	return false, ErrorToken
 }
