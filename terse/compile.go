@@ -11,10 +11,11 @@ func compile(name string, funcs template.FuncMap, tt tokenTree) (map[string]*par
 	}
 
 	var nodes []parse.Node
+	var prefix string
 	if len(tt.roots) > 0 {
-		nodes = tt.roots[0].Compile("")
-		for _, rn := range tt.roots[1:] {
-			nodes = append(nodes, rn.Compile("\n")...)
+		for _, rn := range tt.roots {
+			nodes = append(nodes, rn.Compile(prefix)...)
+			prefix = "\n"
 		}
 	}
 
