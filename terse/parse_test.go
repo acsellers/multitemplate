@@ -109,6 +109,36 @@ var parseTests = []parseTest{
 		Content:  "?true\n  yes\n!?\n  no",
 		Expected: "yes",
 	},
+	parseTest{
+		Name:     "Range Statement (1 item)",
+		Content:  "&.\n  wat",
+		Expected: "\nwat",
+		Data:     []string{"1"},
+	},
+	parseTest{
+		Name:     "Range Statement (2 items)",
+		Content:  "&.\n  wat",
+		Expected: "\nwat\nwat",
+		Data:     []string{"1", "2"},
+	},
+	parseTest{
+		Name:     "Range Statement (0 items)",
+		Content:  "&.\n  wat",
+		Expected: "",
+		Data:     []string{},
+	},
+	parseTest{
+		Name:     "Range/Else Statement (0 items)",
+		Content:  "&.\n  wat\n!&\n  no",
+		Expected: "no",
+		Data:     []string{},
+	},
+	parseTest{
+		Name:     "Range/Else Statement (2 items)",
+		Content:  "&.\n  wat\n!&\n  no",
+		Expected: "\nwat\nwat",
+		Data:     []string{"1", "2"},
+	},
 }
 
 type parseTest struct {

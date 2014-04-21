@@ -73,6 +73,27 @@ func (t *token) Compile(prefix string) []parse.Node {
 			return []parse.Node{
 				&parse.IfNode{bn},
 			}
+		case RangeToken:
+			bn := parse.BranchNode{
+				NodeType: parse.NodeRange,
+				Pos:      parse.Pos(t.Pos),
+			}
+
+			an, _ := actionNode(t.Content, &resources{})
+			bn.Pipe = an.Pipe
+			if len(prefix) == 0 || prefix[0] != '\n' {
+				prefix = "\n" + prefix
+			}
+			bn.List = &parse.ListNode{
+				NodeType: parse.NodeList,
+				Pos:      parse.Pos(t.Children[0].Pos),
+				Nodes:    t.ChildCompile(prefix),
+			}
+
+			return []parse.Node{
+				&parse.RangeNode{bn},
+			}
+
 		}
 	} else {
 		switch t.Type {
@@ -86,6 +107,8 @@ func (t *token) Compile(prefix string) []parse.Node {
 			ps = append(ps, t.ChildCompile(prefix+"  ")...)
 			return append(ps, t.ClosingCompile(prefix)...)
 		case ElseIfToken:
+			return t.ChildCompile(prefix)
+		case ElseRangeToken:
 			return t.ChildCompile(prefix)
 		}
 	}

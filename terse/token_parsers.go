@@ -121,13 +121,31 @@ func elseToken(node *rawNode) (*token, error) {
 }
 
 func rangeToken(node *rawNode) (*token, error) {
+	if node.Code[0] == '&' {
+		node.Code = node.Code[1:]
+	}
 
-	return errorToken, fmt.Errorf("Not Implemented")
+	it := &token{Type: RangeToken, Pos: node.Pos, Content: node.Code}
+
+	var e error
+	it.Children, e = childTokenize(node)
+	if e != nil {
+		return errorToken, e
+	}
+
+	return it, nil
 }
 
 func rangeElseToken(node *rawNode) (*token, error) {
+	et := &token{Type: ElseRangeToken, Pos: node.Pos}
 
-	return errorToken, fmt.Errorf("Not Implemented")
+	var e error
+	et.Children, e = childTokenize(node)
+	if e != nil {
+		return errorToken, e
+	}
+
+	return et, nil
 }
 
 func idClassToken(node *rawNode) (*token, error) {
