@@ -139,6 +139,16 @@ var parseTests = []parseTest{
 		Expected: "\nwat\nwat",
 		Data:     []string{"1", "2"},
 	},
+	parseTest{
+		Name:     "Verbatim Statement",
+		Content:  "/ $9@(#*$now",
+		Expected: "$9@(#*$now",
+	},
+	parseTest{
+		Name:     "Verbatim Statement with Nested lines",
+		Content:  "/ $now\n  ?wat\n    do",
+		Expected: "$now\n  ?wat\n    do",
+	},
 }
 
 type parseTest struct {

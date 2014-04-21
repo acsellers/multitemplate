@@ -50,7 +50,19 @@ func execToken(node *rawNode) (*token, error) {
 }
 
 func verbatimToken(node *rawNode) (*token, error) {
-	return errorToken, fmt.Errorf("Not Implemented")
+	ct := &token{Type: HTMLToken, Pos: node.Pos}
+	if node.Code[0] == '/' {
+		ct.Content = node.Code[1:]
+		if ct.Content[0] == ' ' {
+			ct.Content = ct.Content[1:]
+		}
+	} else {
+		ct.Content = node.Code
+	}
+	for _, child := range node.Children {
+		ct.Content += "\n" + child.Print("  ")
+	}
+	return ct, nil
 }
 
 func commentToken(node *rawNode) (*token, error) {
