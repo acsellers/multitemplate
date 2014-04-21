@@ -185,7 +185,7 @@ func (t *token) OpeningCompile(prefix string) []parse.Node {
 
 func (t *token) ClosingCompile(prefix string) []parse.Node {
 	ns := []parse.Node{}
-	for _, ot := range t.Opening {
+	for _, ot := range t.Closing {
 		ns = append(ns, ot.Compile(prefix)...)
 	}
 	return ns

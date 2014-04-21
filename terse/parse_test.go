@@ -209,10 +209,19 @@ var parseTests = []parseTest{
 		Name: "Inherited Block",
 		Sources: map[string]string{
 			"main":  "[block]\n  12345",
-			"child": "= extend \"main\"\n[block]\n  54321",
+			"child": "@@main\n[block]\n  54321",
 		},
 		Template: "child",
 		Expected: "\n54321",
+	},
+	parseTest{
+		Name: "Define Block",
+		Sources: map[string]string{
+			"main":  "[block]\n  12345\n678",
+			"child": "@@main\n^block]\n  54321",
+		},
+		Template: "child",
+		Expected: "\n54321\n678",
 	},
 }
 

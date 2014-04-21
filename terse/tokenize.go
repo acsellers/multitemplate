@@ -51,6 +51,8 @@ func codeTokenizer(code string) func(*rawNode) (*token, error) {
 		return defineBlockToken
 	case execBlockCode(code):
 		return execBlockToken
+	case extendCode(code):
+		return extendToken
 	case yieldCode(code):
 		return yieldToken
 	case ifCode(code):

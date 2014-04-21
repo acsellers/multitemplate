@@ -26,6 +26,9 @@ Define Block Line
 Yield Line
 @yieldName
 
+Extends Line
+@@parentName
+
 If Line
 ?condition
 

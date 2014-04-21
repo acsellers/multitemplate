@@ -130,13 +130,56 @@ func blockToken(node *rawNode) (*token, error) {
 }
 
 func defineBlockToken(node *rawNode) (*token, error) {
-
-	return errorToken, fmt.Errorf("Not Implemented")
+	t := &token{Type: BlockToken, Pos: node.Pos}
+	blockName := firstTextToken(strings.TrimPrefix(node.Code, "^"))
+	t.Opening = []*token{
+		&token{
+			Type:    ExecToken,
+			Pos:     node.Pos,
+			Content: fmt.Sprintf("define_block \"%s\"", blockName),
+		},
+	}
+	var e error
+	t.Children, e = childTokenize(node)
+	t.Closing = []*token{
+		&token{
+			Type:    ExecToken,
+			Pos:     node.Pos,
+			Content: "end_block",
+		},
+	}
+	return t, e
 }
 
 func execBlockToken(node *rawNode) (*token, error) {
+	t := &token{Type: BlockToken, Pos: node.Pos}
+	blockName := firstTextToken(strings.TrimPrefix(node.Code, "^"))
+	t.Opening = []*token{
+		&token{
+			Type:    ExecToken,
+			Pos:     node.Pos,
+			Content: fmt.Sprintf("exec_block \"%s\"", blockName),
+		},
+	}
+	var e error
+	t.Children, e = childTokenize(node)
+	t.Closing = []*token{
+		&token{
+			Type:    ExecToken,
+			Pos:     node.Pos,
+			Content: "end_block",
+		},
+	}
+	return t, e
+}
 
-	return errorToken, fmt.Errorf("Not Implemented")
+func extendToken(node *rawNode) (*token, error) {
+	parentName := firstTextToken(strings.TrimPrefix(node.Code, "@@"))
+	return &token{
+		Type:    ExecToken,
+		Pos:     node.Pos,
+		Content: fmt.Sprintf("extend \"%s\"", parentName),
+	}, nil
 }
 
 func yieldToken(node *rawNode) (*token, error) {

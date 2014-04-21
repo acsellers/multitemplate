@@ -65,8 +65,8 @@ func blockCode(code string) bool {
 func defineBlockCode(code string) bool {
 	line := strippedLine(code)
 	if line[0] == '^' {
-		ftt := firstTextToken(line)
-		return line[len(ftt)] == ']'
+		ftt := firstTextToken(line[1:])
+		return line[len(ftt)+1] == ']'
 	}
 	return false
 }
@@ -74,10 +74,14 @@ func defineBlockCode(code string) bool {
 func execBlockCode(code string) bool {
 	line := strippedLine(code)
 	if line[0] == '$' {
-		ftt := firstTextToken(line)
-		return line[len(ftt)] == ']'
+		ftt := firstTextToken(line[1:])
+		return line[len(ftt)+1] == ']'
 	}
 	return false
+}
+
+func extendCode(code string) bool {
+	return strippedPrefix(code, "@@")
 }
 
 func yieldCode(code string) bool {
