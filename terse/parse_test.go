@@ -223,6 +223,15 @@ var parseTests = []parseTest{
 		Template: "child",
 		Expected: "\n54321\n678",
 	},
+	parseTest{
+		Name: "Yield Block",
+		Sources: map[string]string{
+			"main":  "@block\n123",
+			"child": "@@main\n^block]\n  54321",
+		},
+		Template: "child",
+		Expected: "\n54321\n123",
+	},
 }
 
 type parseTest struct {

@@ -183,8 +183,12 @@ func extendToken(node *rawNode) (*token, error) {
 }
 
 func yieldToken(node *rawNode) (*token, error) {
-
-	return errorToken, fmt.Errorf("Not Implemented")
+	parentName := firstTextToken(strings.TrimPrefix(node.Code, "@"))
+	return &token{
+		Type:    ExecToken,
+		Pos:     node.Pos,
+		Content: fmt.Sprintf("yield \"%s\"", parentName),
+	}, nil
 }
 
 func ifToken(node *rawNode) (*token, error) {
