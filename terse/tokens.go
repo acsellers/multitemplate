@@ -124,9 +124,5 @@ func (t *token) ChildCompile(prefix string) []parse.Node {
 	if len(t.Children) == 0 {
 		return []parse.Node{}
 	}
-	nodes := []parse.Node{}
-	for _, child := range t.Children {
-		nodes = append(nodes, child.Compile(prefix)...)
-	}
-	return nodes
+	return compileTokens(t.Children, prefix)
 }

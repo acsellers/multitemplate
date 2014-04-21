@@ -10,12 +10,24 @@ func compile(name string, funcs template.FuncMap, tt tokenTree) (map[string]*par
 		return map[string]*parse.Tree{}, tt.err
 	}
 
+	pt := &parse.Tree{
+		Name: name,
+		Root: &parse.ListNode{
+			NodeType: parse.NodeList,
+			Pos:      parse.Pos(0),
+			Nodes:    compileTokens(tt.roots, ""),
+		},
+	}
+
+	return map[string]*parse.Tree{name: pt}, nil
+}
+
+func compileTokens(ts []*token, prefix string) []parse.Node {
 	var nodes []parse.Node
 	var hold []parse.Node
-	var prefix string
 	watchType := ErrorToken
-	if len(tt.roots) > 0 {
-		for _, rn := range tt.roots {
+	if len(ts) > 0 {
+		for _, rn := range ts {
 			cf, ft := rn.FollowupToken()
 			switch {
 			case cf:
@@ -52,7 +64,7 @@ func compile(name string, funcs template.FuncMap, tt tokenTree) (map[string]*par
 			default:
 				nodes = append(nodes, rn.Compile(prefix)...)
 			}
-			if !cf {
+			if !cf && len(prefix) == 0 {
 				prefix = "\n"
 			}
 		}
@@ -60,15 +72,5 @@ func compile(name string, funcs template.FuncMap, tt tokenTree) (map[string]*par
 			nodes = append(nodes, hold...)
 		}
 	}
-
-	pt := &parse.Tree{
-		Name: name,
-		Root: &parse.ListNode{
-			NodeType: parse.NodeList,
-			Pos:      parse.Pos(0),
-			Nodes:    nodes,
-		},
-	}
-
-	return map[string]*parse.Tree{name: pt}, nil
+	return nodes
 }
