@@ -127,7 +127,7 @@ func generateFuncs(t *Template) template.FuncMap {
 			return ""
 		},
 
-		"extends": func(parent string) string {
+		"extend": func(parent string) string {
 			t.ctx.output.NoRoot()
 			t.ctx.parent = parent
 			return ""

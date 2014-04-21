@@ -34,7 +34,7 @@ var simpleTest = templateTest{
 func TestBlock(tst *testing.T) {
 	Within(tst, func(test *Test) {
 		code := `{{ define "view.html" }}
-{{ extends "base.html" }}
+{{ extend "base.html" }}
 
 {{ block "header" }}<styles>{{ end_block }}
 {{ end }}
@@ -48,6 +48,27 @@ func TestBlock(tst *testing.T) {
 		b := &bytes.Buffer{}
 		test.NoError(t.ExecuteTemplate(b, "view.html", nil))
 		test.AreEqual(b.String(), "\n<before>\n<styles>\n<after>")
+
+	})
+}
+
+func TestDefineBlock(tst *testing.T) {
+	Within(tst, func(test *Test) {
+		code := `{{ define "view.html" }}
+{{ extend "base.html" }}
+
+{{ block "header" }}<styles>{{ end_block }}
+{{ end }}
+{{ define "base.html" }}<before>
+{{ define_block "header"}}<links>{{ end_block }}
+<after>{{ end }}
+
+`
+		t, e := New("view.html").Parse("view.html", code, "stdlib")
+		test.IsNil(e)
+		b := &bytes.Buffer{}
+		test.NoError(t.ExecuteTemplate(b, "view.html", nil))
+		test.AreEqual(b.String(), "\n<before>\n\n<after>")
 
 	})
 }
