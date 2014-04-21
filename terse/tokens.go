@@ -1,6 +1,10 @@
 package terse
 
-import "text/template/parse"
+import (
+	"reflect"
+	"strings"
+	"text/template/parse"
+)
 
 type tokenTree struct {
 	roots []*token
@@ -102,6 +106,29 @@ func (t *token) Compile(prefix string) []parse.Node {
 			na := []parse.Node{n}
 			if len(t.Children) > 0 {
 				na = append(na, t.ChildCompile(prefix+"  ")...)
+			}
+
+			c := n.Pipe.Cmds[len(n.Pipe.Cmds)-1]
+			if in, ok := c.Args[0].(*parse.IdentifierNode); ok {
+				if tf, ok := t.Rsc.funcs["end_"+in.Ident]; ok {
+					rv := reflect.TypeOf(tf)
+					if rv.Kind() == reflect.Func {
+						na = append(na, &parse.TextNode{
+							NodeType: parse.NodeText,
+							Text:     []byte("\n"),
+						})
+
+						if rv.NumIn() == 0 {
+							n, _ := actionNode("end_"+in.Ident, t.Rsc)
+							na = append(na, n)
+						} else {
+							n, e := actionNode("end_"+strings.TrimSpace(t.Content), t.Rsc)
+							if e == nil {
+								na = append(na, n)
+							}
+						}
+					}
+				}
 			}
 			return na
 		}

@@ -2,6 +2,7 @@ package terse
 
 import (
 	"bytes"
+	"html/template"
 	"testing"
 
 	"github.com/acsellers/multitemplate"
@@ -9,7 +10,7 @@ import (
 
 func TestParse(t *testing.T) {
 	for _, test := range parseTests {
-		tmpl := multitemplate.New("terse")
+		tmpl := multitemplate.New("terse").Funcs(test.Funcs)
 		var e error
 		if len(test.Sources) == 0 {
 			tmpl, e = tmpl.Parse("parse", test.Content, "terse")
@@ -159,6 +160,33 @@ var parseTests = []parseTest{
 		Content:  "= print\n  /= 123\n  wat",
 		Expected: "123\n  wat",
 	},
+	parseTest{
+		Name:     "Auto-Close Exec",
+		Content:  "= div \n  blah",
+		Expected: "<div>\n  blah\n</div>",
+		Funcs: template.FuncMap{
+			"div": func() template.HTML {
+				return "<div>"
+			},
+			"end_div": func() template.HTML {
+				return "</div>"
+			},
+		},
+	},
+	parseTest{
+		Name: "Auto-Close Exec w/ Args",
+		Content: `= tag "div"
+  blah`,
+		Expected: "<div>\n  blah\n</div>",
+		Funcs: template.FuncMap{
+			"tag": func(s string) template.HTML {
+				return "<" + template.HTML(s) + ">"
+			},
+			"end_tag": func(s string) template.HTML {
+				return "</" + template.HTML(s) + ">"
+			},
+		},
+	},
 }
 
 type parseTest struct {
@@ -167,5 +195,6 @@ type parseTest struct {
 	Sources  map[string]string
 	Expected string
 	Template string
+	Funcs    template.FuncMap
 	Data     interface{}
 }
