@@ -36,6 +36,18 @@ func actionNode(code string, rsc *resources) (*parse.ActionNode, error) {
 
 	ln := t.Tree.Root.Nodes[len(t.Tree.Root.Nodes)-1]
 	if an, ok := ln.(*parse.ActionNode); ok {
+		if len(an.Pipe.Decl) > 0 {
+		DeclLoop:
+			for _, v := range an.Pipe.Decl {
+				vs := v.String()
+				for _, vd := range rsc.vars {
+					if vs == vd {
+						continue DeclLoop
+					}
+				}
+				rsc.vars = append(rsc.vars, vs)
+			}
+		}
 		return an, nil
 	}
 	return nil, fmt.Errorf("Node could not be parsed")

@@ -46,6 +46,17 @@ func doctypeToken(node *rawNode) (*token, error) {
 }
 
 func execToken(node *rawNode) (*token, error) {
+	if len(node.Children) == 0 {
+		if node.Code[0] == '=' {
+			node.Code = node.Code[1:]
+		}
+		return &token{
+			Type:    ExecToken,
+			Content: node.Code,
+			Pos:     node.Pos,
+		}, nil
+	}
+
 	return errorToken, fmt.Errorf("Not Implemented")
 }
 

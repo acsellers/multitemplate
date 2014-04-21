@@ -14,6 +14,7 @@ type token struct {
 	Type     tokenType
 	Content  string
 	Pos      int
+	Rsc      *resources
 }
 
 var errorToken = &token{Type: ErrorToken}
@@ -62,7 +63,7 @@ func (t *token) Compile(prefix string) []parse.Node {
 				Pos:      parse.Pos(t.Pos),
 			}
 
-			an, _ := actionNode(t.Content, &resources{})
+			an, _ := actionNode(t.Content, t.Rsc)
 			bn.Pipe = an.Pipe
 			bn.List = &parse.ListNode{
 				NodeType: parse.NodeList,
@@ -79,7 +80,7 @@ func (t *token) Compile(prefix string) []parse.Node {
 				Pos:      parse.Pos(t.Pos),
 			}
 
-			an, _ := actionNode(t.Content, &resources{})
+			an, _ := actionNode(t.Content, t.Rsc)
 			bn.Pipe = an.Pipe
 			if len(prefix) == 0 || prefix[0] != '\n' {
 				prefix = "\n" + prefix
@@ -93,7 +94,13 @@ func (t *token) Compile(prefix string) []parse.Node {
 			return []parse.Node{
 				&parse.RangeNode{bn},
 			}
-
+		case ExecToken:
+			n, e := actionNode(t.Content, t.Rsc)
+			if e != nil {
+				return []parse.Node{}
+			} else {
+				return []parse.Node{n}
+			}
 		}
 	} else {
 		switch t.Type {

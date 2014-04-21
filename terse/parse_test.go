@@ -149,6 +149,11 @@ var parseTests = []parseTest{
 		Content:  "/ $now\n  ?wat\n    do",
 		Expected: "$now\n  ?wat\n    do",
 	},
+	parseTest{
+		Name:     "Simple Exec",
+		Content:  "= print 123",
+		Expected: "123",
+	},
 }
 
 type parseTest struct {

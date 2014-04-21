@@ -10,6 +10,8 @@ func compile(name string, funcs template.FuncMap, tt tokenTree) (map[string]*par
 		return map[string]*parse.Tree{}, tt.err
 	}
 
+	setResources(tt.roots, &resources{funcs: funcs})
+
 	pt := &parse.Tree{
 		Name: name,
 		Root: &parse.ListNode{
@@ -20,6 +22,15 @@ func compile(name string, funcs template.FuncMap, tt tokenTree) (map[string]*par
 	}
 
 	return map[string]*parse.Tree{name: pt}, nil
+}
+
+func setResources(t []*token, r *resources) {
+	for _, c := range t {
+		c.Rsc = r
+		setResources(c.Opening, r)
+		setResources(c.Closing, r)
+		setResources(c.Children, r)
+	}
 }
 
 func compileTokens(ts []*token, prefix string) []parse.Node {
