@@ -187,6 +187,24 @@ var parseTests = []parseTest{
 			},
 		},
 	},
+	parseTest{
+		Name: "Child Template",
+		Sources: map[string]string{
+			"main":  "[block]\n  1234",
+			"child": "child\n  4321",
+		},
+		Template: "child",
+		Expected: "child\n  4321",
+	},
+	parseTest{
+		Name: "Block",
+		Sources: map[string]string{
+			"main":  "[block]\n  12345",
+			"child": "child\n  54321",
+		},
+		Template: "main",
+		Expected: "12345",
+	},
 }
 
 type parseTest struct {

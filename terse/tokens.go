@@ -30,6 +30,7 @@ const (
 	TextToken
 	HTMLToken
 	ExecToken
+	BlockToken
 	CommentToken
 	IfToken
 	ElseIfToken
@@ -104,9 +105,10 @@ func (t *token) Compile(prefix string) []parse.Node {
 				return []parse.Node{}
 			}
 			na := []parse.Node{n}
-			if len(t.Children) > 0 {
-				na = append(na, t.ChildCompile(prefix+"  ")...)
+			if len(t.Children) == 0 {
+				return na
 			}
+			na = append(na, t.ChildCompile(prefix+"  ")...)
 
 			c := n.Pipe.Cmds[len(n.Pipe.Cmds)-1]
 			if in, ok := c.Args[0].(*parse.IdentifierNode); ok {
@@ -147,6 +149,18 @@ func (t *token) Compile(prefix string) []parse.Node {
 			return t.ChildCompile(prefix)
 		case ElseRangeToken:
 			return t.ChildCompile(prefix)
+		case ExecToken:
+			ps := []parse.Node{}
+			ps = append(ps, t.OpeningCompile(prefix)...)
+			ps = append(ps, t.ChildCompile(prefix+"  ")...)
+			ps = append(ps, t.ClosingCompile(prefix)...)
+			return ps
+		case BlockToken:
+			ps := []parse.Node{}
+			ps = append(ps, t.OpeningCompile(prefix)...)
+			ps = append(ps, t.ChildCompile(prefix)...)
+			ps = append(ps, t.ClosingCompile(prefix)...)
+			return ps
 		}
 	}
 	return []parse.Node{}

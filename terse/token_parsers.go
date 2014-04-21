@@ -108,8 +108,25 @@ func filterToken(node *rawNode) (*token, error) {
 }
 
 func blockToken(node *rawNode) (*token, error) {
-
-	return errorToken, fmt.Errorf("Not Implemented")
+	t := &token{Type: BlockToken, Pos: node.Pos}
+	blockName := firstTextToken(strings.TrimPrefix(node.Code, "["))
+	t.Opening = []*token{
+		&token{
+			Type:    ExecToken,
+			Pos:     node.Pos,
+			Content: fmt.Sprintf("block \"%s\"", blockName),
+		},
+	}
+	var e error
+	t.Children, e = childTokenize(node)
+	t.Closing = []*token{
+		&token{
+			Type:    ExecToken,
+			Pos:     node.Pos,
+			Content: "end_block",
+		},
+	}
+	return t, e
 }
 
 func defineBlockToken(node *rawNode) (*token, error) {

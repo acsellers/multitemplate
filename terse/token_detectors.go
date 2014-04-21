@@ -56,8 +56,8 @@ func filterCode(code string) bool {
 func blockCode(code string) bool {
 	line := strippedLine(code)
 	if line[0] == '[' {
-		ftt := firstTextToken(line)
-		return line[len(ftt)] == ']'
+		ftt := firstTextToken(line[1:])
+		return line[len(ftt)+1] == ']'
 	}
 	return false
 }
