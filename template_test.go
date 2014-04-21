@@ -72,3 +72,23 @@ func TestDefineBlock(tst *testing.T) {
 
 	})
 }
+func TestDefineBlock2(tst *testing.T) {
+	Within(tst, func(test *Test) {
+		code := `{{ define "view.html" }}
+{{ extend "base.html" }}
+
+{{ define_block "header" }}<styles>{{ end_block }}
+{{ end }}
+{{ define "base.html" }}<before>
+{{ block "header"}}<links>{{ end_block }}
+<after>{{ end }}
+
+`
+		t, e := New("view.html").Parse("view.html", code, "stdlib")
+		test.IsNil(e)
+		b := &bytes.Buffer{}
+		test.NoError(t.ExecuteTemplate(b, "view.html", nil))
+		test.AreEqual(b.String(), "\n<before>\n<styles>\n<after>")
+
+	})
+}
