@@ -98,9 +98,12 @@ func (t *token) Compile(prefix string) []parse.Node {
 			n, e := actionNode(t.Content, t.Rsc)
 			if e != nil {
 				return []parse.Node{}
-			} else {
-				return []parse.Node{n}
 			}
+			na := []parse.Node{n}
+			if len(t.Children) > 0 {
+				na = append(na, t.ChildCompile(prefix+"  ")...)
+			}
+			return na
 		}
 	} else {
 		switch t.Type {

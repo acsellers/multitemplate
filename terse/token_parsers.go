@@ -46,18 +46,30 @@ func doctypeToken(node *rawNode) (*token, error) {
 }
 
 func execToken(node *rawNode) (*token, error) {
+	if node.Code[0] == '=' {
+		node.Code = node.Code[1:]
+	}
+	t := &token{
+		Type:    ExecToken,
+		Content: node.Code,
+		Pos:     node.Pos,
+	}
 	if len(node.Children) == 0 {
-		if node.Code[0] == '=' {
-			node.Code = node.Code[1:]
-		}
-		return &token{
-			Type:    ExecToken,
-			Content: node.Code,
-			Pos:     node.Pos,
-		}, nil
+		return t, nil
+	}
+	for len(node.Children) > 0 && execContCode(node.Children[0].Code) {
+		cc := node.Children[0]
+		node.Children = node.Children[1:]
+		t.Content += " " + strings.TrimSpace(cc.Code)[2:]
 	}
 
-	return errorToken, fmt.Errorf("Not Implemented")
+	var e error
+	t.Children, e = childTokenize(node)
+	if e != nil {
+		return errorToken, e
+	}
+
+	return t, nil
 }
 
 func verbatimToken(node *rawNode) (*token, error) {

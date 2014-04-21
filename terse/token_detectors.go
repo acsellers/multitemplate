@@ -27,6 +27,10 @@ func execCode(code string) bool {
 	return strippedPrefix(code, "=")
 }
 
+func execContCode(code string) bool {
+	return strippedPrefix(code, "/=")
+}
+
 func verbatimCode(code string) bool {
 	return strippedPrefix(code, "/")
 }

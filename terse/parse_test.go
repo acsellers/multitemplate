@@ -154,6 +154,11 @@ var parseTests = []parseTest{
 		Content:  "= print 123",
 		Expected: "123",
 	},
+	parseTest{
+		Name:     "Continued Exec",
+		Content:  "= print\n  /= 123\n  wat",
+		Expected: "123\n  wat",
+	},
 }
 
 type parseTest struct {
