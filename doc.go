@@ -2,7 +2,7 @@
 Multitemplate is a library to allow you to write html templates in
 multiple languages, then allowing those templates to work with each
 other using either a Rails-like yield/content_for paradigm or a
-Django style block/extends paradigm. Multitemplate is built on
+Django style block/extend paradigm. Multitemplate is built on
 html/template, so it gets all of the auto-escaping logic from that
 library.
 
@@ -152,7 +152,7 @@ app_controller.go
   templates.ExecuteTemplate(writer, "app/index.html", renderArgs)
 
 app/index.html
-  {{ extends "layouts/main.html" }}
+  {{ extend "layouts/main.html" }}
 
   {{ block "javascript" }}
     <script src="/assets/app.js">
@@ -224,11 +224,11 @@ of that key. Keys are claimed by the first block to render to them.
 
 end_block ends the content are started by block
 
-extends marks that the current template is made up of blocks that will be executed
+extend marks that the current template is made up of blocks that will be executed
 in the context of another template. Template inheritence can be carried to arbitrary
-levels, you are not limited to using extends only once in template execution.
+levels, you are not limited to using extend only once in template execution.
 
-  {{ extends "include/main.html" }}
+  {{ extend "include/main.html" }}
 
 root_dot is the orignal RenderArgs passed in to the ExecuteTemplate call
 
