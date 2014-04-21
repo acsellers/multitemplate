@@ -103,8 +103,22 @@ func tagToken(node *rawNode) (*token, error) {
 }
 
 func filterToken(node *rawNode) (*token, error) {
+	// not actually a filter
+	if len(node.Children) == 0 {
+		return &token{Type: TextToken, Pos: node.Pos, Content: node.Code}, nil
+	}
 
-	return errorToken, fmt.Errorf("Not Implemented")
+	t := &token{Type: FilterToken, Content: node.Code[1:], Pos: node.Pos}
+	// misidentified as filter
+	if _, ok := Filters[t.Content]; !ok {
+		return textToken(node)
+	}
+	tc := &token{Type: FilterContentToken, Pos: node.Children[0].Pos}
+	for _, c := range node.Children {
+		tc.Content += c.Print("")
+	}
+	t.Children = []*token{tc}
+	return t, nil
 }
 
 func blockToken(node *rawNode) (*token, error) {

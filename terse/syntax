@@ -1,9 +1,8 @@
+Documented:
+
+Finished:
 Doctype Line
 !! (doctype[])
-
-Tag Line
-'%'?(tagName)\(wat attr="value" attr=$code) blah
-'%'?(tagName)\(wat attr="value" attr=$code)= $value
 
 Executable Line
 = 
@@ -13,9 +12,6 @@ Verbatim Line
 
 Comment Line
 // .*
-
-Filter Line
-:(filterName)
 
 Block Line
 [blockName]
@@ -41,11 +37,23 @@ Range Line
 Else Line (Range)
 !&
 
+Text Line
+.*
+
+Filter Line
+:(filterName)
+
+Unfinished:
+
+Tag Line
+'%'?(tagName)\(wat attr="value" attr=$code) blah
+'%'?(tagName)\(wat attr="value" attr=$code)= $value
+
 Id/Class Line
 (.|#)(text) .*
 
-Text Line
-.*
+Interpolated lines
+blah{{ code }}blah
 
 Nesting in strange situations
 

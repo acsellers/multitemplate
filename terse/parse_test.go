@@ -232,6 +232,21 @@ var parseTests = []parseTest{
 		Template: "child",
 		Expected: "\n54321\n123",
 	},
+	parseTest{
+		Name:     "Fake Filter Block",
+		Content:  ":wat",
+		Expected: ":wat",
+	},
+	parseTest{
+		Name:     "Fake Nested Filter Block",
+		Content:  ":wat\n  two",
+		Expected: ":wat\n  two",
+	},
+	parseTest{
+		Name:     "Nested Filter Block",
+		Content:  ":plain\n  two",
+		Expected: "two",
+	},
 }
 
 type parseTest struct {

@@ -39,6 +39,8 @@ const (
 	TagToken
 	TagOpenToken
 	TagCloseToken
+	FilterToken
+	FilterContentToken
 )
 
 func (t *token) Compile(prefix string) []parse.Node {
@@ -133,6 +135,22 @@ func (t *token) Compile(prefix string) []parse.Node {
 				}
 			}
 			return na
+		case FilterToken:
+			filter := Filters[t.Content]
+			content := ""
+			for _, c := range t.Children {
+				content += "\n" + c.Content
+			}
+			if len(content) > 0 {
+				content = content[1:]
+			}
+			converted, _ := filter(content)
+			return []parse.Node{
+				&parse.TextNode{
+					NodeType: parse.NodeText,
+					Text:     []byte(converted),
+				},
+			}
 		}
 	} else {
 		switch t.Type {
