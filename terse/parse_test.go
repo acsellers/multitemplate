@@ -205,6 +205,15 @@ var parseTests = []parseTest{
 		Template: "main",
 		Expected: "12345",
 	},
+	parseTest{
+		Name: "Inherited Block",
+		Sources: map[string]string{
+			"main":  "[block]\n  12345",
+			"child": "= extend \"main\"\n[block]\n  54321",
+		},
+		Template: "child",
+		Expected: "\n54321",
+	},
 }
 
 type parseTest struct {
