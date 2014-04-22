@@ -64,7 +64,7 @@ func codeTokenizer(code string) func(*rawNode) (*token, error) {
 	case rangeElseCode(code):
 		return rangeElseToken
 	case idClassCode(code):
-		return idClassToken
+		return tagToken
 	default:
 		return textToken
 	}

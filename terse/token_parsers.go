@@ -267,11 +267,6 @@ func rangeElseToken(node *rawNode) (*token, error) {
 	return et, nil
 }
 
-func idClassToken(node *rawNode) (*token, error) {
-
-	return errorToken, fmt.Errorf("Not Implemented")
-}
-
 func textToken(node *rawNode) (*token, error) {
 	// interpolated text isn't supported yet, so bail out
 	if strings.Contains(node.Code, LeftDelim) && strings.Contains(node.Code, RightDelim) {

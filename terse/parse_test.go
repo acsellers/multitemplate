@@ -257,6 +257,16 @@ var parseTests = []parseTest{
 		Content:  "img",
 		Expected: "<img />",
 	},
+	parseTest{
+		Name:     "Empty tag",
+		Content:  "span\n  name",
+		Expected: "<span>name</span>",
+	},
+	parseTest{
+		Name:     "Class div",
+		Content:  ".wat\n  here",
+		Expected: "<div class=\"wat\">here</div>",
+	},
 }
 
 type parseTest struct {
