@@ -13,7 +13,7 @@ func strippedLine(code string) string {
 	return strings.TrimSpace(code)
 }
 
-var firstTextRegex = regexp.MustCompile("^[a-z0-9]+")
+var firstTextRegex = regexp.MustCompile("^[a-z0-9_-]+")
 
 func firstTextToken(code string) string {
 	return firstTextRegex.FindString(code)
@@ -41,7 +41,7 @@ func commentCode(code string) bool {
 
 func tagCode(code string) bool {
 	_, ok := ValidElements[firstTextToken(code)]
-	return ok
+	return ok || code[0] == '%'
 }
 
 func filterCode(code string) bool {

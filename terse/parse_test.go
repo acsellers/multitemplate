@@ -247,6 +247,16 @@ var parseTests = []parseTest{
 		Content:  ":plain\n  two",
 		Expected: "two",
 	},
+	parseTest{
+		Name:     "Nested Filter Block",
+		Content:  ":plain\n  two",
+		Expected: "two",
+	},
+	parseTest{
+		Name:     "Empty tag",
+		Content:  "img",
+		Expected: "<img />",
+	},
 }
 
 type parseTest struct {

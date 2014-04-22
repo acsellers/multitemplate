@@ -98,8 +98,14 @@ func commentToken(node *rawNode) (*token, error) {
 }
 
 func tagToken(node *rawNode) (*token, error) {
-
-	return errorToken, fmt.Errorf("Not Implemented")
+	t := &token{Type: TagToken}
+	o, r, c := parseTag(node.Code, len(node.Children) > 0)
+	t.Opening = []*token{o}
+	t.Closing = []*token{c}
+	node.Code = r
+	nc, e := childTokenize(node)
+	t.Children = append(t.Children, nc...)
+	return t, e
 }
 
 func filterToken(node *rawNode) (*token, error) {

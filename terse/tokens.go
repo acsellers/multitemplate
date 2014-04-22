@@ -37,8 +37,6 @@ const (
 	RangeToken
 	ElseRangeToken
 	TagToken
-	TagOpenToken
-	TagCloseToken
 	FilterToken
 	FilterContentToken
 )
@@ -158,7 +156,7 @@ func (t *token) Compile(prefix string) []parse.Node {
 			ps := []parse.Node{}
 			ps = append(ps, t.OpeningCompile(prefix)...)
 			return append(ps, t.ChildCompile(prefix+"  ")...)
-		case HTMLToken:
+		case HTMLToken, ExecToken, TagToken:
 			ps := []parse.Node{}
 			ps = append(ps, t.OpeningCompile(prefix)...)
 			ps = append(ps, t.ChildCompile(prefix+"  ")...)
@@ -167,12 +165,6 @@ func (t *token) Compile(prefix string) []parse.Node {
 			return t.ChildCompile(prefix)
 		case ElseRangeToken:
 			return t.ChildCompile(prefix)
-		case ExecToken:
-			ps := []parse.Node{}
-			ps = append(ps, t.OpeningCompile(prefix)...)
-			ps = append(ps, t.ChildCompile(prefix+"  ")...)
-			ps = append(ps, t.ClosingCompile(prefix)...)
-			return ps
 		case BlockToken:
 			ps := []parse.Node{}
 			ps = append(ps, t.OpeningCompile(prefix)...)
