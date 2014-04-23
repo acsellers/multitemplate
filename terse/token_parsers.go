@@ -280,6 +280,22 @@ func rangeElseToken(node *rawNode) (*token, error) {
 	return et, nil
 }
 
+func withToken(node *rawNode) (*token, error) {
+	if node.Code[0] == '>' {
+		node.Code = node.Code[1:]
+	}
+
+	it := &token{Type: WithToken, Pos: node.Pos, Content: node.Code}
+
+	var e error
+	it.Children, e = childTokenize(node)
+	if e != nil {
+		return errorToken, e
+	}
+
+	return it, nil
+}
+
 func textToken(node *rawNode) (*token, error) {
 	// simplest possible text
 	if len(node.Children) == 0 {

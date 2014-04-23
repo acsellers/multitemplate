@@ -104,6 +104,10 @@ func rangeElseCode(code string) bool {
 	return strippedLine(code) == "!&"
 }
 
+func withCode(code string) bool {
+	return strippedLine(code)[0] == '>'
+}
+
 func idClassCode(code string) bool {
 	c := strippedLine(code)[0]
 	return c == '.' || c == '#'

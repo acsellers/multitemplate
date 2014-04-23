@@ -35,6 +35,7 @@ const (
 	IfToken
 	ElseIfToken
 	RangeToken
+	WithToken
 	ElseRangeToken
 	TagToken
 	FilterToken
@@ -118,6 +119,48 @@ func (t *token) Compile(prefix string) []parse.Node {
 			return []parse.Node{
 				&parse.RangeNode{bn},
 			}
+		case WithToken:
+			bn := parse.BranchNode{
+				NodeType: parse.NodeWith,
+				Pos:      parse.Pos(t.Pos),
+			}
+			var an *parse.ActionNode
+			var e error
+			var vars []string
+			if singleRangeRegex.MatchString(t.Content) {
+				sm := singleRangeRegex.FindStringSubmatch(t.Content)[1:]
+				vars = sm[1:]
+				t.Rsc.vars = append(t.Rsc.vars, sm[1:]...)
+				an, e = actionNode(sm[0], t.Rsc)
+			} else {
+				an, e = actionNode(t.Content, t.Rsc)
+			}
+			if e != nil {
+				return []parse.Node{}
+			}
+
+			for _, vd := range vars {
+				an.Pipe.Decl = append(an.Pipe.Decl,
+					&parse.VariableNode{
+						NodeType: parse.NodeVariable,
+						Ident:    strings.Split(vd, "."),
+					},
+				)
+			}
+			bn.Pipe = an.Pipe
+			if len(prefix) == 0 || prefix[0] != '\n' {
+				prefix = "\n" + prefix
+			}
+			bn.List = &parse.ListNode{
+				NodeType: parse.NodeList,
+				Pos:      parse.Pos(t.Children[0].Pos),
+				Nodes:    t.ChildCompile(prefix),
+			}
+
+			return []parse.Node{
+				&parse.WithNode{bn},
+			}
+
 		case ExecToken:
 			n, e := actionNode(t.Content, t.Rsc)
 			if e != nil {

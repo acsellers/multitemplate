@@ -289,6 +289,18 @@ var parseTests = []parseTest{
 		Expected: "Welcome Gopher",
 		Data:     "Gopher",
 	},
+	parseTest{
+		Name:     "With line",
+		Content:  ">.Username\n  = .",
+		Expected: "Gopher",
+		Data:     map[string]string{"Username": "Gopher"},
+	},
+	parseTest{
+		Name:     "With line using variable",
+		Content:  ">.Username:$name\n  = $name",
+		Expected: "Andrew",
+		Data:     map[string]string{"Username": "Andrew"},
+	},
 }
 
 type parseTest struct {
