@@ -301,6 +301,12 @@ var parseTests = []parseTest{
 		Expected: "Andrew",
 		Data:     map[string]string{"Username": "Andrew"},
 	},
+	parseTest{
+		Name:     "With line",
+		Content:  ">.NotExist\n  = .\n!>\n  Other animal",
+		Expected: "Other animal",
+		Data:     map[string]string{"Username": "Gopher"},
+	},
 }
 
 type parseTest struct {

@@ -314,8 +314,37 @@ using @@ followed by the template name (without quotation marks).
 
 With Statements
 
-Add implementation (>pipeline) and text here
+A with statement takes a pipeline and either sets the dot or a variable
+to the value. With statments will only execute if the value is not a
+falsey value (0, false, nil, empty string, array, slice or map). With
+statements can have else statements, which are signified by a !>.
 
+  // Source
+  >.Current.User
+    Welcome
+    = .Name
+    ?time_gt .LastLogin "3w"
+      It's been a while
+  !>
+    Please login
+
+  // Output
+  {{ with .Current.User }}
+    Welcome
+    {{ .Name }}
+    {{ if time_gt .LastLogin "3w" }}
+      It's been a while
+    {{ end }}
+  {{ end }}
+
+  // Source
+  >.Current.Location:$loc
+    = $loc.Name
+
+  // Output
+  {{ with $loc := .Current.Location }}
+    {{ $loc.Name }}
+  {{ end }}
 Interpolation
 
 In addition to the function lines, you can also embed functions into

@@ -296,6 +296,18 @@ func withToken(node *rawNode) (*token, error) {
 	return it, nil
 }
 
+func withElseToken(node *rawNode) (*token, error) {
+	et := &token{Type: ElseWithToken, Pos: node.Pos}
+
+	var e error
+	et.Children, e = childTokenize(node)
+	if e != nil {
+		return errorToken, e
+	}
+
+	return et, nil
+}
+
 func textToken(node *rawNode) (*token, error) {
 	// simplest possible text
 	if len(node.Children) == 0 {
