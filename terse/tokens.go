@@ -35,8 +35,9 @@ const (
 	IfToken
 	ElseIfToken
 	RangeToken
-	WithToken
 	ElseRangeToken
+	WithToken
+	ElseWithToken
 	TagToken
 	FilterToken
 	FilterContentToken
@@ -227,6 +228,8 @@ func (t *token) Compile(prefix string) []parse.Node {
 			return t.ChildCompile(prefix)
 		case ElseRangeToken:
 			return t.ChildCompile(prefix)
+		case ElseWithToken:
+			return t.ChildCompile(prefix)
 		case BlockToken, TagToken:
 			ps := []parse.Node{}
 			ps = append(ps, t.OpeningCompile(prefix)...)
@@ -244,6 +247,8 @@ func (t *token) FollowupToken() (bool, tokenType) {
 		return true, ElseIfToken
 	case RangeToken:
 		return true, ElseRangeToken
+	case WithToken:
+		return true, ElseWithToken
 	}
 	return false, ErrorToken
 }
