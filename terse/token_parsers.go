@@ -101,8 +101,15 @@ func tagToken(node *rawNode) (*token, error) {
 	t := &token{Type: TagToken}
 	o, r, c := parseTag(node.Code, len(node.Children) > 0)
 	t.Opening = []*token{o}
+	if r != "" {
+		node.Code = r
+		rt, e := codeTokenizer(r)(node)
+		if e != nil {
+			return nil, e
+		}
+		t.Children = []*token{rt}
+	}
 	t.Closing = []*token{c}
-	node.Code = r
 	nc, e := childTokenize(node)
 	t.Children = append(t.Children, nc...)
 	return t, e

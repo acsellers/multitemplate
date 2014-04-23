@@ -272,6 +272,11 @@ var parseTests = []parseTest{
 		Content:  "h1\n  <span>no</span>",
 		Expected: "<h1><span>no</span></h1>",
 	},
+	parseTest{
+		Name:     "Tag with content",
+		Content:  "h1 Here",
+		Expected: "<h1> Here</h1>",
+	},
 }
 
 type parseTest struct {

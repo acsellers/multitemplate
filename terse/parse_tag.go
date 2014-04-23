@@ -47,7 +47,7 @@ func (t *tag) Parse(children bool) {
 }
 
 func (t *tag) Open() *token {
-	if t.Enclosing {
+	if t.Enclosing || t.Remaining != "" {
 		return &token{Type: HTMLToken, Content: t.Start() + ">"}
 	} else {
 		return &token{Type: HTMLToken, Content: t.Start() + " />"}
@@ -66,7 +66,7 @@ func (t *tag) Start() string {
 }
 
 func (t *tag) Close() *token {
-	if t.Enclosing {
+	if t.Enclosing || t.Remaining != "" {
 		return &token{Type: HTMLToken, Content: "</" + t.Name + ">"}
 	}
 	return &token{Type: HTMLToken, Content: ""}
