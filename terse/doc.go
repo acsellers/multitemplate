@@ -244,13 +244,73 @@ be ranging over.
   {{ range $user, $index := .Users }}
     {{ $index }}. {{ $user.Name }}
   {{ else }}
-    No matchin users.
+    No matching users.
   {{ end }}
 
 
 Block Statements
 
-Add text here
+Blocks are central to multitemplate and terse features
+them in a first-class manner. The simple block call is [name] where
+name is the name you are using for that block. If you a special
+form of the block statement, just replace the opening '['. For an
+exec block you use a $, while define block uses a ^. The mnemonic
+for those is that exec is the end of a block, so it is a regex endline
+symbol ($), while define-block is more a beginning statement, and the
+regex character for the beginning of line is ^. Blocks are automatically
+closed in terse.
+
+  // Source
+  [content]
+    h1
+      Welcome
+      = .User.Name
+
+  // Output
+  {{ block "content" }}
+    <h1>Welcome {{.User.Name }}</h1>
+  {{ end_block }}
+
+  // Source
+  ^content]
+    I'm defining this block and not outputting here.
+  // Output
+  {{ define_block "content" }}
+    I'm defining this block and not outputting here.
+  {{ end_block }}
+
+  // Source
+  $content]
+    We will definitely put some block content here.
+  // Output
+  {{ exec_block "content" }}
+    We will definitely put some block content here.
+  {{ end_block }}
+
+Yield Statements
+
+Yield statements (for blocks or templates) are written as @name,
+where name is the name you are using for that block or template.
+
+  // Source
+  #content
+    @content
+
+  // Output
+  <div id="content">
+    {{ yield "content" }}
+  </div>
+
+Extend Statements
+
+Extend statements (for inheriting from other templates) are written
+using @@ followed by the template name (without quotation marks).
+
+  // Source
+  @@layouts/app.html
+
+  // Output
+  {{ extend "layouts/app.html" }}
 
 With Statements
 
