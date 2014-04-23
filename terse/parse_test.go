@@ -267,6 +267,11 @@ var parseTests = []parseTest{
 		Content:  ".wat\n  here",
 		Expected: "<div class=\"wat\">here</div>",
 	},
+	parseTest{
+		Name:     "Passthrough HTML",
+		Content:  "h1\n  <span>no</span>",
+		Expected: "<h1><span>no</span></h1>",
+	},
 }
 
 type parseTest struct {
