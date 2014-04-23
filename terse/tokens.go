@@ -92,7 +92,7 @@ func (t *token) Compile(prefix string) []parse.Node {
 			var vars []string
 			if doubleRangeRegex.MatchString(t.Content) {
 				sm := doubleRangeRegex.FindStringSubmatch(t.Content)[1:]
-				vars = sm[1:]
+				vars = []string{sm[2], sm[1]}
 				t.Rsc.vars = append(t.Rsc.vars, sm[1:]...)
 				an, e = actionNode(sm[0], t.Rsc)
 			} else if singleRangeRegex.MatchString(t.Content) {

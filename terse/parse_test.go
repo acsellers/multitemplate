@@ -142,7 +142,7 @@ var parseTests = []parseTest{
 	},
 	parseTest{
 		Name:     "Range Statement",
-		Content:  "&.:$index:$element\n  li= $element",
+		Content:  "&.:$element:$index\n  li= $element",
 		Expected: "\n<li>a\n</li>\n<li>i\n</li>\n<li>b\n</li>",
 		Data:     []string{"a", "i", "b"},
 	},
