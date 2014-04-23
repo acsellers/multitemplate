@@ -27,6 +27,9 @@ func (ms *multiStruct) String() string {
 func init() {
 	ms := multiStruct{}
 	multitemplate.Parsers["mustache"] = &ms
+	for fn, fi := range testFuncs {
+		multitemplate.LoadedFuncs[fn] = fi
+	}
 }
 
 func Parse(templateName, templateContent string, funcs ht.FuncMap) (map[string]*parse.Tree, error) {
