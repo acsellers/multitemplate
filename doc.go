@@ -104,6 +104,13 @@ the yield example. Note that the inherits call should be the first
 call of the view, any code before the inherits call may be sent to
 the writer added to the Execute call.
 
+In the interest of security, you should only enclose multiple
+continuous lines of similar types of content inside a block. The reason
+for this is that blocks may end up with different escaping rules when
+originally executed and saved versus where they are output. While
+multitemplate will catch many cases where a block is asked to be
+output to a location that is under different escaping rules than the
+block's original rules, you should still be careful.
 
 app_controller.go
   templates.ExecuteTemplate(writer, "app/index.html", renderArgs)
