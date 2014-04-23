@@ -68,7 +68,10 @@ func (t *token) Compile(prefix string) []parse.Node {
 				Pos:      parse.Pos(t.Pos),
 			}
 
-			an, _ := actionNode(t.Content, t.Rsc)
+			an, e := actionNode(t.Content, t.Rsc)
+			if e != nil {
+				return []parse.Node{}
+			}
 			bn.Pipe = an.Pipe
 			bn.List = &parse.ListNode{
 				NodeType: parse.NodeList,
@@ -84,8 +87,34 @@ func (t *token) Compile(prefix string) []parse.Node {
 				NodeType: parse.NodeRange,
 				Pos:      parse.Pos(t.Pos),
 			}
+			var an *parse.ActionNode
+			var e error
+			var vars []string
+			if doubleRangeRegex.MatchString(t.Content) {
+				sm := doubleRangeRegex.FindStringSubmatch(t.Content)[1:]
+				vars = sm[1:]
+				t.Rsc.vars = append(t.Rsc.vars, sm[1:]...)
+				an, e = actionNode(sm[0], t.Rsc)
+			} else if singleRangeRegex.MatchString(t.Content) {
+				sm := singleRangeRegex.FindStringSubmatch(t.Content)[1:]
+				vars = sm[1:]
+				t.Rsc.vars = append(t.Rsc.vars, sm[1:]...)
+				an, e = actionNode(sm[0], t.Rsc)
+			} else {
+				an, e = actionNode(t.Content, t.Rsc)
+			}
 
-			an, _ := actionNode(t.Content, t.Rsc)
+			if e != nil {
+				return []parse.Node{}
+			}
+			for _, vd := range vars {
+				an.Pipe.Decl = append(an.Pipe.Decl,
+					&parse.VariableNode{
+						NodeType: parse.NodeVariable,
+						Ident:    strings.Split(vd, "."),
+					},
+				)
+			}
 			bn.Pipe = an.Pipe
 			if len(prefix) == 0 || prefix[0] != '\n' {
 				prefix = "\n" + prefix

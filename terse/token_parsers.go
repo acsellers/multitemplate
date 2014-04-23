@@ -2,6 +2,7 @@ package terse
 
 import (
 	"fmt"
+	"regexp"
 	"strings"
 )
 
@@ -245,6 +246,11 @@ func elseToken(node *rawNode) (*token, error) {
 
 	return et, nil
 }
+
+var (
+	singleRangeRegex = regexp.MustCompile(`(.*):(\$[a-zA-Z0-9_\.-]+)$`)
+	doubleRangeRegex = regexp.MustCompile(`(.*):(\$[a-zA-Z0-9_\.-]+):(\$[a-zA-Z0-9_\.-]+)$`)
+)
 
 func rangeToken(node *rawNode) (*token, error) {
 	if node.Code[0] == '&' {
