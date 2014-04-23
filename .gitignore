@@ -8,3 +8,6 @@
 # mustache things
 /mustache/specs/gen/*
 
+# revel sample things
+/revel/samples/*/app/routes/*
+/revel/samples/*/app/tmp/*
