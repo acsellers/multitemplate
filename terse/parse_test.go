@@ -283,6 +283,12 @@ var parseTests = []parseTest{
 		Content:  "h1 Here",
 		Expected: "<h1> Here</h1>",
 	},
+	parseTest{
+		Name:     "Interpolated content",
+		Content:  "Welcome {{ . }}",
+		Expected: "Welcome Gopher",
+		Data:     "Gopher",
+	},
 }
 
 type parseTest struct {

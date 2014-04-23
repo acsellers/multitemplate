@@ -49,19 +49,9 @@ func (t *token) Compile(prefix string) []parse.Node {
 	if t.Content != "" {
 		switch t.Type {
 		case TextToken:
-			return []parse.Node{
-				&parse.TextNode{
-					NodeType: parse.NodeText,
-					Text:     []byte(prefix + t.Content),
-				},
-			}
+			return textNodes(prefix+t.Content, t.Rsc)
 		case HTMLToken:
-			return []parse.Node{
-				&parse.TextNode{
-					NodeType: parse.NodeText,
-					Text:     []byte(prefix + t.Content),
-				},
-			}
+			return textNodes(prefix+t.Content, t.Rsc)
 		case IfToken:
 			bn := parse.BranchNode{
 				NodeType: parse.NodeIf,

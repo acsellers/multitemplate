@@ -281,11 +281,6 @@ func rangeElseToken(node *rawNode) (*token, error) {
 }
 
 func textToken(node *rawNode) (*token, error) {
-	// interpolated text isn't supported yet, so bail out
-	if strings.Contains(node.Code, LeftDelim) && strings.Contains(node.Code, RightDelim) {
-		return errorToken, fmt.Errorf("Not Implemented")
-	}
-
 	// simplest possible text
 	if len(node.Children) == 0 {
 		return &token{Type: TextToken, Content: node.Code, Pos: node.Pos}, nil
