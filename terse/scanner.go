@@ -2,6 +2,7 @@ package terse
 
 import (
 	"bufio"
+	"fmt"
 	"strings"
 )
 
@@ -51,9 +52,11 @@ func scan(src string) rawTree {
 		}
 		current := rt.Children[len(rt.Children)-1]
 		line = unindentLine(line)
+		fmt.Println(line)
 		for len(current.Children) != 0 && !unindentedLine(line) {
 			current = current.Children[len(current.Children)-1]
 			line = unindentLine(line)
+			fmt.Println(line)
 		}
 		current.Children = append(current.Children, &rawNode{Code: line})
 	}

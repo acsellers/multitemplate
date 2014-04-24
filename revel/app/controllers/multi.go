@@ -8,6 +8,7 @@ package multitemplate
 
 import (
 	"bytes"
+	"fmt"
 	"html/template"
 	"io"
 	"io/ioutil"

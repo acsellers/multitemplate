@@ -70,8 +70,8 @@ var formTagFuncs = template.FuncMap{
 		al["type"] = "number"
 		return buildTag("input", "", al)
 	},
-	"password_field_tag": func(name string, value interface{}, options ...AttrList) template.HTML {
-		al := combine(name, fmt.Sprint(value), options)
+	"password_field_tag": func(name string, options ...AttrList) template.HTML {
+		al := combine(name, "", options)
 		al["type"] = "password"
 		return buildTag("input", "", al)
 	},

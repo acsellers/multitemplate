@@ -345,7 +345,6 @@ input type=$t`,
 			},
 		},
 	},
-
 	parseTest{
 		Name:     "If with trailing content",
 		Content:  "?true\n  Yes\ntrailer",

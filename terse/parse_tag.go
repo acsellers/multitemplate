@@ -43,11 +43,11 @@ func (t *tag) Parse(children bool) {
 	}
 	// pull id and class static's
 	for len(t.Source) > 0 && (t.Source[0] == '#' || t.Source[0] == '.') {
-		if t.Source[0] == '#' {
+		switch t.Source[0] {
+		case '#':
 			t.Id = firstTextToken(t.Source[1:])
 			t.Source = t.Source[len(t.Id)+1:]
-		}
-		if t.Source[0] == '.' {
+		case '.':
 			cl := firstTextToken(t.Source[1:])
 			t.Source = t.Source[len(cl)+1:]
 			t.Classes = append(t.Classes, cl)
@@ -56,8 +56,8 @@ func (t *tag) Parse(children bool) {
 	if len(t.Source) > 0 && t.Source[0] == '(' {
 		fmt.Println("Multi line")
 	} else if attrStartRegex.MatchString(strings.TrimSpace(t.Source)) {
-		t.Source = strings.TrimSpace(t.Source)
-		for attrStartRegex.MatchString(t.Source) {
+		for attrStartRegex.MatchString(strings.TrimSpace(t.Source)) {
+			t.Source = strings.TrimSpace(t.Source)
 			attr := attrStartRegex.FindStringSubmatch(t.Source)[1]
 			t.Source = t.Source[len(attr)+1:]
 			switch t.Source[0] {
@@ -80,7 +80,7 @@ func (t *tag) Parse(children bool) {
 					t.Source = t.Source[index:]
 				}
 			case '.':
-				index := strings.Index(t.Source[1:], " ")
+				index := strings.Index(t.Source, " ")
 				if index == -1 {
 					t.DynAttrs[attr] = t.Source
 					t.Source = ""
