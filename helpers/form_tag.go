@@ -63,7 +63,7 @@ var formTagFuncs = template.FuncMap{
 	"label_tag": func(target, text string, options ...AttrList) template.HTML {
 		al := combine("", "", options)
 		al["for"] = strings.Map(nameFilter, target)
-		return buildTag("input", template.HTML(template.HTMLEscapeString(text)), al)
+		return buildTag("label", template.HTML(template.HTMLEscapeString(text)), al)
 	},
 	"number_field_tag": func(name string, value interface{}, options ...AttrList) template.HTML {
 		al := combine(name, fmt.Sprint(value), options)
@@ -93,8 +93,8 @@ var formTagFuncs = template.FuncMap{
 		al["type"] = "range"
 		return buildTag("input", "", al)
 	},
-	"search_field_tag": func(name string, value interface{}, options ...AttrList) template.HTML {
-		al := combine(name, fmt.Sprint(value), options)
+	"search_field_tag": func(name string, options ...AttrList) template.HTML {
+		al := combine(name, "", options)
 		al["type"] = "search"
 		return buildTag("input", "", al)
 	},

@@ -73,14 +73,48 @@ var formTagTests = []helperTest{
 		Args:     []string{"user_id", "123456"},
 		Expected: `<input name="user_id" id="user_id" value="123456" type="hidden" />`,
 	},
-	// label_tag
-	// number_field_tag
-	// password_field_tag
-	// phone_field_tag
-	// radio_button_tag
-	// range_field_tag
-	// search_field_tag
-	// submit_tag
+	helperTest{
+		Helper:   "label_tag",
+		Args:     []string{"user_name", "What's ya name?"},
+		Expected: `<label for="user_name">What&#39;s ya name?</label>`,
+	},
+	helperTest{
+		Helper:   "number_field_tag",
+		Args:     []string{"open_slots", "12"},
+		Expected: `<input name="open_slots" id="open_slots" value="12" type="number" />`,
+	},
+	helperTest{
+		Helper:   "password_field_tag",
+		Args:     []string{"user_pass"},
+		Expected: `<input name="user_pass" id="user_pass" type="password" />`,
+	},
+	helperTest{
+		Helper:   "phone_field_tag",
+		Args:     []string{"telephone", "555-5555"},
+		Expected: `<input name="telephone" id="telephone" value="555-5555" type="tel" />`,
+	},
+	/*
+		helperTest{
+			Helper:   "radio_button_tag",
+			Args:     []string{"wake", "yes"},
+			Expected: ``,
+		},
+	*/
+	helperTest{
+		Helper:   "range_field_tag",
+		Args:     []string{"date_ages", ""},
+		Expected: `<input name="date_ages" id="date_ages" type="range" />`,
+	},
+	helperTest{
+		Helper:   "search_field_tag",
+		Args:     []string{"search"},
+		Expected: `<input name="search" id="search" type="search" />`,
+	},
+	helperTest{
+		Helper:   "submit_tag",
+		Args:     []string{"create"},
+		Expected: `<input name="create" id="create" type="submit" />`,
+	},
 	helperTest{
 		Helper:   "text_area_tag",
 		Args:     []string{"story", "blah blah blah"},
@@ -98,7 +132,6 @@ var formTagTests = []helperTest{
 	},
 	helperTest{
 		Helper:   "utf8_tag",
-		Args:     []string{},
 		Expected: `<input type="hidden" name="utf8" value="&#x269b" />`,
 	},
 }
