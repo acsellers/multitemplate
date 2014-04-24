@@ -350,6 +350,11 @@ input type=$t`,
 		Content:  "?true\n  Yes\ntrailer",
 		Expected: "Yes\ntrailer",
 	},
+	parseTest{
+		Name:     "Collapsed Tags",
+		Content:  "table > tr > %td\n  I'm different",
+		Expected: "<table><tr><td>I'm different</td></tr></table>",
+	},
 }
 
 type parseTest struct {

@@ -69,6 +69,22 @@ and it wil be passed through to the final output. This is why the character
     <h1>My Title</h1>
   </article>
 
+Collapsing Tags
+
+If you have lines that are simply declaring elements that are nesting,
+you can collapse the lines using the '>' character. Note that you cannot
+add attributes or content to the tags. At the moment, you can't use the
+id/class shorthand here.
+
+  // Source
+  table > tr > td > %custom_element
+    Gopher Freeman
+
+  // Output
+  <table><tr><td><custom_element>
+    Gopher Freeman
+  </custom_element></td></tr></table>
+
 Class and Id Shorthand
 
 Id's and Class attributes may be specified in shorthand. If you do

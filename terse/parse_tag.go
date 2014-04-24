@@ -20,6 +20,7 @@ func parseTag(tagCode string, children bool) (*token, string, *token) {
 type tag struct {
 	Source    string
 	Name      string
+	ChildTags []string
 	Id        string
 	Classes   []string
 	Attrs     map[string]string
@@ -104,12 +105,33 @@ func (t *tag) Parse(children bool) {
 	if len(t.Remaining) > 0 && t.Remaining[0] == ' ' {
 		t.Remaining = t.Remaining[1:]
 	}
+	for len(t.Remaining) > 0 && t.Remaining[0] == '>' {
+		check := strings.TrimSpace(t.Remaining[1:])
+		switch {
+		case check[0] == '%':
+			element := firstTextToken(check[1:])
+			check = check[len(element)+1:]
+			t.Remaining = strings.TrimSpace(check)
+			t.ChildTags = append(t.ChildTags, element)
+		case ValidElements[firstTextToken(check)]:
+			element := firstTextToken(check)
+			check = check[len(element):]
+			t.Remaining = strings.TrimSpace(check)
+			t.ChildTags = append(t.ChildTags, element)
+		}
+	}
 }
 
 func (t *tag) Open() *token {
-	if t.Enclosing || t.Remaining != "" {
-		return &token{Type: HTMLToken, Content: t.Start() + ">"}
+	tc := t.Start()
+	if t.Enclosing || t.Remaining != "" || len(t.ChildTags) > 0 {
+		tc += ">"
+		for _, tag := range t.ChildTags {
+			tc += "<" + tag + ">"
+		}
+		return &token{Type: HTMLToken, Content: tc}
 	} else {
+		tc += " />"
 		return &token{Type: HTMLToken, Content: t.Start() + " />"}
 	}
 }
@@ -133,8 +155,12 @@ func (t *tag) Start() string {
 }
 
 func (t *tag) Close() *token {
-	if t.Enclosing || t.Remaining != "" {
-		return &token{Type: HTMLToken, Content: "</" + t.Name + ">"}
+	if t.Enclosing || t.Remaining != "" || len(t.ChildTags) > 0 {
+		tc := "</" + t.Name + ">"
+		for _, tag := range t.ChildTags {
+			tc = "</" + tag + ">" + tc
+		}
+		return &token{Type: HTMLToken, Content: tc}
 	}
 	return &token{Type: HTMLToken, Content: ""}
 }
