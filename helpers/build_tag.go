@@ -25,7 +25,7 @@ func buildTag(tagName string, content template.HTML, al AttrList) template.HTML 
 
 	if v, ok := al["MT_skip_close"]; ok {
 		if b, ok := v.(bool); ok && b {
-			return template.HTML(tag + ">")
+			return template.HTML(tag + ">" + string(content))
 		}
 	}
 
