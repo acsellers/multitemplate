@@ -13,6 +13,8 @@ func TestFormTag(t *testing.T) {
 			if f, ok := formTagFuncs[formTagTest.Helper]; ok {
 				var r string
 				switch af := f.(type) {
+				case func() template.HTML:
+					r = string(af())
 				case func(string, interface{}, ...AttrList) template.HTML:
 					r = string(af(formTagTest.Args[0], formTagTest.Args[1], formTagTest.Attrs...))
 				case func(string, string, ...AttrList) template.HTML:
@@ -60,6 +62,44 @@ var formTagTests = []helperTest{
 		Helper:   "file_field_tag",
 		Args:     []string{"picture"},
 		Expected: `<input name="picture" id="picture" type="file" />`,
+	},
+	helperTest{
+		Helper:   "form_tag",
+		Args:     []string{"/users/create"},
+		Expected: `<form action="/users/create" method="post">`,
+	},
+	helperTest{
+		Helper:   "hidden_field_tag",
+		Args:     []string{"user_id", "123456"},
+		Expected: `<input name="user_id" id="user_id" value="123456" type="hidden" />`,
+	},
+	// label_tag
+	// number_field_tag
+	// password_field_tag
+	// phone_field_tag
+	// radio_button_tag
+	// range_field_tag
+	// search_field_tag
+	// submit_tag
+	helperTest{
+		Helper:   "text_area_tag",
+		Args:     []string{"story", "blah blah blah"},
+		Expected: `<textarea name="story" id="story">blah blah blah</textarea>`,
+	},
+	helperTest{
+		Helper:   "text_field_tag",
+		Args:     []string{"user_name", "acsellers"},
+		Expected: `<input name="user_name" id="user_name" value="acsellers" type="text" />`,
+	},
+	helperTest{
+		Helper:   "url_field_tag",
+		Args:     []string{"website", "google.com"},
+		Expected: `<input name="website" id="website" value="google.com" type="url" />`,
+	},
+	helperTest{
+		Helper:   "utf8_tag",
+		Args:     []string{},
+		Expected: `<input type="hidden" name="utf8" value="&#x269b" />`,
 	},
 }
 
