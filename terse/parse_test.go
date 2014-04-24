@@ -323,13 +323,13 @@ var parseTests = []parseTest{
 		Expected: `<input type="checkbox" />`,
 		Data:     map[string]string{"Type": "checkbox"},
 	},
-	/*
-			parseTest{
-				Name: "Tag with variable attribute",
-				Content: `= $t := "checkbox
-		input type=$t`,
-				Expected: `<input type="checkbox" />`,
-			},*/
+	parseTest{
+		Name: "Tag with variable attribute",
+		Content: `= $t := "checkbox"
+input type=$t`,
+		Expected: `
+<input type="checkbox" />`,
+	},
 	parseTest{
 		Name:     "If with trailing content",
 		Content:  "?true\n  Yes\ntrailer",
