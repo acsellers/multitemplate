@@ -1,35 +1,28 @@
 package helpers
 
-/*
-
 import (
 	"html/template"
-	"net/url"
 	"testing"
 	. "github.com/acsellers/assert"
 )
 
 func TestFormTag(t *testing.T) {
 	Within(t, func(test *Test) {
-		for _, formTagTest := range assetTests {
-			test.Section("Helper: " + assetTest.Helper)
-			if f, ok := formTagFuncs[assetTest.Helper]; ok {
+		for _, formTagTest := range formTagTests {
+			test.Section("Helper: " + formTagTest.Helper)
+			if f, ok := formTagFuncs[formTagTest.Helper]; ok {
 				var r string
 				switch af := f.(type) {
-				case func(...string) template.HTML:
-					r = string(af(assetTest.Args...))
-				case func(string) template.HTML:
-					r = string(af(assetTest.Args[0]))
-				case func(string) string:
-					r = af(assetTest.Args[0])
+				case func(string, interface{}, ...AttrList) template.HTML:
+					r = string(af(formTagTest.Args[0], formTagTest.Args[1]))
 				case func(string, ...AttrList) template.HTML:
-					r = string(af(assetTest.Args[0], assetTest.Attrs...))
+					r = string(af(formTagTest.Args[0], formTagTest.Attrs...))
 				default:
-					t.Fatalf("Function %s was not type asserted", assetTest.Helper)
+					t.Fatalf("Function %s was not type asserted", formTagTest.Helper)
 				}
-				test.AreEqual(r, assetTest.Expected)
+				test.AreEqual(r, formTagTest.Expected)
 			} else {
-				t.Errorf("Could not find function %s", assetTest.Helper)
+				t.Errorf("Could not find function %s", formTagTest.Helper)
 			}
 		}
 	})
@@ -37,18 +30,22 @@ func TestFormTag(t *testing.T) {
 
 var formTagTests = []helperTest{
 	helperTest{
-		Helper:   "atom_link",
-		Args:     []string{"/api/atom"},
-		Expected: `<link rel="alternate" type="application/atom+xml" title="ATOM" href="http://localhost/api/atom" />`,
+		Helper:   "button_tag",
+		Args:     []string{"Hello"},
+		Expected: `<button name="hello">Hello</button>`,
 	},
 	helperTest{
-		Helper: "favicon_link",
-		Args:   []string{"favicon.png"},
-		Expected: string(buildTag("link", "", AttrList{
-			"rel":  "shortcut icon",
-			"type": "image/png",
-			"href": "/img/favicon.png",
-		})),
+		Helper:   "check_box_tag",
+		Args:     []string{"is_active", "true"},
+		Expected: `<input name="is_active" id="is_active" value="true" type="checkbox" />`,
 	},
+}
+
+/*
+type helperTest struct {
+	Helper   string
+	Args     []string
+	Attrs    []AttrList
+	Expected string
 }
 */
