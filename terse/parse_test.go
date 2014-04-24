@@ -335,6 +335,16 @@ input type=$t`,
 		Content:  `input type=(print "checkbox")`,
 		Expected: `<input type="checkbox" />`,
 	},
+	parseTest{
+		Name:     "Tag with function attribute",
+		Content:  `input type=checker`,
+		Expected: `<input type="checkbox" />`,
+		Funcs: template.FuncMap{
+			"checker": func() string {
+				return "checkbox"
+			},
+		},
+	},
 
 	parseTest{
 		Name:     "If with trailing content",
