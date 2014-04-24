@@ -355,6 +355,16 @@ input type=$t`,
 		Content:  "table > tr > %td\n  I'm different",
 		Expected: "<table><tr><td>I'm different</td></tr></table>",
 	},
+	parseTest{
+		Name:     "Totem Pole Tags",
+		Content:  "table > tr > td",
+		Expected: "<table><tr><td></td></tr></table>",
+	},
+	parseTest{
+		Name:     "Collapsed tags with content on line",
+		Content:  "table > tr > td Hello",
+		Expected: "<table><tr><td>Hello</td></tr></table>",
+	},
 }
 
 type parseTest struct {
