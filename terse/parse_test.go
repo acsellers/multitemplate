@@ -281,7 +281,7 @@ var parseTests = []parseTest{
 	parseTest{
 		Name:     "Tag with content",
 		Content:  "h1 Here",
-		Expected: "<h1> Here</h1>",
+		Expected: "<h1>Here</h1>",
 	},
 	parseTest{
 		Name:     "Interpolated content",
@@ -306,6 +306,34 @@ var parseTests = []parseTest{
 		Content:  ">.NotExist\n  = .\n!>\n  Other animal",
 		Expected: "Other animal",
 		Data:     map[string]string{"Username": "Gopher"},
+	},
+	parseTest{
+		Name:     "Tag with attribute",
+		Content:  `input type="checkbox"`,
+		Expected: `<input type="checkbox" />`,
+	},
+	parseTest{
+		Name:     "Tag with attribute and single quotes",
+		Content:  `input type='checkbox'`,
+		Expected: `<input type="checkbox" />`,
+	},
+	parseTest{
+		Name:     "Tag with dot attribute",
+		Content:  `input type=.Type`,
+		Expected: `<input type="checkbox" />`,
+		Data:     map[string]string{"Type": "checkbox"},
+	},
+	/*
+			parseTest{
+				Name: "Tag with variable attribute",
+				Content: `= $t := "checkbox
+		input type=$t`,
+				Expected: `<input type="checkbox" />`,
+			},*/
+	parseTest{
+		Name:     "If with trailing content",
+		Content:  "?true\n  Yes\ntrailer",
+		Expected: "Yes\ntrailer",
 	},
 }
 

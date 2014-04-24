@@ -1,9 +1,18 @@
 package terse
 
-import "strings"
+import (
+	"fmt"
+	"regexp"
+	"strings"
+)
 
 func parseTag(tagCode string, children bool) (*token, string, *token) {
-	t := &tag{Name: "div", Source: tagCode}
+	t := &tag{
+		Name:     "div",
+		Source:   tagCode,
+		Attrs:    make(map[string]string),
+		DynAttrs: make(map[string]string),
+	}
 	t.Parse(children)
 	return t.Open(), t.Remaining, t.Close()
 }
@@ -14,9 +23,12 @@ type tag struct {
 	Id        string
 	Classes   []string
 	Attrs     map[string]string
+	DynAttrs  map[string]string
 	Remaining string
 	Enclosing bool
 }
+
+var attrStartRegex = regexp.MustCompile(`^([a-zA-Z0-9]+)=`)
 
 func (t *tag) Parse(children bool) {
 	t.Enclosing = children
@@ -41,9 +53,57 @@ func (t *tag) Parse(children bool) {
 			t.Classes = append(t.Classes, cl)
 		}
 	}
-	if len(t.Source) > 0 && t.Source[0] != '(' {
+	if len(t.Source) > 0 && t.Source[0] == '(' {
+		fmt.Println("Multi line")
+	} else if attrStartRegex.MatchString(strings.TrimSpace(t.Source)) {
+		t.Source = strings.TrimSpace(t.Source)
+		for attrStartRegex.MatchString(t.Source) {
+			attr := attrStartRegex.FindStringSubmatch(t.Source)[1]
+			t.Source = t.Source[len(attr)+1:]
+			switch t.Source[0] {
+			case '"':
+				t.Attrs[attr] = t.Source[1 : 1+strings.Index(t.Source[1:], "\"")]
+				t.Source = t.Source[2+len(t.Attrs[attr]):]
+			case '\'':
+				t.Attrs[attr] = t.Source[1 : 1+strings.Index(t.Source[1:], "'")]
+				t.Source = t.Source[2+len(t.Attrs[attr]):]
+			case '(':
+				t.DynAttrs[attr] = t.Source[:2+strings.Index(t.Source[1:], ")")]
+				t.Source = t.Source[2+len(t.DynAttrs[attr]):]
+			case '$':
+				index := strings.Index(t.Source[1:], " ")
+				if index == -1 {
+					t.DynAttrs[attr] = t.Source
+					t.Source = ""
+				} else {
+					t.DynAttrs[attr] = t.Source[:index]
+					t.Source = t.Source[index:]
+				}
+			case '.':
+				index := strings.Index(t.Source[1:], " ")
+				if index == -1 {
+					t.DynAttrs[attr] = t.Source
+					t.Source = ""
+				} else {
+					t.DynAttrs[attr] = t.Source[:index]
+					t.Source = t.Source[index:]
+				}
+			default:
+				index := strings.Index(t.Source[1:], " ")
+				if index == -1 {
+					t.DynAttrs[attr] = t.Source
+					t.Source = ""
+				} else {
+					t.DynAttrs[attr] = t.Source[:index]
+					t.Source = t.Source[index:]
+				}
+			}
+		}
 	}
 	t.Remaining = t.Source
+	if len(t.Remaining) > 0 && t.Remaining[0] == ' ' {
+		t.Remaining = t.Remaining[1:]
+	}
 }
 
 func (t *tag) Open() *token {
@@ -62,6 +122,13 @@ func (t *tag) Start() string {
 	if t.Id != "" {
 		tc += " id=\"" + t.Id + "\""
 	}
+	for n, v := range t.Attrs {
+		tc += fmt.Sprintf(` %s="%s"`, n, v)
+	}
+	for n, v := range t.DynAttrs {
+		tc += fmt.Sprintf(` %s="%s%s%s"`, n, LeftDelim, v, RightDelim)
+	}
+
 	return tc
 }
 

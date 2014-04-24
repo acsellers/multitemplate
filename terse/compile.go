@@ -79,6 +79,8 @@ func compileTokens(ts []*token, prefix string) []parse.Node {
 			case watchType != ErrorToken:
 				watchType = ErrorToken
 				nodes = append(nodes, hold...)
+				prefix = "\n"
+				nodes = append(nodes, rn.Compile(prefix)...)
 				hold = []parse.Node{}
 			default:
 				nodes = append(nodes, rn.Compile(prefix)...)
