@@ -68,7 +68,7 @@ func (t *tag) Parse(children bool) {
 				t.Attrs[attr] = t.Source[1 : 1+strings.Index(t.Source[1:], "'")]
 				t.Source = t.Source[2+len(t.Attrs[attr]):]
 			case '(':
-				t.DynAttrs[attr] = t.Source[:2+strings.Index(t.Source[1:], ")")]
+				t.DynAttrs[attr] = t.Source[1 : 1+strings.Index(t.Source[1:], ")")]
 				t.Source = t.Source[2+len(t.DynAttrs[attr]):]
 			case '$':
 				index := strings.Index(t.Source[1:], " ")

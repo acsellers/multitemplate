@@ -331,6 +331,12 @@ input type=$t`,
 <input type="checkbox" />`,
 	},
 	parseTest{
+		Name:     "Tag with parentheses attribute",
+		Content:  `input type=(print "checkbox")`,
+		Expected: `<input type="checkbox" />`,
+	},
+
+	parseTest{
 		Name:     "If with trailing content",
 		Content:  "?true\n  Yes\ntrailer",
 		Expected: "Yes\ntrailer",
