@@ -117,6 +117,8 @@
 
   - lower: Convert a string to lowercase
 
+  - now: Return the current time
+
   - number_lines: Add the line number to each line in s in the form "1. "
 
   - pluralize: Pluralize a string

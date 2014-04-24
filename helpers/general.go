@@ -6,6 +6,7 @@ import (
 	"math/rand"
 	"reflect"
 	"strings"
+	"time"
 	"unicode"
 
 	"github.com/acsellers/inflections"
@@ -236,6 +237,9 @@ var generalFuncs = template.FuncMap{
 		return string(nRunes)
 	},
 	"lower": strings.ToLower,
+	"now": func() time.Time {
+		return time.Now()
+	},
 	"number_lines": func(s string) string {
 		output := strings.Split(s, "\n")
 		for i, line := range output {
