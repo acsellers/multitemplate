@@ -404,6 +404,16 @@ input type=$t`,
 		Content:  "=",
 		Expected: "=",
 	},
+	parseTest{
+		Name:     "Single slash",
+		Content:  "/",
+		Expected: "/",
+	},
+	parseTest{
+		Name:     "Blank comment",
+		Content:  "//",
+		Expected: "",
+	},
 }
 
 type parseTest struct {

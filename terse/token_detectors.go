@@ -41,7 +41,7 @@ func verbatimCode(code string) bool {
 }
 
 func commentCode(code string) bool {
-	return strippedPrefix(code, "//")
+	return strippedBegin(code, "//")
 }
 
 func tagCode(code string) bool {
