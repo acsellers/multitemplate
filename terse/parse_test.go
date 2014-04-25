@@ -430,9 +430,39 @@ input type=$t`,
 		Expected: "[",
 	},
 	parseTest{
-		Name:     "Malformed Block 2",
+		Name:     "Malformed Block 3",
 		Content:  "[]",
 		Expected: "[]",
+	},
+	parseTest{
+		Name:     "Malformed Exec Block 1",
+		Content:  "$name",
+		Expected: "$name",
+	},
+	parseTest{
+		Name:     "Malformed Exec Block 2",
+		Content:  "$",
+		Expected: "$",
+	},
+	parseTest{
+		Name:     "Malformed Exec Block 3",
+		Content:  "$]",
+		Expected: "$]",
+	},
+	parseTest{
+		Name:     "Malformed Define Block 1",
+		Content:  "^name",
+		Expected: "^name",
+	},
+	parseTest{
+		Name:     "Malformed Define Block 2",
+		Content:  "^",
+		Expected: "^",
+	},
+	parseTest{
+		Name:     "Malformed Define Block 3",
+		Content:  "^]",
+		Expected: "^]",
 	},
 }
 
