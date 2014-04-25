@@ -90,11 +90,11 @@ func extendCode(code string) bool {
 }
 
 func yieldCode(code string) bool {
-	return strippedLine(code)[0] == '@'
+	return strippedBegin(code, "@")
 }
 
 func ifCode(code string) bool {
-	return strippedLine(code)[0] == '?'
+	return strippedPrefix(code, "?")
 }
 
 func elseCode(code string) bool {
@@ -102,7 +102,7 @@ func elseCode(code string) bool {
 }
 
 func rangeCode(code string) bool {
-	return strippedLine(code)[0] == '&'
+	return strippedPrefix(code, "&")
 }
 
 func rangeElseCode(code string) bool {
@@ -110,7 +110,7 @@ func rangeElseCode(code string) bool {
 }
 
 func withCode(code string) bool {
-	return strippedLine(code)[0] == '>'
+	return strippedPrefix(code, ">")
 }
 
 func withElseCode(code string) bool {
@@ -118,6 +118,5 @@ func withElseCode(code string) bool {
 }
 
 func idClassCode(code string) bool {
-	c := strippedLine(code)[0]
-	return c == '.' || c == '#'
+	return strippedPrefix(code, ".") || strippedPrefix(code, "#")
 }
