@@ -7,12 +7,10 @@ slim.
 _doctypes_
 
 ```
-!!!
+!!
 // <!DOCTYPE html>
-!!! strict
+!! strict
 // <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-!!! xml
-// <?xml version="1.0" encoding="utf-8" ?>
 ```
 
 _tags_
@@ -22,6 +20,17 @@ html
 // <html> … </html>
 h1  markup example 
 // <h1>markup example</h1>
+```
+
+_tags with id/class_
+
+```
+#footer
+// <div id=”footer”>...</div>
+.clear
+// <div class=”clear”></div>
+table.striped
+// <table class=”striped”> … </table>
 ```
 
 _filters_
@@ -45,7 +54,14 @@ _yields_
 // {{ yield "footer" (fallback "test.html") }}
 ```
 
-blocks
+_extend_
+
+```
+@@layouts/app.html
+// {{ extend "layouts/app.html" }}
+```
+
+_blocks_
 
 ```
 // Regular block
@@ -99,7 +115,7 @@ _if/else/range_
 
 ```
 // Range Else Statement
-&items
+&.Items
   = name
 !&
   no items
@@ -113,19 +129,35 @@ _if/else/range_
 */
 ```
 
-_tags with id/class_
+_with_
 
 ```
-#footer
-// <div id=”footer”>...</div>
-.clear
-// <div class=”clear”></div>
-table.striped
-// <table class=”striped”> … </table>
+// With Statement
+>.User:$user
+  = $user.Name
+/*
+  {{ with $user := .User }} 
+    {{ $user.Name }}
+  {{ end }}
+*/
+
+// With/Else Statement
+>.User
+  = .Name
+!>
+  Not logged in!
+/*
+  {{ with .User }}
+    {{ .Name }}
+  {{ else }}
+    Not logged in!
+  {{ end }}
+*/
+    
 ```
 
 _interpolation_
 
 ```
-First Name: #{user.name}
+First Name: {{user.name}}
 ```
