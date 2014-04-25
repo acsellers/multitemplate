@@ -378,7 +378,10 @@ Filters
 Filters are started with a :, then the name of a registered filter.
 Filters can have interpolated code within them, if the filter may
 have interpolated code, it needs to return true, else if it returns
-false, the filtered text will not be checked for code.
+false, the filtered text will not be checked for code. Note that the
+processed text will be inserted into the template and any interpolated
+code will be processed by html/template and escaped in a manner
+consistent with the surrounding text.
 
   // Source
   :js

@@ -5,7 +5,8 @@ package terse
 // indicates whether the transformed string may have delimited template
 // code within it, so it should run it though a stdlib template parser.
 // You are expected to do any escaping that may be needed for your
-// text, and your filter will only receive the content once, when the
+// text, but if you are using interpolation, html/template will do
+// escaping. The filter will only receive the content once, when the
 // template is compiled.
 var Filters = map[string]FilterFunc{
 	"plain": func(s string) (string, bool) {
