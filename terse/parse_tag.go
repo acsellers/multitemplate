@@ -6,10 +6,11 @@ import (
 	"strings"
 )
 
-func parseTag(tagCode string, children bool) (*tag, error) {
+func parseTag(node *rawNode, children bool) (*tag, error) {
 	t := &tag{
 		Name:     "div",
-		Source:   tagCode,
+		Node:     node,
+		Source:   node.Code,
 		Attrs:    make(map[string]string),
 		DynAttrs: make(map[string]string),
 	}
@@ -18,6 +19,7 @@ func parseTag(tagCode string, children bool) (*tag, error) {
 }
 
 type tag struct {
+	Node      *rawNode
 	Source    string
 	Name      string
 	ChildTags []string
@@ -54,6 +56,7 @@ func (t *tag) Parse(children bool) error {
 			t.Classes = append(t.Classes, cl)
 		}
 	}
+
 	if len(t.Source) > 0 && t.Source[0] == '(' {
 		fmt.Println("Multi line")
 	} else if attrStartRegex.MatchString(strings.TrimSpace(t.Source)) {
@@ -69,7 +72,14 @@ func (t *tag) Parse(children bool) error {
 				t.Attrs[attr] = t.Source[1 : 1+strings.Index(t.Source[1:], "'")]
 				t.Source = t.Source[2+len(t.Attrs[attr]):]
 			case '(':
-				t.DynAttrs[attr] = t.Source[1 : 1+strings.Index(t.Source[1:], ")")]
+				i := strings.Index(t.Source[1:], ")")
+				if i == -1 {
+					return fmt.Errorf("Unclosed parentheses for attribute %s in %s", attr, t.Node.Code)
+				}
+				if i == 0 {
+					return fmt.Errorf("Empty parentheses for attribute %s in %s", attr, t.Node.Code)
+				}
+				t.DynAttrs[attr] = t.Source[1 : 1+i]
 				t.Source = t.Source[2+len(t.DynAttrs[attr]):]
 			case '$':
 				index := strings.Index(t.Source[1:], " ")

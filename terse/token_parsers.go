@@ -100,7 +100,7 @@ func commentToken(node *rawNode) (*token, error) {
 
 func tagToken(node *rawNode) (*token, error) {
 	t := &token{Type: TagToken}
-	tg, e := parseTag(node.Code, len(node.Children) > 0)
+	tg, e := parseTag(node, len(node.Children) > 0)
 	if e != nil {
 		return nil, e
 	}
