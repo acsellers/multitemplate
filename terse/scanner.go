@@ -75,7 +75,7 @@ func unindentLine(line string) string {
 	if line[0:2] == "  " {
 		return line[2:]
 	}
-	if line[0] == '/' {
+	if line[0] == '\t' {
 		return line[1:]
 	}
 	return line

@@ -485,6 +485,11 @@ input type=$t`,
 		Data:     "Andrew\";alert('XSS');\"",
 		Expected: `<script type="text/javascript">var name="Andrew\x22;alert(\x27XSS\x27);\x22";alert('here');</script>`,
 	},
+	parseTest{
+		Name:     "Tab indentation",
+		Content:  "html\n\thead",
+		Expected: "<html><head /></html>",
+	},
 }
 
 type parseTest struct {
