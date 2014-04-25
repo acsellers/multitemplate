@@ -41,6 +41,26 @@ var errorTests = []errorTest{
 		Source:   "html name=''",
 		Contains: "Empty single quotes",
 	},
+	errorTest{
+		Name:     "Unclosed attribute double quotes ",
+		Source:   "html name=\"link_to",
+		Contains: "Unclosed double quotes",
+	},
+	errorTest{
+		Name:     "Empty attribute double quotes",
+		Source:   "html name=\"\"",
+		Contains: "Empty double quotes",
+	},
+	errorTest{
+		Name:     "Blank attribute variable",
+		Source:   "html name=",
+		Contains: "Empty attribute",
+	},
+	errorTest{
+		Name:     "Headless Totem Pole",
+		Source:   "html > head >",
+		Contains: "Missing tag",
+	},
 }
 
 type errorTest struct {

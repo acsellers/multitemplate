@@ -64,9 +64,19 @@ func (t *tag) Parse(children bool) error {
 			t.Source = strings.TrimSpace(t.Source)
 			attr := attrStartRegex.FindStringSubmatch(t.Source)[1]
 			t.Source = t.Source[len(attr)+1:]
+			if len(t.Source) == 0 {
+				return fmt.Errorf("Blank attribute value for attribute %s in %s", attr, t.Node.Code)
+			}
 			switch t.Source[0] {
 			case '"':
-				t.Attrs[attr] = t.Source[1 : 1+strings.Index(t.Source[1:], "\"")]
+				i := strings.Index(t.Source[1:], "\"")
+				if i == -1 {
+					return fmt.Errorf("Unclosed double quotes for attribute %s in %s", attr, t.Node.Code)
+				}
+				if i == 0 {
+					return fmt.Errorf("Empty double quotes for attribute %s in %s", attr, t.Node.Code)
+				}
+				t.Attrs[attr] = t.Source[1 : 1+i]
 				t.Source = t.Source[2+len(t.Attrs[attr]):]
 			case '\'':
 				i := strings.Index(t.Source[1:], "'")
@@ -125,6 +135,8 @@ func (t *tag) Parse(children bool) error {
 	for len(t.Remaining) > 0 && t.Remaining[0] == '>' {
 		check := strings.TrimSpace(t.Remaining[1:])
 		switch {
+		case len(check) == 0:
+			return fmt.Errorf("Missing tag in nested tags for %s", t.Node.Code)
 		case check[0] == '%':
 			element := firstTextToken(check[1:])
 			check = check[len(element)+1:]
