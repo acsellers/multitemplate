@@ -30,8 +30,39 @@ func LoadHelpers(modules ...string) {
 	}
 }
 
+func GetHelpers(modules ...string) template.FuncMap {
+	tf := template.FuncMap{}
+	getFuncs(tf, coreFuncs)
+	for _, module := range modules {
+		switch module {
+		case "all":
+			getFuncs(tf, formTagFuncs)
+			getFuncs(tf, selectTagFuncs)
+			getFuncs(tf, generalFuncs)
+			getFuncs(tf, linkFuncs)
+			getFuncs(tf, assetFuncs)
+		case "forms":
+			getFuncs(tf, formTagFuncs)
+			getFuncs(tf, selectTagFuncs)
+		case "general":
+			getFuncs(tf, generalFuncs)
+		case "link":
+			getFuncs(tf, linkFuncs)
+		case "asset":
+			getFuncs(tf, assetFuncs)
+		}
+	}
+	return tf
+}
+
 func loadFuncs(tf template.FuncMap) {
 	for k, f := range tf {
 		multitemplate.LoadedFuncs[k] = f
+	}
+}
+
+func getFuncs(host, source template.FuncMap) {
+	for k, f := range source {
+		host[k] = f
 	}
 }
