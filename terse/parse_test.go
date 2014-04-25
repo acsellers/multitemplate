@@ -479,6 +479,12 @@ input type=$t`,
 		Content:  `span name='first_{{ printf "%v_name" 'a' }}' wat`,
 		Expected: `<span name="first_97_name">wat</span>`,
 	},
+	parseTest{
+		Name:     "JS Filter",
+		Content:  ":js\n  var name=\"{{.}}\";\n  alert('here');",
+		Data:     "Andrew\";alert('XSS');\"",
+		Expected: `<script type="text/javascript">var name="Andrew\x22;alert(\x27XSS\x27);\x22";alert('here');</script>`,
+	},
 }
 
 type parseTest struct {

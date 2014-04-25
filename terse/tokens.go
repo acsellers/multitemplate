@@ -216,13 +216,17 @@ func (t *token) Compile(prefix string) []parse.Node {
 			if len(content) > 0 {
 				content = content[1:]
 			}
-			converted, _ := filter(content)
-			return []parse.Node{
-				&parse.TextNode{
-					NodeType: parse.NodeText,
-					Text:     []byte(converted),
-					Pos:      parse.Pos(t.Pos),
-				},
+			converted, interpolate := filter(content)
+			if interpolate {
+				return textNodes(converted, t.Rsc, t.Pos)
+			} else {
+				return []parse.Node{
+					&parse.TextNode{
+						NodeType: parse.NodeText,
+						Text:     []byte(converted),
+						Pos:      parse.Pos(t.Pos),
+					},
+				}
 			}
 		}
 	} else {
