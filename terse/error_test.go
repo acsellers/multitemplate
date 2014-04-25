@@ -83,6 +83,22 @@ var errorTests = []errorTest{
 		Name:   "Bad function name for if",
 		Source: "&asdfasdfsafd\n  no",
 	},
+	errorTest{
+		Name:   "Bad interpolated code 1",
+		Source: "asdf {{ asdfasdf }}",
+	},
+	errorTest{
+		Name:   "Bad interpolated code 2",
+		Source: "asdf\n  {{ asdfasdf }}",
+	},
+	errorTest{
+		Name:   "Bad interpolated code 3",
+		Source: "asdf\n  {{ {}{}} }}",
+	},
+	errorTest{
+		Name:   "Bad interpolated code 3",
+		Source: "asdf}} {{  }}",
+	},
 }
 
 type errorTest struct {
