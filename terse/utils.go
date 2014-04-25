@@ -58,7 +58,7 @@ func surround(s string) string {
 	}
 	return LeftDelim + s + RightDelim
 }
-func actionNode(code string, rsc *resources) (*parse.ActionNode, error) {
+func actionNode(code string, rsc *resources, pos int) (*parse.ActionNode, error) {
 	t := template.New("mule").Funcs(template.FuncMap(rsc.funcs)).Delims(LeftDelim, RightDelim)
 	t, err := t.Parse(rsc.Prelude() + surround(code))
 	if err != nil {
@@ -79,9 +79,22 @@ func actionNode(code string, rsc *resources) (*parse.ActionNode, error) {
 				rsc.vars = append(rsc.vars, vs)
 			}
 		}
+		normalize(an, pos)
 		return an, nil
 	}
 	return nil, fmt.Errorf("Node could not be parsed")
+}
+
+func normalize(an *parse.ActionNode, pos int) {
+	drop := int(an.Pos)
+	an.Pos = parse.Pos(pos)
+	an.Pipe.Pos = parse.Pos(int(an.Pipe.Pos) - drop + pos)
+	for _, decl := range an.Pipe.Decl {
+		decl.Pos = parse.Pos(int(decl.Pos) - drop + pos)
+	}
+	for _, cmd := range an.Pipe.Cmds {
+		cmd.Pos = parse.Pos(int(cmd.Pos) - drop + pos)
+	}
 }
 
 func textNodes(text string, rsc *resources) []parse.Node {

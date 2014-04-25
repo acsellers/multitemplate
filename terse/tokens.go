@@ -60,7 +60,7 @@ func (t *token) Compile(prefix string) []parse.Node {
 				Pos:      parse.Pos(t.Pos),
 			}
 
-			an, e := actionNode(t.Content, t.Rsc)
+			an, e := actionNode(t.Content, t.Rsc, t.Pos)
 			if e != nil {
 				t.Rsc.err = e
 				return []parse.Node{}
@@ -87,14 +87,14 @@ func (t *token) Compile(prefix string) []parse.Node {
 				sm := doubleRangeRegex.FindStringSubmatch(t.Content)[1:]
 				vars = []string{sm[2], sm[1]}
 				t.Rsc.vars = append(t.Rsc.vars, sm[1:]...)
-				an, e = actionNode(sm[0], t.Rsc)
+				an, e = actionNode(sm[0], t.Rsc, t.Pos)
 			} else if singleRangeRegex.MatchString(t.Content) {
 				sm := singleRangeRegex.FindStringSubmatch(t.Content)[1:]
 				vars = sm[1:]
 				t.Rsc.vars = append(t.Rsc.vars, sm[1:]...)
-				an, e = actionNode(sm[0], t.Rsc)
+				an, e = actionNode(sm[0], t.Rsc, t.Pos)
 			} else {
-				an, e = actionNode(t.Content, t.Rsc)
+				an, e = actionNode(t.Content, t.Rsc, t.Pos)
 			}
 
 			if e != nil {
@@ -134,9 +134,9 @@ func (t *token) Compile(prefix string) []parse.Node {
 				sm := singleRangeRegex.FindStringSubmatch(t.Content)[1:]
 				vars = sm[1:]
 				t.Rsc.vars = append(t.Rsc.vars, sm[1:]...)
-				an, e = actionNode(sm[0], t.Rsc)
+				an, e = actionNode(sm[0], t.Rsc, t.Pos)
 			} else {
-				an, e = actionNode(t.Content, t.Rsc)
+				an, e = actionNode(t.Content, t.Rsc, t.Pos)
 			}
 			if e != nil {
 				return []parse.Node{}
@@ -165,7 +165,7 @@ func (t *token) Compile(prefix string) []parse.Node {
 			}
 
 		case ExecToken:
-			n, e := actionNode(t.Content, t.Rsc)
+			n, e := actionNode(t.Content, t.Rsc, t.Pos)
 			if e != nil {
 				t.Rsc.err = e
 				return []parse.Node{}
@@ -187,13 +187,13 @@ func (t *token) Compile(prefix string) []parse.Node {
 						})
 
 						if rv.NumIn() == 0 {
-							n, e := actionNode("end_"+in.Ident, t.Rsc)
+							n, e := actionNode("end_"+in.Ident, t.Rsc, t.Pos)
 							if e != nil {
 								t.Rsc.err = e
 							}
 							na = append(na, n)
 						} else {
-							n, e := actionNode("end_"+strings.TrimSpace(t.Content), t.Rsc)
+							n, e := actionNode("end_"+strings.TrimSpace(t.Content), t.Rsc, t.Pos)
 							if e != nil {
 								t.Rsc.err = e
 							} else {
