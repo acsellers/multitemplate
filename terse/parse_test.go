@@ -469,6 +469,16 @@ input type=$t`,
 		Content:  "textarea(\n  data-template=\"checkbox\"\n  name=\"blah\"\n  )\n  blah\n",
 		Expected: "<textarea data-template=\"checkbox\" name=\"blah\">blah</textarea>",
 	},
+	parseTest{
+		Name:     "Interpolated attribute with quote marks",
+		Content:  `span name="first_{{ printf "%d_name" 4 }}" wat`,
+		Expected: `<span name="first_4_name">wat</span>`,
+	},
+	parseTest{
+		Name:     "Interpolated attribute with single quote marks",
+		Content:  `span name='first_{{ printf "%v_name" 'a' }}' wat`,
+		Expected: `<span name="first_97_name">wat</span>`,
+	},
 }
 
 type parseTest struct {

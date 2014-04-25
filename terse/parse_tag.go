@@ -170,6 +170,12 @@ func (t *tag) parseAttribute(attr string) error {
 		if i == 0 {
 			return fmt.Errorf("Empty double quotes for attribute %s in %s", attr, t.Node.Code)
 		}
+		if strings.Contains(t.Source[1:1+i], LeftDelim) && !strings.Contains(t.Source[1:1+1], RightDelim) {
+			di := strings.Index(t.Source[1+i:], RightDelim)
+			if di != -1 {
+				i += di + strings.Index(t.Source[1+i+di:], "\"")
+			}
+		}
 		t.Attrs[attr] = t.Source[1 : 1+i]
 		t.Source = t.Source[2+len(t.Attrs[attr]):]
 	case '\'':
@@ -179,6 +185,12 @@ func (t *tag) parseAttribute(attr string) error {
 		}
 		if i == 0 {
 			return fmt.Errorf("Empty single quotes for attribute %s in %s", attr, t.Node.Code)
+		}
+		if strings.Contains(t.Source[1:1+i], LeftDelim) && !strings.Contains(t.Source[1:1+1], RightDelim) {
+			di := strings.Index(t.Source[1+i:], RightDelim)
+			if di != -1 {
+				i += di + strings.Index(t.Source[1+i+di:], "'")
+			}
 		}
 		t.Attrs[attr] = t.Source[1 : 1+i]
 		t.Source = t.Source[2+len(t.Attrs[attr]):]
