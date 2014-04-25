@@ -6,6 +6,11 @@ import (
 )
 
 func strippedPrefix(code, prefix string) bool {
+	tc := strings.TrimSpace(code)
+	return strings.HasPrefix(tc, prefix) && len(tc) > len(prefix)
+}
+
+func strippedBegin(code, prefix string) bool {
 	return strings.HasPrefix(strings.TrimSpace(code), prefix)
 }
 
@@ -20,7 +25,7 @@ func firstTextToken(code string) string {
 }
 
 func doctypeCode(code string) bool {
-	return strippedPrefix(code, "!!")
+	return strippedBegin(code, "!!")
 }
 
 func execCode(code string) bool {
@@ -41,7 +46,7 @@ func commentCode(code string) bool {
 
 func tagCode(code string) bool {
 	_, ok := ValidElements[firstTextToken(code)]
-	return ok || (code[0] == '%' && len(code) > 1)
+	return ok || strippedPrefix(code, "%")
 }
 
 func filterCode(code string) bool {

@@ -64,7 +64,6 @@ func compileTokens(ts []*token, prefix string) []parse.Node {
 							Nodes:    en,
 						}
 					}
-
 				case ElseIfToken:
 					if ln, ok := hold[0].(*parse.IfNode); ok {
 						ln.ElseList = &parse.ListNode{

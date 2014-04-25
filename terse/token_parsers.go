@@ -216,11 +216,19 @@ func extendToken(node *rawNode) (*token, error) {
 
 func yieldToken(node *rawNode) (*token, error) {
 	parentName := firstTextToken(strings.TrimPrefix(node.Code, "@"))
-	return &token{
-		Type:    ExecToken,
-		Pos:     node.Pos,
-		Content: fmt.Sprintf("yield \"%s\"", parentName),
-	}, nil
+	if parentName == "" {
+		return &token{
+			Type:    ExecToken,
+			Pos:     node.Pos,
+			Content: fmt.Sprintf("yield", parentName),
+		}, nil
+	} else {
+		return &token{
+			Type:    ExecToken,
+			Pos:     node.Pos,
+			Content: fmt.Sprintf("yield \"%s\"", parentName),
+		}, nil
+	}
 }
 
 func ifToken(node *rawNode) (*token, error) {
