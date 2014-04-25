@@ -51,9 +51,9 @@ func (t *token) Compile(prefix string) []parse.Node {
 	if t.Content != "" {
 		switch t.Type {
 		case TextToken:
-			return textNodes(prefix+t.Content, t.Rsc)
+			return textNodes(prefix+t.Content, t.Rsc, t.Pos)
 		case HTMLToken:
-			return textNodes(prefix+t.Content, t.Rsc)
+			return textNodes(prefix+t.Content, t.Rsc, t.Pos)
 		case IfToken:
 			bn := parse.BranchNode{
 				NodeType: parse.NodeIf,
@@ -106,6 +106,7 @@ func (t *token) Compile(prefix string) []parse.Node {
 					&parse.VariableNode{
 						NodeType: parse.NodeVariable,
 						Ident:    strings.Split(vd, "."),
+						Pos:      parse.Pos(t.Pos),
 					},
 				)
 			}
@@ -147,6 +148,7 @@ func (t *token) Compile(prefix string) []parse.Node {
 					&parse.VariableNode{
 						NodeType: parse.NodeVariable,
 						Ident:    strings.Split(vd, "."),
+						Pos:      parse.Pos(t.Pos),
 					},
 				)
 			}
@@ -184,6 +186,7 @@ func (t *token) Compile(prefix string) []parse.Node {
 						na = append(na, &parse.TextNode{
 							NodeType: parse.NodeText,
 							Text:     []byte("\n"),
+							Pos:      parse.Pos(t.Pos),
 						})
 
 						if rv.NumIn() == 0 {
@@ -218,6 +221,7 @@ func (t *token) Compile(prefix string) []parse.Node {
 				&parse.TextNode{
 					NodeType: parse.NodeText,
 					Text:     []byte(converted),
+					Pos:      parse.Pos(t.Pos),
 				},
 			}
 		}

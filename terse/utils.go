@@ -97,7 +97,7 @@ func normalize(an *parse.ActionNode, pos int) {
 	}
 }
 
-func textNodes(text string, rsc *resources) []parse.Node {
+func textNodes(text string, rsc *resources, pos int) []parse.Node {
 	t := template.New("mule").Funcs(template.FuncMap(rsc.funcs)).Delims(LeftDelim, RightDelim)
 	t, err := t.Parse(rsc.Prelude() + text)
 	if err != nil {
@@ -106,8 +106,21 @@ func textNodes(text string, rsc *resources) []parse.Node {
 	}
 
 	ln := t.Tree.Root.Nodes[len(rsc.vars):]
+	drop := int(ln[0].Position())
 	for _, n := range ln {
+		setPos(n, int(n.Position())-drop+pos)
 		rsc.UpdateVars(n)
 	}
 	return ln
+}
+
+func setPos(n parse.Node, pos int) {
+	switch an := n.(type) {
+	case *parse.ActionNode:
+		an.Pos = parse.Pos(pos)
+	case *parse.TextNode:
+		an.Pos = parse.Pos(pos)
+	case *parse.TemplateNode:
+		an.Pos = parse.Pos(pos)
+	}
 }
