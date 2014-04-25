@@ -40,13 +40,16 @@ func (rn rawNode) Print(prefix string) string {
 func scan(src string) rawTree {
 	s := bufio.NewScanner(strings.NewReader(src))
 	rt := rawTree{}
+	var pos, nextPos int
 	for s.Scan() {
+		pos = nextPos
 		line := s.Text()
+		nextPos += 1 + len(line)
 		if blankLine(line) {
 			continue
 		}
 		if unindentedLine(line) || len(rt.Children) == 0 {
-			rt.Children = append(rt.Children, &rawNode{Code: line})
+			rt.Children = append(rt.Children, &rawNode{Code: line, Pos: pos})
 			continue
 		}
 		current := rt.Children[len(rt.Children)-1]
@@ -55,7 +58,7 @@ func scan(src string) rawTree {
 			current = current.Children[len(current.Children)-1]
 			line = unindentLine(line)
 		}
-		current.Children = append(current.Children, &rawNode{Code: line})
+		current.Children = append(current.Children, &rawNode{Code: line, Pos: pos})
 	}
 	return rt
 }
