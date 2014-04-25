@@ -3,13 +3,9 @@
   Helpers is a package that adds a set of functions to multitemplate
   to simplify various common html operations. It is organized into a
   modules that are loaded using the LoadHelpers function. All modules
-  depend on a "core" module that will always be loaded.
-
-  Current Modules are: "forms"
-
-  Upcoming Modules are: "js", "assets", "form_builder",
-
-  Meta-Modules are: "all"
+  depend on a "core" module that will always be loaded. The modules may
+  be all be loaded by asking for the "all" module, or they can be loaded
+  by their names, which are "form", "general", "link" and "asset".
 
   Core functions
 
