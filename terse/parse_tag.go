@@ -31,7 +31,7 @@ type tag struct {
 	Enclosing bool
 }
 
-var attrStartRegex = regexp.MustCompile(`^([a-zA-Z0-9]+)=`)
+var attrStartRegex = regexp.MustCompile(`^([a-zA-Z0-9_-]+)=`)
 
 func (t *tag) Parse(children bool) error {
 	t.Enclosing = children
@@ -59,73 +59,32 @@ func (t *tag) Parse(children bool) error {
 
 	if len(t.Source) > 0 && t.Source[0] == '(' {
 		fmt.Println("Multi line")
+		for _, child := range t.Node.Children {
+			if attrStartRegex.MatchString(strings.TrimSpace(child.Code)) {
+				t.Source = child.Code
+				e := t.parseAttributes()
+				if e != nil {
+					return e
+				}
+			} else if strings.HasPrefix(strings.TrimSpace(child.Code), ")") {
+				t.Node.Children = t.Node.Children[1:]
+				t.Remaining = strings.TrimSpace(child.Code)[1:]
+				break
+			}
+
+			t.Node.Children = t.Node.Children[1:]
+			if strings.HasPrefix(strings.TrimSpace(t.Source), ")") {
+				t.Remaining = strings.TrimSpace(t.Source)[1:]
+				break
+			}
+			if t.Remaining != "" {
+				break
+			}
+		}
 	} else if attrStartRegex.MatchString(strings.TrimSpace(t.Source)) {
-		for attrStartRegex.MatchString(strings.TrimSpace(t.Source)) {
-			t.Source = strings.TrimSpace(t.Source)
-			attr := attrStartRegex.FindStringSubmatch(t.Source)[1]
-			t.Source = t.Source[len(attr)+1:]
-			if len(t.Source) == 0 {
-				return fmt.Errorf("Blank attribute value for attribute %s in %s", attr, t.Node.Code)
-			}
-			switch t.Source[0] {
-			case '"':
-				i := strings.Index(t.Source[1:], "\"")
-				if i == -1 {
-					return fmt.Errorf("Unclosed double quotes for attribute %s in %s", attr, t.Node.Code)
-				}
-				if i == 0 {
-					return fmt.Errorf("Empty double quotes for attribute %s in %s", attr, t.Node.Code)
-				}
-				t.Attrs[attr] = t.Source[1 : 1+i]
-				t.Source = t.Source[2+len(t.Attrs[attr]):]
-			case '\'':
-				i := strings.Index(t.Source[1:], "'")
-				if i == -1 {
-					return fmt.Errorf("Unclosed single quotes for attribute %s in %s", attr, t.Node.Code)
-				}
-				if i == 0 {
-					return fmt.Errorf("Empty single quotes for attribute %s in %s", attr, t.Node.Code)
-				}
-				t.Attrs[attr] = t.Source[1 : 1+i]
-				t.Source = t.Source[2+len(t.Attrs[attr]):]
-			case '(':
-				i := strings.Index(t.Source[1:], ")")
-				if i == -1 {
-					return fmt.Errorf("Unclosed parentheses for attribute %s in %s", attr, t.Node.Code)
-				}
-				if i == 0 {
-					return fmt.Errorf("Empty parentheses for attribute %s in %s", attr, t.Node.Code)
-				}
-				t.DynAttrs[attr] = t.Source[1 : 1+i]
-				t.Source = t.Source[2+len(t.DynAttrs[attr]):]
-			case '$':
-				index := strings.Index(t.Source[1:], " ")
-				if index == -1 {
-					t.DynAttrs[attr] = t.Source
-					t.Source = ""
-				} else {
-					t.DynAttrs[attr] = t.Source[:index]
-					t.Source = t.Source[index:]
-				}
-			case '.':
-				index := strings.Index(t.Source, " ")
-				if index == -1 {
-					t.DynAttrs[attr] = t.Source
-					t.Source = ""
-				} else {
-					t.DynAttrs[attr] = t.Source[:index]
-					t.Source = t.Source[index:]
-				}
-			default:
-				index := strings.Index(t.Source[1:], " ")
-				if index == -1 {
-					t.DynAttrs[attr] = t.Source
-					t.Source = ""
-				} else {
-					t.DynAttrs[attr] = t.Source[:index]
-					t.Source = t.Source[index:]
-				}
-			}
+		e := t.parseAttributes()
+		if e != nil {
+			return e
 		}
 	}
 	t.Remaining = t.Source
@@ -182,6 +141,84 @@ func (t *tag) Start() string {
 	}
 
 	return tc
+}
+
+func (t *tag) parseAttributes() error {
+	for attrStartRegex.MatchString(strings.TrimSpace(t.Source)) {
+		t.Source = strings.TrimSpace(t.Source)
+		attr := attrStartRegex.FindStringSubmatch(t.Source)[1]
+		t.Source = t.Source[len(attr)+1:]
+		if len(t.Source) == 0 {
+			return fmt.Errorf("Blank attribute value for attribute %s in %s", attr, t.Node.Code)
+		}
+		err := t.parseAttribute(attr)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+func (t *tag) parseAttribute(attr string) error {
+	switch t.Source[0] {
+	case '"':
+		i := strings.Index(t.Source[1:], "\"")
+		if i == -1 {
+			return fmt.Errorf("Unclosed double quotes for attribute %s in %s", attr, t.Node.Code)
+		}
+		if i == 0 {
+			return fmt.Errorf("Empty double quotes for attribute %s in %s", attr, t.Node.Code)
+		}
+		t.Attrs[attr] = t.Source[1 : 1+i]
+		t.Source = t.Source[2+len(t.Attrs[attr]):]
+	case '\'':
+		i := strings.Index(t.Source[1:], "'")
+		if i == -1 {
+			return fmt.Errorf("Unclosed single quotes for attribute %s in %s", attr, t.Node.Code)
+		}
+		if i == 0 {
+			return fmt.Errorf("Empty single quotes for attribute %s in %s", attr, t.Node.Code)
+		}
+		t.Attrs[attr] = t.Source[1 : 1+i]
+		t.Source = t.Source[2+len(t.Attrs[attr]):]
+	case '(':
+		i := strings.Index(t.Source[1:], ")")
+		if i == -1 {
+			return fmt.Errorf("Unclosed parentheses for attribute %s in %s", attr, t.Node.Code)
+		}
+		if i == 0 {
+			return fmt.Errorf("Empty parentheses for attribute %s in %s", attr, t.Node.Code)
+		}
+		t.DynAttrs[attr] = t.Source[1 : 1+i]
+		t.Source = t.Source[2+len(t.DynAttrs[attr]):]
+	case '$':
+		index := strings.Index(t.Source[1:], " ")
+		if index == -1 {
+			t.DynAttrs[attr] = t.Source
+			t.Source = ""
+		} else {
+			t.DynAttrs[attr] = t.Source[:index]
+			t.Source = t.Source[index:]
+		}
+	case '.':
+		index := strings.Index(t.Source, " ")
+		if index == -1 {
+			t.DynAttrs[attr] = t.Source
+			t.Source = ""
+		} else {
+			t.DynAttrs[attr] = t.Source[:index]
+			t.Source = t.Source[index:]
+		}
+	default:
+		index := strings.Index(t.Source[1:], " ")
+		if index == -1 {
+			t.DynAttrs[attr] = t.Source
+			t.Source = ""
+		} else {
+			t.DynAttrs[attr] = t.Source[:index]
+			t.Source = t.Source[index:]
+		}
+	}
+	return nil
 }
 
 func (t *tag) Close() *token {

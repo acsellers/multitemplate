@@ -464,6 +464,11 @@ input type=$t`,
 		Content:  "^]",
 		Expected: "^]",
 	},
+	parseTest{
+		Name:     "Multi-line attributes",
+		Content:  "textarea(\n  data-template=\"checkbox\"\n  name=\"blah\"\n  )\n  blah\n",
+		Expected: "<textarea data-template=\"checkbox\" name=\"blah\">blah</textarea>",
+	},
 }
 
 type parseTest struct {
