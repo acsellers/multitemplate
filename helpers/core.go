@@ -25,8 +25,14 @@ var coreFuncs = template.FuncMap{
 	},
 }
 
+// AttrList is created by "attrs" or "data". Data just prepends
+// "data-" to the keys passed in. You can create Attr instances
+// in your code and then pass them to helpers functions.
 type AttrList map[string]interface{}
 
+// Attr is the type returned by the "attr" helper function. You can
+// create Attr instances in your code and then pass them to helpers
+// functions.
 type Attr struct {
 	Name  string
 	Value interface{}

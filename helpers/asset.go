@@ -91,6 +91,8 @@ Example AppInfo
 */
 var AppInfo = AssetInfo{}
 
+// FullLink will determine whether the url given is a full path
+// and if not will add the root url for the app to the path.
 func (ai AssetInfo) FullLink(path string) string {
 	tu, _ := url.Parse(path)
 	if tu.Host == "" {
@@ -100,6 +102,8 @@ func (ai AssetInfo) FullLink(path string) string {
 	return tu.String()
 }
 
+// AssetLink takes a path and a prefix, then puts them
+// together without doubling up on /'s
 func (ai AssetInfo) AssetLink(path, prefix string) string {
 	tu, _ := url.Parse(path)
 	// Use relative urls for local urls
@@ -117,10 +121,14 @@ func (ai AssetInfo) AssetLink(path, prefix string) string {
 	return tu.String()
 }
 
+// ImageLink returns a link for the filename, you must include
+// the extension for the file (png, jpg, gif).
 func (ai AssetInfo) ImageLink(filename string) string {
 	return ai.AssetLink(filename, ai.ImageRelative)
 }
 
+// JavascriptLink returns a link for the filename, if you do
+// not include the .js extension it will be appended for you.
 func (ai AssetInfo) JavascriptLink(filename string) string {
 	if filepath.Ext(filename) != ".js" {
 		filename += ".js"
@@ -128,6 +136,8 @@ func (ai AssetInfo) JavascriptLink(filename string) string {
 	return ai.AssetLink(filename, ai.JavascriptRelative)
 }
 
+// StylesheetLink returns a link for the filename, if you do
+// not include the .css extension, it will be appended.
 func (ai AssetInfo) StylesheetLink(filename string) string {
 	if filepath.Ext(filename) != ".css" {
 		filename += ".css"

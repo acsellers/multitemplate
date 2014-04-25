@@ -58,7 +58,7 @@ func TestOptions(t *testing.T) {
 
 func TestGroupOptions(t *testing.T) {
 	Within(t, func(test *Test) {
-		f := selectTagFuncs["group_options"].(func(string, OptionList) OptionGroup)
+		f := selectTagFuncs["group_options"].(func(string, ...OptionLike) OptionGroup)
 		r := f("wat", OptionList{Option{"a", "b"}})
 		test.AreEqual(r.ToHTML(), `<optgroup label="wat"><option value="b">a</option></optgroup>`)
 	})

@@ -36,6 +36,10 @@ var selectTagFuncs = template.FuncMap{
 				})
 			case Option:
 				ol = append(ol, av)
+			case OptionLike:
+				for _, o := range av.Options() {
+					ol = append(ol, o)
+				}
 			default:
 				vs := fmt.Sprint(val)
 				ol = append(ol, Option{
@@ -46,7 +50,7 @@ var selectTagFuncs = template.FuncMap{
 		}
 		return ol
 	},
-	"group_options": func(label string, ol OptionList) OptionGroup {
+	"group_options": func(label string, ol ...OptionLike) OptionGroup {
 		options := []Option{}
 		for _, oi := range ol {
 			options = append(options, oi.Options()...)
