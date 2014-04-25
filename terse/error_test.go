@@ -104,9 +104,13 @@ var errorTests = []errorTest{
 		Source: "?!?",
 	},
 	errorTest{
-		Name:     "Weird if statement",
+		Name:     "No attribute if statement",
 		Source:   "html(",
 		Contains: "Missing nested attributes",
+	},
+	errorTest{
+		Name:   "Bad range statement",
+		Source: "&nothere\n  = .",
 	},
 }
 
