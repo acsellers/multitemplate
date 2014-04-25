@@ -58,7 +58,9 @@ func (t *tag) Parse(children bool) error {
 	}
 
 	if len(t.Source) > 0 && t.Source[0] == '(' {
-		fmt.Println("Multi line")
+		if len(t.Node.Children) == 0 {
+			return fmt.Errorf("Missing nested attributes for %s", t.Node.Code)
+		}
 		for _, child := range t.Node.Children {
 			if attrStartRegex.MatchString(strings.TrimSpace(child.Code)) {
 				t.Source = child.Code

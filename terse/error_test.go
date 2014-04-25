@@ -103,6 +103,11 @@ var errorTests = []errorTest{
 		Name:   "Weird if statement",
 		Source: "?!?",
 	},
+	errorTest{
+		Name:     "Weird if statement",
+		Source:   "html(",
+		Contains: "Missing nested attributes",
+	},
 }
 
 type errorTest struct {
