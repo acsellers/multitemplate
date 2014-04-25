@@ -69,7 +69,14 @@ func (t *tag) Parse(children bool) error {
 				t.Attrs[attr] = t.Source[1 : 1+strings.Index(t.Source[1:], "\"")]
 				t.Source = t.Source[2+len(t.Attrs[attr]):]
 			case '\'':
-				t.Attrs[attr] = t.Source[1 : 1+strings.Index(t.Source[1:], "'")]
+				i := strings.Index(t.Source[1:], "'")
+				if i == -1 {
+					return fmt.Errorf("Unclosed single quotes for attribute %s in %s", attr, t.Node.Code)
+				}
+				if i == 0 {
+					return fmt.Errorf("Empty single quotes for attribute %s in %s", attr, t.Node.Code)
+				}
+				t.Attrs[attr] = t.Source[1 : 1+i]
 				t.Source = t.Source[2+len(t.Attrs[attr]):]
 			case '(':
 				i := strings.Index(t.Source[1:], ")")

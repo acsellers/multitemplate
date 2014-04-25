@@ -27,9 +27,19 @@ var errorTests = []errorTest{
 		Contains: "Unclosed parentheses",
 	},
 	errorTest{
-		Name:     "Unclosed attribute parentheses",
+		Name:     "Empty attribute parentheses",
 		Source:   "html name=()",
 		Contains: "Empty parentheses",
+	},
+	errorTest{
+		Name:     "Unclosed attribute single quotes ",
+		Source:   "html name='link_to",
+		Contains: "Unclosed single quotes",
+	},
+	errorTest{
+		Name:     "Empty attribute single quotes",
+		Source:   "html name=''",
+		Contains: "Empty single quotes",
 	},
 }
 
