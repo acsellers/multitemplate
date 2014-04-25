@@ -44,6 +44,9 @@ var assetFuncs = template.FuncMap{
 		}
 		return template.HTML(content)
 	},
+	"root_url": func(link string) template.HTML {
+		return template.HTML(AppInfo.RootURL.String())
+	},
 	"rss_link": func(link string) template.HTML {
 		al := AttrList{
 			"rel":   "alternate",

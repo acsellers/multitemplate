@@ -180,6 +180,8 @@
 
   - javascript_link: Returns the script tags for one or more javascript files in JavascriptRoot
 
+  - root_url: Return the root url set in the AppInfo
+
   - rss_link: Returns a link tag for a rss feed based on the RootURL + the path you send.
 
   - stylesheet_link: Return the link tags for one or more stylesheets base on the StylesheetRoot + paths given.
