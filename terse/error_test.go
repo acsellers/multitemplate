@@ -99,6 +99,10 @@ var errorTests = []errorTest{
 		Name:   "Bad interpolated code 3",
 		Source: "asdf}} {{  }}",
 	},
+	errorTest{
+		Name:   "Weird if statement",
+		Source: "?!?",
+	},
 }
 
 type errorTest struct {
