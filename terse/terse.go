@@ -20,7 +20,11 @@ func init() {
 type multiStruct struct{}
 
 func (*multiStruct) ParseTemplate(name, src string, funcs template.FuncMap) (map[string]*parse.Tree, error) {
-	return compile(name, funcs, tokenize(scan(src)))
+	tt := tokenize(scan(src))
+	if tt.err != nil {
+		return map[string]*parse.Tree{}, tt.err
+	}
+	return compile(name, funcs, tt)
 }
 func (*multiStruct) String() string {
 	return "terse: HTML Templating gone concise"

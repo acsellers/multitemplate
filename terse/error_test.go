@@ -1,6 +1,7 @@
 package terse
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/acsellers/multitemplate"
@@ -16,6 +17,10 @@ func TestErrors(t *testing.T) {
 		if e == nil {
 			t.Error("No Error:", test.Name)
 			continue
+		} else if test.Contains != "" {
+			if !strings.Contains(e.Error(), test.Contains) {
+				t.Error("Incorrect error for", test.Name, "Expected:", test.Contains, "Was:", e)
+			}
 		}
 	}
 }
@@ -54,7 +59,7 @@ var errorTests = []errorTest{
 	errorTest{
 		Name:     "Blank attribute variable",
 		Source:   "html name=",
-		Contains: "Empty attribute",
+		Contains: "Blank attribute",
 	},
 	errorTest{
 		Name:     "Headless Totem Pole",
@@ -64,6 +69,19 @@ var errorTests = []errorTest{
 	errorTest{
 		Name:   "Malformed code test",
 		Source: "= link_to (",
+	},
+	errorTest{
+		Name:     "Multiple errors test",
+		Source:   "head >\n= link_to (",
+		Contains: "Missing tag",
+	},
+	errorTest{
+		Name:   "Bad function name for if",
+		Source: "?asdfasdfsafd\n  no",
+	},
+	errorTest{
+		Name:   "Bad function name for if",
+		Source: "&asdfasdfsafd\n  no",
 	},
 }
 
