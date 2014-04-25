@@ -394,6 +394,16 @@ input type=$t`,
 		Content:  "%",
 		Expected: "%",
 	},
+	parseTest{
+		Name:     "Blank Yield",
+		Content:  "@",
+		Expected: "",
+	},
+	parseTest{
+		Name:     "Equals sign",
+		Content:  "=",
+		Expected: "=",
+	},
 }
 
 type parseTest struct {
