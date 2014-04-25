@@ -62,7 +62,7 @@ func blockCode(code string) bool {
 	line := strippedLine(code)
 	if line[0] == '[' {
 		ftt := firstTextToken(line[1:])
-		return line[len(ftt)+1] == ']'
+		return len(line) > len(ftt)+1 && len(ftt) > 0 && line[len(ftt)+1] == ']'
 	}
 	return false
 }

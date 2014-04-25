@@ -414,6 +414,26 @@ input type=$t`,
 		Content:  "//",
 		Expected: "",
 	},
+	parseTest{
+		Name:     "Cont, but actually verbatim",
+		Content:  "/=",
+		Expected: "=",
+	},
+	parseTest{
+		Name:     "Malformed Block 1",
+		Content:  "[name",
+		Expected: "[name",
+	},
+	parseTest{
+		Name:     "Malformed Block 2",
+		Content:  "[",
+		Expected: "[",
+	},
+	parseTest{
+		Name:     "Malformed Block 2",
+		Content:  "[]",
+		Expected: "[]",
+	},
 }
 
 type parseTest struct {
