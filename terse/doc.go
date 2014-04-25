@@ -392,6 +392,13 @@ consistent with the surrounding text.
     $(document).ready(function{ setup_ajax(); });
   </script>
 
+Currently there are 3 built-in filters, a plain filter, a javascript filter
+(also aliased as js), and a css filter. The Plain filter will take any nested
+lines and push the straight out to the the text/template parser. The javascript
+filter will wrap the text in a script tag, then send it to be processed by the
+text/template parser. Similarly, the css filter will wrap the text in a style
+tag, then send it to the parser.
+
 Notes
 
 The format of the documentation and some examples were inspired by
