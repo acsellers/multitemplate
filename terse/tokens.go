@@ -62,6 +62,7 @@ func (t *token) Compile(prefix string) []parse.Node {
 
 			an, e := actionNode(t.Content, t.Rsc)
 			if e != nil {
+				t.Rsc.err = e
 				return []parse.Node{}
 			}
 			bn.Pipe = an.Pipe
@@ -97,6 +98,7 @@ func (t *token) Compile(prefix string) []parse.Node {
 			}
 
 			if e != nil {
+				t.Rsc.err = e
 				return []parse.Node{}
 			}
 			for _, vd := range vars {
@@ -165,6 +167,7 @@ func (t *token) Compile(prefix string) []parse.Node {
 		case ExecToken:
 			n, e := actionNode(t.Content, t.Rsc)
 			if e != nil {
+				t.Rsc.err = e
 				return []parse.Node{}
 			}
 			na := []parse.Node{n}
@@ -184,11 +187,16 @@ func (t *token) Compile(prefix string) []parse.Node {
 						})
 
 						if rv.NumIn() == 0 {
-							n, _ := actionNode("end_"+in.Ident, t.Rsc)
+							n, e := actionNode("end_"+in.Ident, t.Rsc)
+							if e != nil {
+								t.Rsc.err = e
+							}
 							na = append(na, n)
 						} else {
 							n, e := actionNode("end_"+strings.TrimSpace(t.Content), t.Rsc)
-							if e == nil {
+							if e != nil {
+								t.Rsc.err = e
+							} else {
 								na = append(na, n)
 							}
 						}

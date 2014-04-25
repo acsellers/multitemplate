@@ -220,7 +220,7 @@ func yieldToken(node *rawNode) (*token, error) {
 		return &token{
 			Type:    ExecToken,
 			Pos:     node.Pos,
-			Content: fmt.Sprintf("yield", parentName),
+			Content: "yield",
 		}, nil
 	} else {
 		return &token{

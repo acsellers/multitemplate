@@ -11,6 +11,7 @@ import (
 type resources struct {
 	funcs ht.FuncMap
 	vars  []string
+	err   error
 }
 
 func (rsc *resources) Prelude() string {
@@ -87,7 +88,7 @@ func textNodes(text string, rsc *resources) []parse.Node {
 	t := template.New("mule").Funcs(template.FuncMap(rsc.funcs)).Delims(LeftDelim, RightDelim)
 	t, err := t.Parse(rsc.Prelude() + text)
 	if err != nil {
-		fmt.Println(err)
+		rsc.err = err
 		return nil
 	}
 

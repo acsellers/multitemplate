@@ -10,7 +10,8 @@ func compile(name string, funcs template.FuncMap, tt tokenTree) (map[string]*par
 		return map[string]*parse.Tree{}, tt.err
 	}
 
-	setResources(tt.roots, &resources{funcs: funcs})
+	r := &resources{funcs: funcs}
+	setResources(tt.roots, r)
 
 	pt := &parse.Tree{
 		Name: name,
@@ -21,7 +22,7 @@ func compile(name string, funcs template.FuncMap, tt tokenTree) (map[string]*par
 		},
 	}
 
-	return map[string]*parse.Tree{name: pt}, nil
+	return map[string]*parse.Tree{name: pt}, r.err
 }
 
 func setResources(t []*token, r *resources) {

@@ -61,6 +61,10 @@ var errorTests = []errorTest{
 		Source:   "html > head >",
 		Contains: "Missing tag",
 	},
+	errorTest{
+		Name:   "Malformed code test",
+		Source: "= link_to (",
+	},
 }
 
 type errorTest struct {
