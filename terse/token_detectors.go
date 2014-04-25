@@ -41,7 +41,7 @@ func commentCode(code string) bool {
 
 func tagCode(code string) bool {
 	_, ok := ValidElements[firstTextToken(code)]
-	return ok || code[0] == '%'
+	return ok || (code[0] == '%' && len(code) > 1)
 }
 
 func filterCode(code string) bool {

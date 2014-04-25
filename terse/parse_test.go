@@ -365,6 +365,35 @@ input type=$t`,
 		Content:  "table > tr > td Hello",
 		Expected: "<table><tr><td>Hello</td></tr></table>",
 	},
+	parseTest{
+		Name:     "Nested If/Else Statements",
+		Content:  "?true\n  ?false\n    1\n  !?\n    2\n!?\n  3",
+		Expected: "2",
+	},
+	parseTest{
+		Name: "Nested Else things",
+		Content: `?true
+  >func1
+    = .
+    news
+  !>
+    bad
+    wherever
+!?
+  unknown
+  iops`,
+		Expected: "asdf\nnews",
+		Funcs: template.FuncMap{
+			"func1": func() string {
+				return "asdf"
+			},
+		},
+	},
+	parseTest{
+		Name:     "Percentage Sign",
+		Content:  "%",
+		Expected: "%",
+	},
 }
 
 type parseTest struct {

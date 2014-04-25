@@ -65,7 +65,7 @@ func blankLine(line string) bool {
 }
 
 func unindentedLine(line string) bool {
-	return line[0:2] != "  " && line[0] != '\t'
+	return len(line) < 2 || (line[0:2] != "  " && line[0] != '\t')
 }
 
 func unindentLine(line string) string {

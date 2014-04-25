@@ -100,7 +100,11 @@ func commentToken(node *rawNode) (*token, error) {
 
 func tagToken(node *rawNode) (*token, error) {
 	t := &token{Type: TagToken}
-	o, r, c := parseTag(node.Code, len(node.Children) > 0)
+	tg, e := parseTag(node.Code, len(node.Children) > 0)
+	if e != nil {
+		return nil, e
+	}
+	o, r, c := tg.Open(), tg.Remaining, tg.Close()
 	t.Opening = []*token{o}
 	if r != "" {
 		node.Code = r
@@ -202,7 +206,7 @@ func execBlockToken(node *rawNode) (*token, error) {
 }
 
 func extendToken(node *rawNode) (*token, error) {
-	parentName := firstTextToken(strings.TrimPrefix(node.Code, "@@"))
+	parentName := strings.TrimSpace(strings.TrimPrefix(node.Code, "@@"))
 	return &token{
 		Type:    ExecToken,
 		Pos:     node.Pos,

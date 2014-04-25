@@ -6,15 +6,15 @@ import (
 	"strings"
 )
 
-func parseTag(tagCode string, children bool) (*token, string, *token) {
+func parseTag(tagCode string, children bool) (*tag, error) {
 	t := &tag{
 		Name:     "div",
 		Source:   tagCode,
 		Attrs:    make(map[string]string),
 		DynAttrs: make(map[string]string),
 	}
-	t.Parse(children)
-	return t.Open(), t.Remaining, t.Close()
+	e := t.Parse(children)
+	return t, e
 }
 
 type tag struct {
@@ -31,7 +31,7 @@ type tag struct {
 
 var attrStartRegex = regexp.MustCompile(`^([a-zA-Z0-9]+)=`)
 
-func (t *tag) Parse(children bool) {
+func (t *tag) Parse(children bool) error {
 	t.Enclosing = children
 	// pull percentage sign off
 	if t.Source[0] == '%' {
@@ -120,6 +120,7 @@ func (t *tag) Parse(children bool) {
 			t.ChildTags = append(t.ChildTags, element)
 		}
 	}
+	return nil
 }
 
 func (t *tag) Open() *token {
