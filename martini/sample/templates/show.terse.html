@@ -1,0 +1,10 @@
+h1.page-title= .Content.Key
+.row-fluid.row-shrunk
+  .span12
+    ?.Content.IsList
+      ul
+        &.Content.Contents
+          li
+            pre.redis-item= .
+    !?
+      %blockquote= .Content.Content
