@@ -41,6 +41,31 @@ _filters_
 // <script type=”text/javascript”> … </script>
 ```
 
+_defines_
+
+```
+::mini.html
+  html
+    head > title= .Title
+    body
+      @content
+[content]
+  Content
+
+/*
+  {{ define "mini.html" }}
+    <html>
+      <head><title>{{ .Title }}</title></head>
+      <body>{{ yield "content" }}</body>
+    </html>
+  {{ end }}
+
+  {{ block "content" }}
+    Content
+  {{ end_block }}
+*/
+```
+
 _yields_
 
 ```
