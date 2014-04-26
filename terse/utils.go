@@ -10,6 +10,7 @@ import (
 
 type resources struct {
 	funcs ht.FuncMap
+	tt    *tokenTree
 	vars  []string
 	err   error
 }

@@ -43,6 +43,8 @@ func codeTokenizer(code string) func(*rawNode) (*token, error) {
 		return verbatimToken
 	case tagCode(code):
 		return tagToken
+	case defineCode(code):
+		return defineToken
 	case filterCode(code):
 		return filterToken
 	case blockCode(code):

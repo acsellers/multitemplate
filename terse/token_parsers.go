@@ -354,6 +354,20 @@ func templateToken(node *rawNode) (*token, error) {
 	}
 	return t, nil
 }
+
+func defineToken(node *rawNode) (*token, error) {
+	children, e := childTokenize(node)
+	if e != nil {
+		return nil, e
+	}
+	return &token{
+		Type:     DefineToken,
+		Content:  strings.TrimSpace(strings.TrimPrefix(node.Code, "::")),
+		Pos:      node.Pos + 2,
+		Children: children,
+	}, nil
+}
+
 func textToken(node *rawNode) (*token, error) {
 	// simplest possible text
 	if len(node.Children) == 0 {

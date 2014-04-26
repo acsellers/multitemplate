@@ -8,6 +8,7 @@ import (
 
 type tokenTree struct {
 	roots []*token
+	defs  []*token
 	err   error
 }
 
@@ -42,6 +43,7 @@ const (
 	TemplateToken
 	FilterToken
 	FilterContentToken
+	DefineToken
 )
 
 func (t *token) Compile(prefix string) []parse.Node {
@@ -75,6 +77,8 @@ func (t *token) Compile(prefix string) []parse.Node {
 					Pipe:     an.Pipe,
 				},
 			)
+		case DefineToken:
+			t.Rsc.tt.defs = append(t.Rsc.tt.defs, t)
 		case TextToken:
 			return textNodes(prefix+t.Content, t.Rsc, t.Pos)
 		case HTMLToken:

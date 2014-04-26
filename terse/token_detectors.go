@@ -121,6 +121,10 @@ func idClassCode(code string) bool {
 	return strippedPrefix(code, ".") || strippedPrefix(code, "#")
 }
 
+func defineCode(code string) bool {
+	return strippedPrefix(code, "::")
+}
+
 func templateCode(code string) bool {
 	return strippedPrefix(code, ">>")
 }

@@ -2,6 +2,7 @@ package terse
 
 import (
 	"html/template"
+	"strings"
 	"text/template/parse"
 )
 
@@ -10,19 +11,33 @@ func compile(name string, funcs template.FuncMap, tt tokenTree) (map[string]*par
 		return map[string]*parse.Tree{}, tt.err
 	}
 
-	r := &resources{funcs: funcs}
+	r := &resources{funcs: funcs, tt: &tt}
 	setResources(tt.roots, r)
 
-	pt := &parse.Tree{
-		Name: name,
-		Root: &parse.ListNode{
-			NodeType: parse.NodeList,
-			Pos:      parse.Pos(0),
-			Nodes:    compileTokens(tt.roots, ""),
+	tmpls := map[string]*parse.Tree{
+		name: &parse.Tree{
+			Name: name,
+			Root: &parse.ListNode{
+				NodeType: parse.NodeList,
+				Pos:      parse.Pos(0),
+				Nodes:    compileTokens(tt.roots, ""),
+			},
 		},
 	}
 
-	return map[string]*parse.Tree{name: pt}, r.err
+	for _, def := range tt.defs {
+		tn := strings.TrimSpace(def.Content)
+		tmpls[tn] = &parse.Tree{
+			Name: tn,
+			Root: &parse.ListNode{
+				NodeType: parse.NodeList,
+				Pos:      parse.Pos(def.Pos),
+				Nodes:    compileTokens(def.Children, ""),
+			},
+		}
+	}
+
+	return tmpls, r.err
 }
 
 func setResources(t []*token, r *resources) {

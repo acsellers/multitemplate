@@ -503,10 +503,41 @@ input type=$t`,
 		Name: "Template call with Var",
 		Sources: map[string]string{
 			"mini":   "= .",
-			"master": "= $r := 123\n>>mini $r\n456",
+			"master": "= $r := 123\n>>\"mini\" $r\n456",
 		},
 		Template: "master",
 		Expected: "\n123\n456",
+	},
+	parseTest{
+		Name: "Define template",
+		Content: `::mini
+  56
+::master 
+  12
+  >>mini
+    `,
+		Template: "master",
+		Expected: "12\n56",
+	},
+	parseTest{
+		Name: "Define template",
+		Content: `::mini
+  head
+::master
+  html
+    >>mini
+    `,
+		Template: "master",
+		Expected: "<html><head /></html>",
+	},
+	parseTest{
+		Name: "Define template",
+		Content: `html
+  >>mini
+::mini
+  head`,
+		Template: "parse",
+		Expected: "<html><head /></html>",
 	},
 }
 

@@ -85,6 +85,45 @@ id/class shorthand here.
     Gopher Freeman
   </custom_element></td></tr></table>
 
+Template Calls
+
+Templates can be called easily using the >> operator. You may add the name
+of the template without quotes, unless the name would have spaces, in which
+case you should add quotes to the template name. Then the template call may
+have a space and a value declaraction (could be ., a $ variable, a function,
+a number, string, number, etc) where the value would be passed to the
+template. If you do not provide a value to the template, the dot operator will
+be assumed to be the value.
+
+  // Source
+  >>layouts/navigation.html
+
+  // Output
+  {{ template "layouts/navigation.html" . }}
+
+  // Source
+  >>"beta layouts/javascript defer.html" $modules
+
+  // Output
+  {{ template "beta layouts/javascript defer.html" $modules }}
+
+Define Statements
+
+Define statements start with two :'s, then the name for the template. Remember
+that variables from below the define will not be accessible in the define area.
+Also remember that a define statement will be pulled out and compiled during
+the compilation of the parent, and that we will use the name given for the
+template.
+
+  // Source
+  ::snippets/title.html
+    h1.title= .
+
+  // Output
+  {{ define "snippets.html" }}
+    <h1 class="title">{{ . }}</h1>
+  {{ end }}
+
 Class and Id Shorthand
 
 Id's and Class attributes may be specified in shorthand. If you do
