@@ -7,6 +7,7 @@
 
   import (
     "github.com/codegangsta/martini"
+    "github.com/cooldude/cache"
 
     // contians the multirender package.
     "github.com/acsellers/multitemplate/martini"
@@ -30,6 +31,8 @@
         ctx.SetContent("content", ok)
       }
     })
+
+    app.Run()
   }
 
 */
@@ -45,6 +48,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/acsellers/multitemplate"
 	"github.com/acsellers/multitemplate/helpers"
@@ -60,7 +64,9 @@ type Render interface {
 	XML(status int, v interface{})
 	// HTML render the template given by name, with the status and options
 	// given.
-	HTML(status int, name string, v interface{}, htmlOpt *Context)
+	HTML(status int, name string, htmlOpt *Context)
+	// Create a Context with default options set
+	NewContext() *Context
 	// Render the text to the output
 	Text(status int, text string)
 	// Write the given status to the Response
@@ -115,12 +121,11 @@ func Renderer(opt Options) martini.Handler {
 	mt := multitemplate.New("martini").Funcs(opt.Funcs)
 	var err error
 	mt = mt.Funcs(helpers.GetHelpers(opt.Helpers...))
-	mt, err = compile(opt, mt)
-	if err != nil {
-		fmt.Println(err)
-	}
+	mt, _ = compile(opt, mt)
 	return func(w http.ResponseWriter, r *http.Request, c martini.Context) {
 		if martini.Env == martini.Dev {
+			mt := multitemplate.New("martini").Funcs(opt.Funcs)
+			mt = mt.Funcs(helpers.GetHelpers(opt.Helpers...))
 			mt, err = compile(opt, mt)
 		}
 		c.MapTo(&renderer{w, r, mt, opt, err}, (*Render)(nil))
@@ -149,8 +154,12 @@ func compile(opt Options, mt *multitemplate.Template) (*multitemplate.Template, 
 	for _, dir := range opt.Directories {
 		mt.Base = dir
 		e := filepath.Walk(dir, func(path string, i os.FileInfo, e error) error {
-			if !i.IsDir() {
+			if !i.IsDir() && strings.Contains(path, "html") {
+				fmt.Println("Compiling file:", path)
 				_, err := mt.ParseFiles(path)
+				if err == nil {
+					fmt.Println("Successfully compiled file")
+				}
 				return err
 			}
 			return nil
@@ -207,24 +216,33 @@ func (r *renderer) XML(status int, v interface{}) {
 	r.Write(result)
 }
 func (r *renderer) HTML(status int, name string, htmlOpt *Context) {
-	ctx := multitemplate.NewContext(htmlOpt.RenderArgs)
+	var ctx *multitemplate.Context
+	if htmlOpt != nil {
+		ctx = multitemplate.NewContext(htmlOpt.RenderArgs)
+		if !htmlOpt.NoLayout {
+			ctx.Layout = htmlOpt.Layout
+		}
+		if len(htmlOpt.Yields) > 0 {
+			ctx.Yields = htmlOpt.Yields
+		}
+		if len(htmlOpt.blocks) > 0 {
+			ctx.Blocks = htmlOpt.blocks
+		}
+	} else {
+		ctx = multitemplate.NewContext(nil)
+		ctx.Layout = r.opt.DefaultLayout
+	}
 	ctx.Main = name
-	if !htmlOpt.NoLayout {
-		ctx.Layout = htmlOpt.Layout
-	}
-	if len(htmlOpt.Yields) > 0 {
-		ctx.Yields = htmlOpt.Yields
-	}
-	if len(htmlOpt.blocks) > 0 {
-		ctx.Blocks = htmlOpt.blocks
-	}
-
+	fmt.Println(r.mt.Lookup("layout.html").Tmpl.Tree.Root.String())
 	b := &bytes.Buffer{}
+	if r.mt == nil || r.mt.Tmpl == nil {
+		panic("here")
+	}
 	e := r.mt.ExecuteContext(b, ctx)
 	if e != nil {
 		http.Error(r, e.Error(), 500)
 	}
-
+	io.Copy(r, b)
 }
 
 func (r *renderer) Error(status int) {

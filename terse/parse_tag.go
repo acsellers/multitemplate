@@ -115,7 +115,7 @@ func (t *tag) Parse(children bool) error {
 
 func (t *tag) Open() *token {
 	tc := t.Start()
-	if t.Enclosing || t.Remaining != "" || len(t.ChildTags) > 0 {
+	if t.Enclosing || t.Remaining != "" || len(t.ChildTags) > 0 || t.Name == "script" {
 		tc += ">"
 		for _, tag := range t.ChildTags {
 			tc += "<" + tag + ">"
@@ -236,7 +236,7 @@ func (t *tag) parseAttribute(attr string) error {
 }
 
 func (t *tag) Close() *token {
-	if t.Enclosing || t.Remaining != "" || len(t.ChildTags) > 0 {
+	if t.Enclosing || t.Remaining != "" || len(t.ChildTags) > 0 || t.Name == "script" {
 		tc := "</" + t.Name + ">"
 		for _, tag := range t.ChildTags {
 			tc = "</" + tag + ">" + tc
