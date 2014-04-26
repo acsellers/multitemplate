@@ -39,6 +39,7 @@ const (
 	WithToken
 	ElseWithToken
 	TagToken
+	TemplateToken
 	FilterToken
 	FilterContentToken
 )
@@ -50,6 +51,30 @@ func (t *token) Compile(prefix string) []parse.Node {
 
 	if t.Content != "" {
 		switch t.Type {
+		case TemplateToken:
+			nodes := []parse.Node{}
+			if prefix != "" {
+				nodes = append(nodes,
+					&parse.TextNode{
+						NodeType: parse.NodeText,
+						Text:     []byte(prefix),
+						Pos:      parse.Pos(t.Pos),
+					},
+				)
+			}
+			an, e := actionNode(t.Children[0].Content, t.Rsc, t.Children[0].Pos)
+			if e != nil {
+				t.Rsc.err = e
+				return []parse.Node{}
+			}
+			return append(nodes,
+				&parse.TemplateNode{
+					Pos:      parse.Pos(t.Pos),
+					NodeType: parse.NodeTemplate,
+					Name:     t.Content,
+					Pipe:     an.Pipe,
+				},
+			)
 		case TextToken:
 			return textNodes(prefix+t.Content, t.Rsc, t.Pos)
 		case HTMLToken:

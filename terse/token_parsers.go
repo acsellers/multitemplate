@@ -320,6 +320,40 @@ func withElseToken(node *rawNode) (*token, error) {
 	return et, nil
 }
 
+func templateToken(node *rawNode) (*token, error) {
+	code := strings.TrimSpace(strings.TrimPrefix(node.Code, ">>"))
+
+	var name, remainder string
+	if code[0] == '"' {
+		parts := strings.SplitN(code[1:], "\"", 2)
+		name = parts[0]
+		if len(parts) == 2 {
+			remainder = parts[1]
+		}
+	} else {
+		parts := strings.SplitN(code, " ", 2)
+		name = parts[0]
+		if len(parts) == 2 {
+			remainder = parts[1]
+		}
+	}
+	if strings.TrimSpace(remainder) == "" {
+		remainder = "."
+	}
+	t := &token{
+		Type:    TemplateToken,
+		Pos:     node.Pos,
+		Content: name,
+		Children: []*token{
+			&token{
+				Type:    ExecToken,
+				Pos:     node.Pos + 2 + len(remainder),
+				Content: remainder,
+			},
+		},
+	}
+	return t, nil
+}
 func textToken(node *rawNode) (*token, error) {
 	// simplest possible text
 	if len(node.Children) == 0 {

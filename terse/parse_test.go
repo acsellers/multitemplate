@@ -490,6 +490,24 @@ input type=$t`,
 		Content:  "html\n\thead",
 		Expected: "<html><head /></html>",
 	},
+	parseTest{
+		Name: "Template call",
+		Sources: map[string]string{
+			"mini":   "mini me",
+			"master": "123\n>>mini\n456",
+		},
+		Template: "master",
+		Expected: "123\nmini me\n456",
+	},
+	parseTest{
+		Name: "Template call with Var",
+		Sources: map[string]string{
+			"mini":   "= .",
+			"master": "= $r := 123\n>>mini $r\n456",
+		},
+		Template: "master",
+		Expected: "\n123\n456",
+	},
 }
 
 type parseTest struct {
