@@ -127,6 +127,18 @@ var tableTests = []tableTest{
 	},
 
 	tableTest{
+		Name:        "Exec Block",
+		Description: "Exec block should execute the block in that space",
+		Expected:    "layout main",
+		Main:        "main",
+		Layout:      "layout",
+		Templates: map[string]string{
+			"layout": `layout {{ exec_block "block" }}default{{ end_block }}`,
+			"main":   `{{ block "block" }}main{{ end_block }}`,
+		},
+	},
+
+	tableTest{
 		Name:        "Extended Main Templates with Layouts",
 		Description: "Main template must be able to be yielded in a layout",
 		Expected:    "lay ext child end out",

@@ -80,6 +80,7 @@ func (pw *pouchWriter) Write(p []byte) (n int, err error) {
 
 		return len(p), nil
 	}
+
 	if len(pw.buffers) > 0 {
 		return pw.buffers[len(pw.buffers)-1].Write(p)
 	}

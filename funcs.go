@@ -107,8 +107,10 @@ func generateFuncs(t *Template) template.FuncMap {
 				return "<\"'.", e
 			} else if rb, ok := t.ctx.Blocks[name]; ok {
 				t.ctx.output.Nop(rb)
+				return "<\"'.", nil
+			} else {
+				return "", nil
 			}
-			return "<\"'.", nil
 		},
 		"define_block": func(name string) string {
 			t.ctx.output.Open(name)

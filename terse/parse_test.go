@@ -230,6 +230,16 @@ var parseTests = []parseTest{
 		Expected: "\n54321\n678",
 	},
 	parseTest{
+		Name: "Exec Block",
+		Sources: map[string]string{
+			"main":  "678\n$block]\n  12345\n678",
+			"child": "@@main\n[block]\n  54321",
+		},
+		Template: "child",
+		Expected: "678\n54321\n678",
+	},
+
+	parseTest{
 		Name: "Yield Block",
 		Sources: map[string]string{
 			"main":  "@block\n123",

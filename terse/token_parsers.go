@@ -185,7 +185,7 @@ func defineBlockToken(node *rawNode) (*token, error) {
 
 func execBlockToken(node *rawNode) (*token, error) {
 	t := &token{Type: BlockToken, Pos: node.Pos}
-	blockName := firstTextToken(strings.TrimPrefix(node.Code, "^"))
+	blockName := firstTextToken(strings.TrimPrefix(node.Code, "$"))
 	t.Opening = []*token{
 		&token{
 			Type:    ExecToken,
