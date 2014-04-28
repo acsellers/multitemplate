@@ -1,4 +1,4 @@
-trs: Terse html templating
+terse: concise html templating
 ==========================
 
 Terse is a syntax for writing templates using a syntax inspired by mustache and
