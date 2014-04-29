@@ -2,6 +2,7 @@ package bham
 
 import (
 	"bytes"
+	"html/template"
 	"testing"
 
 	. "github.com/acsellers/assert"
@@ -18,6 +19,22 @@ func TestTemplate(tst *testing.T) {
 			test.AreEqual(b.String(), simpleTest.Expected)
 		}
 	})
+}
+
+func TestVariable(t *testing.T) {
+	tmpl, e := multitemplate.New("vars").Funcs(template.FuncMap{"wat": func(string, string) string {
+		return "now"
+	}}).Parse("vars", `= $f := "123"
+= wat $f "nana"`, "bham")
+	if e != nil {
+		t.Log("Parse Error: ", e)
+		t.Fail()
+	}
+	b := &bytes.Buffer{}
+	tmpl.Execute(b, nil)
+	if b.String() != "now" {
+		t.Errorf("Expected: '123', found: '%s'", b.String())
+	}
 }
 
 type templateTest struct {

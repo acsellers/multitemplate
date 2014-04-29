@@ -1,0 +1,18 @@
+= set . "title" "Home"
+
+#login
+
+  (try with demo/demo)
+
+  = form_tag (url "Application.Login") (attrs "id" "formLogin")
+    p.field
+      label Login Name:
+      input type="text" name="username" value=.flash.username size="19"
+    p.field
+      label Password:
+      = password_field_tag "password" (attrs "size" "19")
+    p.field
+      label Remember:
+      = check_box_tag "remember" true
+    p.buttons
+      input type="submit" value="Account login"

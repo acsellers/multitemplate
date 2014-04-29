@@ -1,0 +1,67 @@
+Documented:
+
+Finished:
+Doctype Line
+!! (doctype[])
+
+Executable Line
+= 
+
+Verbatim Line
+/ .*
+
+Comment Line
+// .*
+
+Block Line
+[blockName]
+
+Define Block Line
+^blockName]
+
+Yield Line
+@yieldName
+
+Extends Line
+@@parentName
+
+If Line
+?condition
+
+Else Line (If)
+!?
+
+Range Line
+& (something)
+
+Else Line (Range)
+!&
+
+Text Line
+.*
+
+Filter Line
+:(filterName)
+
+Unfinished:
+
+Tag Line
+'%'?(tagName)\(wat attr="value" attr=$code) blah
+'%'?(tagName)\(wat attr="value" attr=$code)= $value
+
+Id/Class Line
+(.|#)(text) .*
+
+Interpolated lines
+blah{{ code }}blah
+
+Nesting in strange situations
+
+Text:
+  Text can have nested text inside it, but the only type of special text it will detect is 
+  Comment tags
+
+Doctype:
+  You can nest comment tags, but 
+
+Comment:

@@ -1,0 +1,20 @@
+html {
+  background-color: #e2e2e2;
+  margin: 0 auto;
+}
+.row-shrunk {
+  padding: 12px; 
+  width: 97%;
+}
+.page-title {
+  padding-left: 24px
+}
+.navbar-key-items {
+  font-family: 'Signika Negative', sans-serif;
+}
+.flat-bottom {
+  margin-bottom: 0px;
+}
+.active.key-link {
+  color: #454545;
+}

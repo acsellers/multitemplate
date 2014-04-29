@@ -20,6 +20,7 @@ import (
 	"strings"
 
 	mt "github.com/acsellers/multitemplate"
+	"github.com/acsellers/multitemplate/helpers"
 	"github.com/revel/revel"
 )
 
@@ -49,8 +50,10 @@ var (
 type RequestFormat string
 
 // Init must be called from within revel's OnAppStart method.
-func Init() {
+func Init(helper string) {
 	revel.INFO.Println("Multitemplate starting")
+	things := strings.Split(helper, "|")
+	helpers.LoadHelpers(things...)
 
 	if revel.DevMode || ProdRefresh {
 		watch = revel.NewWatcher()

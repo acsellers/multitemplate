@@ -69,7 +69,7 @@ func newValueNode(val string) parse.Node {
 	case "nil":
 		return &parse.NilNode{}
 	}
-	panic("Can only call value node for true, false, nil")
+	panic(fmt.Sprintf("Can only call value node for true, false, nil, was: %s", val))
 }
 
 func newFieldNode(field string) parse.Node {

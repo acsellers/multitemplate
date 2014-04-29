@@ -32,13 +32,13 @@ var tableTests = []tableTest{
 		},
 	},
 	tableTest{
-		Name:        "Yielding Extends",
+		Name:        "Yielding Extend",
 		Description: "A block should be able to be yielded in a parent template.",
 		Expected:    "test block content",
 		Main:        "child",
 		Templates: map[string]string{
 			"main":  `{{ yield "test_block" }}`,
-			"child": `{{ extends "main" }}{{ block "test_block" }}test block content{{ end_block }}`,
+			"child": `{{ extend "main" }}{{ block "test_block" }}test block content{{ end_block }}`,
 		},
 	},
 	tableTest{
@@ -48,7 +48,7 @@ var tableTests = []tableTest{
 		Main:        "child",
 		Templates: map[string]string{
 			"main":  `{{ block "test_block" }}incorrect{{ end_block }}`,
-			"child": `{{ extends "main" }}{{ block "test_block" }}correct{{ end_block }}`,
+			"child": `{{ extend "main" }}{{ block "test_block" }}correct{{ end_block }}`,
 		},
 	},
 	tableTest{
@@ -81,7 +81,7 @@ var tableTests = []tableTest{
 		Main:        "child",
 		Layout:      "layout",
 		Templates: map[string]string{
-			"child":  `{{ extends "parent" }}{{ block "block1" }}child{{ end_block }}`,
+			"child":  `{{ extend "parent" }}{{ block "block1" }}child{{ end_block }}`,
 			"parent": `{{ block "block1" }}parent{{ end_block }}{{ block "block2" }}parent{{ end_block }}`,
 			"layout": `layout {{ block "block1" }}layout{{ end_block }} {{ block "block2" }}layout{{ end_block }} layout`,
 		},
@@ -94,7 +94,7 @@ var tableTests = []tableTest{
 		Main:        "child",
 		Layout:      "layout",
 		Templates: map[string]string{
-			"child":  `{{ extends "parent" }}{{ block "child_block" }}child{{ end_block }}`,
+			"child":  `{{ extend "parent" }}{{ block "child_block" }}child{{ end_block }}`,
 			"parent": `{{ block "test_block" }}parent {{ block "child_block" }}parent{{ end_block }}{{ end_block }}`,
 			"layout": `layout {{ block "test_block" }}layout{{ end_block }} layout`,
 		},
@@ -107,9 +107,9 @@ var tableTests = []tableTest{
 		Main:        "main_child",
 		Layout:      "layout_child",
 		Templates: map[string]string{
-			"layout_child":  `{{ extends "layout_parent" }}{{ block "child_layout" }}two{{ end_block }}`,
+			"layout_child":  `{{ extend "layout_parent" }}{{ block "child_layout" }}two{{ end_block }}`,
 			"layout_parent": `one {{ yield "child_layout" }} {{ yield "parent_main" }} {{ yield "child_main" }}`,
-			"main_child":    `{{ extends "main_parent" }}{{ block "child_main" }}four{{ end_block }}`,
+			"main_child":    `{{ extend "main_parent" }}{{ block "child_main" }}four{{ end_block }}`,
 			"main_parent":   `{{ block "parent_main" }}three{{ end_block }}`,
 		},
 	},
@@ -127,13 +127,25 @@ var tableTests = []tableTest{
 	},
 
 	tableTest{
+		Name:        "Exec Block",
+		Description: "Exec block should execute the block in that space",
+		Expected:    "layout main",
+		Main:        "main",
+		Layout:      "layout",
+		Templates: map[string]string{
+			"layout": `layout {{ exec_block "block" }}default{{ end_block }}`,
+			"main":   `{{ block "block" }}main{{ end_block }}`,
+		},
+	},
+
+	tableTest{
 		Name:        "Extended Main Templates with Layouts",
 		Description: "Main template must be able to be yielded in a layout",
 		Expected:    "lay ext child end out",
 		Main:        "main_child",
 		Layout:      "layout",
 		Templates: map[string]string{
-			"main_child":  `{{ extends "main_parent" }}{{ block "content" }}child{{ end_block }}`,
+			"main_child":  `{{ extend "main_parent" }}{{ block "content" }}child{{ end_block }}`,
 			"main_parent": `ext {{ block "content" }}error{{ end_block }} end`,
 			"layout":      `lay {{ yield }} out`,
 		},

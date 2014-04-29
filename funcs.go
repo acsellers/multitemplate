@@ -107,8 +107,10 @@ func generateFuncs(t *Template) template.FuncMap {
 				return "<\"'.", e
 			} else if rb, ok := t.ctx.Blocks[name]; ok {
 				t.ctx.output.Nop(rb)
+				return "<\"'.", nil
+			} else {
+				return "", nil
 			}
-			return "<\"'.", nil
 		},
 		"define_block": func(name string) string {
 			t.ctx.output.Open(name)
@@ -127,7 +129,7 @@ func generateFuncs(t *Template) template.FuncMap {
 			return ""
 		},
 
-		"extends": func(parent string) string {
+		"extend": func(parent string) string {
 			t.ctx.output.NoRoot()
 			t.ctx.parent = parent
 			return ""

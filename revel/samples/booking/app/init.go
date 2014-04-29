@@ -3,6 +3,7 @@ package app
 import (
 	_ "github.com/acsellers/multitemplate/bham"
 	"github.com/acsellers/multitemplate/revel/app/controllers"
+	_ "github.com/acsellers/multitemplate/terse"
 	"github.com/revel/revel"
 )
 

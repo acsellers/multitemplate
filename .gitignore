@@ -1,0 +1,13 @@
+# Test files
+/multitemplate.test
+/bham/bham.test
+/helpers/helpers.test
+/mustache/mustache.test
+/terse/terse.test
+
+# mustache things
+/mustache/specs/gen/*
+
+# revel sample things
+/revel/samples/*/app/routes/*
+/revel/samples/*/app/tmp/*

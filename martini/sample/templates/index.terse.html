@@ -1,0 +1,26 @@
+h1.page-title All Keys
+.row-fluid.row-shrunk
+  .span2
+    .well
+      table.table.flat-bottom
+        thead
+          tr
+            td.all_keys
+              All Keys
+        tbody
+          &.Keys
+            tr
+              td
+                a.key-link href="#" data-key=(to_hex .)= truncate . 20
+  .span9
+    &.Values
+      .keycontent id="key_{{ .Link}}"
+        h3
+          a href="/show/{{ .Link }}"= .Key
+        ?.IsList
+          ul
+            &.Contents
+              li
+                pre.redis-item= .
+        !?
+          %blockquote= .Content

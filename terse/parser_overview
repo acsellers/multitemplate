@@ -1,0 +1,14 @@
+3 steps
+
+1: Scan (78 lines)
+  Takes in the raw string of the template and turns it into the tree form
+  that we'll need. We don't care whether you prefer tabs or spaces here.
+
+2: Tokenize (main logic)
+  Takes in the tree created by scan and turns it into a tree of tokens.
+  Tokens either have content, or they have opening tokens, closing tokens,
+  children tokens. All tokens have a type, which is used by compile.
+
+3: Compile (minor logic)
+  Takes the tree of tokens from Tokenize, then runs some simple rules to 
+  turn it into a parse.Tree.

@@ -81,22 +81,73 @@ github.com/revel/revel, but with templates converted to use multitemplate. (Yes 
 know there's only one there now, I'll add more soon).
 
 
-Development Status
-------------------
+Versioning
+----------
 
-_Done:_
+New versions are released when the features planned for that version 
+are complete. If a feature looks to not be ready in the same 
+timeframe as the other features earmarked for that version, then the
+longer features may get bumped.
+
+
+Future Version Plans
+--------------------
+
+_1.1_
+
+* New things, maybe a language, helpers module, or something from left field.
+
+_1.0_
+
+* Stability, plan to keep same API at this point and add languages, subsystems
+
+_0.6_
+
+* Mustache partial CMTS
+* More CMTS tests
+
+_0.5_
+
+* Terse parser gets ported to bham
+* FormBuilder-like helper module
+* Bham spec
+* Common MultiTemplate Test Suite (set of tests that each language must pass)
+* Stdlib CMTS
+* Bham CMTS
+* Terse CMTS
+* Refactor mustache tests to use multitemplate.Template and Table Driven tests
+
+_0.4_
+
+* New language (terse)
+* New sub-library for html helpers
+* FormTag, Link, General, Simple Asset helper modules
+* helpers modules come into 0.4 with 100% in tests, documentation, and examples
+* Better parser construction (proper parser structure)
+* Martini integration (multirender)
+
+
+Version History
+---------------
+
+_0.3_
+
+* Blocks know how they've been escaped and will check for escaping ruleset matches when being rendered (security)
+* Fix bugs in revel integration exposed by security fixes
+
+_0.2_
+
+* Fix issues with bham around function parsing
+* Started documenting library
+* Various fixes
+
+_0.1_
 
 * Move helpers, mussed, and bham into subdirectories of the same repo.
 * Write a buildable version of multitemplate.Template
 * Figure out how to set up Delims on standard library
 * Write tests on multitemplate.Template
-* Implement the template interoperation library
 * Fix up yield function to take fallback template name
 * Content_for function with template name
 * Implement block and end_block
 * Write a revel connector
-
-_To Do:_
-
-* Implement the helpers library
-* Figure out what other libraries (martini?) could use a connector
