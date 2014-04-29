@@ -117,18 +117,17 @@ _0.5_
 * Terse CMTS
 * Refactor mustache tests to use multitemplate.Template and Table Driven tests
 
+Version History
+---------------
+
 _0.4_
 
 * New language (terse)
 * New sub-library for html helpers
 * FormTag, Link, General, Simple Asset helper modules
-* helpers modules come into 0.4 with 100% in tests, documentation, and examples
-* Better parser construction (proper parser structure)
+* helpers modules that are enabled individually
+* Better parser construction (working in terse)
 * Martini integration (multirender)
-
-
-Version History
----------------
 
 _0.3_
 

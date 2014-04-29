@@ -19,17 +19,14 @@
     app := martini.Classic()
     app.Use(multirender.Renderer())
 
-    app.Get("/html", func (mr multirender.Render) {
-      mr.HTMLContext(multirender.Context{
-        Main: "app/index.html",
-      })
+    app.Get("/", func (mr multirender.Render) {
+      mr.HTML(200, "app/index.html", nil)
     })
 
-    app.Get("/expensive", func(mr multirender.Render) {
-      ctx := multirender.NewContext("app/expensive.html")
-      if content, ok := cache.Get("expensive_block"); ok {
-        ctx.SetContent("content", ok)
-      }
+    app.Get("/admins", func(mr multirender.Render) {
+      ctx := mr.NewContext()
+      ctx.RenderArgs["Users"] = AdminUsers
+      mr.HTML(200, "app/user_list.html", ctx)
     })
 
     app.Run()
