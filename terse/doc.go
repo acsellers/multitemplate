@@ -102,7 +102,7 @@ be assumed to be the value.
   {{ template "layouts/navigation.html" . }}
 
   // Source
-  >>"beta layouts/javascript defer.html" $modules
+  >>"beta layouts/javascript defer.html":$modules
 
   // Output
   {{ template "beta layouts/javascript defer.html" $modules }}
@@ -439,10 +439,6 @@ text/template parser. Similarly, the css filter will wrap the text in a style
 tag, then send it to the parser.
 
 Notes
-
-Range and With statements use :'s to delineate arguments while template
-statements use spaces. I'm still thinking about this, and template's will likely
-move to :'s.
 
 The format of the documentation and some examples were inspired by
 Haml's REFERENCE file.

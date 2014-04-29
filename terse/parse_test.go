@@ -513,7 +513,7 @@ input type=$t`,
 		Name: "Template call with Var",
 		Sources: map[string]string{
 			"mini":   "= .",
-			"master": "= $r := 123\n>>\"mini\" $r\n456",
+			"master": "= $r := 123\n>>\"mini\":$r\n456",
 		},
 		Template: "master",
 		Expected: "\n123\n456",

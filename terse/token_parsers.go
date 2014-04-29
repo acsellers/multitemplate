@@ -331,11 +331,14 @@ func templateToken(node *rawNode) (*token, error) {
 			remainder = parts[1]
 		}
 	} else {
-		parts := strings.SplitN(code, " ", 2)
+		parts := strings.SplitN(code, ":", 2)
 		name = parts[0]
 		if len(parts) == 2 {
 			remainder = parts[1]
 		}
+	}
+	if len(remainder) > 0 && remainder[0] == ':' {
+		remainder = remainder[1:]
 	}
 	if strings.TrimSpace(remainder) == "" {
 		remainder = "."
