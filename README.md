@@ -76,9 +76,20 @@ You can find instruction on how to integrate multitemplate and revel at the godo
 Information on the replacement controller struct to use with the revel integration is at the godoc for
 [github.com/acsellers/multitemplate/revel/app/controllers](http://godoc.org/github.com/acsellers/multitemplate/revel/app/controllers).
 
-Samples in the revel folder are a selection of samples available from
-github.com/revel/revel, but with templates converted to use multitemplate. (Yes I
-know there's only one there now, I'll add more soon).
+The sample in the revel folder is the booking sample from
+github.com/revel/revel, but with templates converted to use multitemplate languages.
+
+
+Martini Integration
+-------------------
+
+You can find instruction on how to integrate multitemplate and revel at the godoc for
+[github.com/acsellers/multitemplate/martini](http://godoc.org/github.com/acsellers/multitemplate/martini).
+Information on the replacement controller struct to use with the revel integration is at the godoc for
+[github.com/acsellers/multitemplate/martini](http://godoc.org/github.com/acsellers/multitemplate/martini).
+
+The Sample in the martini folder is a port of a small Redis viewer I wrote a while ago,
+but with the templates all in the terse language.
 
 
 Versioning
