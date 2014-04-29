@@ -20,7 +20,7 @@ Bham documentation
 ------------------
 
 I am continuing to add to the [godoc documentation](http://godoc.org/github.com/acsellers/multitemplate/bham),
-but a quick taste of bham (as of 0.2) is as follows:
+this is a simple snippet from the booking examples written in bham.
 
 ```
   !!!
@@ -42,6 +42,30 @@ but a quick taste of bham (as of 0.2) is as follows:
       = yield "content"
 ```
 
+Terse Documentation
+-------------------
+
+[Terse](http://godoc.org/github.com/acsellers/multitemplate/terse) is fairly well documented, but could always use some longer form examples.
+This is the same snippet as bham, but in terse
+
+```
+  !!
+  html
+    head
+      @head
+    body
+      [header]
+        #header
+          ?.user
+            #options
+              Connected as {{.user.Username}} |
+              a href=(url "Hotels.Index") Search
+              |
+              a href=(url "Hotels.Settings") Settings
+              |
+              a href=(url "Application.Logout") Logout
+      @content
+```
 
 Using the library
 -----------------
