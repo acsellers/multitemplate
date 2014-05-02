@@ -159,7 +159,14 @@ func (t *Template) Parse(name, src, parser string) (*Template, error) {
 		return nil, err
 	}
 	for n, tree := range trees {
-		t, err = t.AddParseTree(n, tree)
+		// text/template/parse needs the text of the template to generate errors,
+		// but you can't set that without parsing, so make a fake parse run, then swap
+		// out the roots while no one's looking. Use 25 delimeters so it all gets parsed
+		// as text
+		ptt := parse.New(tree.Name)
+		ptt.Parse(src, "{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{", "}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}", map[string]*parse.Tree{})
+		ptt.Root = tree.Root
+		t, err = t.AddParseTree(n, ptt)
 		if err != nil {
 			return nil, err
 		}

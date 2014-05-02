@@ -83,7 +83,7 @@ func actionNode(code string, rsc *resources, pos int) (*parse.ActionNode, error)
 		normalize(an, pos)
 		return an, nil
 	}
-	return nil, fmt.Errorf("Node could not be parsed")
+	return nil, fmt.Errorf("Node could not be parsed: %s", code)
 }
 
 func normalize(an *parse.ActionNode, pos int) {

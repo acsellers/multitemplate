@@ -16,6 +16,13 @@ on top of the standard library.
 
 Current documentation is available at [godoc.org](http://godoc.org/github.com/acsellers/multitemplate).
 
+Current status is beta. The happy path works, but straying off the happy
+path may lead to big bad bears. Right now, I'm endeavoring to build real
+things with multitemplate, so I will be pushing new versions of 
+multitemplate at arbitrary times to fix the issues I find. At some point
+in the next month or two I plan to start moving multitemplate to a 
+release candidate state for the 0.5 release.
+
 Bham documentation
 ------------------
 
