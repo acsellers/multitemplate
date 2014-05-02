@@ -121,7 +121,7 @@ func Renderer(opt Options) martini.Handler {
 	mt, _ = compile(opt, mt)
 	return func(w http.ResponseWriter, r *http.Request, c martini.Context) {
 		if martini.Env == martini.Dev {
-			mt := multitemplate.New("martini").Funcs(opt.Funcs)
+			mt = multitemplate.New("martini").Funcs(opt.Funcs)
 			mt = mt.Funcs(helpers.GetHelpers(opt.Helpers...))
 			mt, err = compile(opt, mt)
 		}
@@ -148,14 +148,17 @@ type Options struct {
 
 func compile(opt Options, mt *multitemplate.Template) (*multitemplate.Template, error) {
 	var err error
+	fmt.Println("[multitemplate] Start Template Compile")
 	for _, dir := range opt.Directories {
 		mt.Base = dir
 		e := filepath.Walk(dir, func(path string, i os.FileInfo, e error) error {
 			if !i.IsDir() && strings.Contains(path, "html") {
-				fmt.Println("Compiling file:", path)
+				fmt.Println("[multitemplate] Compiling file:", path)
 				_, err := mt.ParseFiles(path)
 				if err == nil {
-					fmt.Println("Successfully compiled file")
+					fmt.Println("[multitemplate] Successfully compiled file")
+				} else {
+					fmt.Printf("[multitemplate] Could not compile file: %s\n", err.Error())
 				}
 				return err
 			}
@@ -165,7 +168,7 @@ func compile(opt Options, mt *multitemplate.Template) (*multitemplate.Template, 
 			err = e
 		}
 	}
-
+	fmt.Println("[multitemplate] End Template Compile")
 	return mt, err
 }
 
@@ -230,7 +233,6 @@ func (r *renderer) HTML(status int, name string, htmlOpt *Context) {
 		ctx.Layout = r.opt.DefaultLayout
 	}
 	ctx.Main = name
-	fmt.Println(r.mt.Lookup("layout.html").Tmpl.Tree.Root.String())
 	b := &bytes.Buffer{}
 	if r.mt == nil || r.mt.Tmpl == nil {
 		panic("here")
