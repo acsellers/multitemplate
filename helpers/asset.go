@@ -83,7 +83,7 @@ type AssetInfo struct {
 Example AppInfo
     helpers.AppInfo = AssetInfo{
       RootURL:        url.Parse("http://localhost"),
-      AssetRoot:      filepath.Join(os.Getwd(), "public"),
+      DocRoot:            "assets",
       ImageRelative:      "images",
       JavascriptRelative: "javascripts",
       StylesheetRelative: "stylesheets",
@@ -108,7 +108,7 @@ func (ai AssetInfo) AssetLink(path, prefix string) string {
 	tu, _ := url.Parse(path)
 	// Use relative urls for local urls
 	if tu.Host == "" {
-		if prefix[0] != '/' {
+		if len(prefix) == 0 || prefix[0] != '/' {
 			prefix = "/" + prefix
 		}
 		if path[0] != '/' {

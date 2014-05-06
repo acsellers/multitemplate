@@ -4,6 +4,13 @@ import "html/template"
 
 func generateFuncs(t *Template) template.FuncMap {
 	return template.FuncMap{
+		"may_yield": func(name string) bool {
+			if _, ok := t.ctx.Yields[name]; ok {
+				return true
+			}
+			_, ok := t.ctx.Blocks[name]
+			return ok
+		},
 		"yield": func(vals ...interface{}) (string, error) {
 			var e error
 			switch len(vals) {
