@@ -211,6 +211,16 @@ the Main template without a Main template set is an error
   // with specific RenderArgs
   {{ yield "results" .CurrentObject (fallback "errors/undefined.html") }}
 
+may_yield will check if a block has been set with a name or a template
+has been set for the name. If you need to have text around a block or template,
+but only if the block or template has been set, then may_yield will help you out.
+
+  // check if "more_content" has been set elsewhere
+  {{ if may_yield "more_content" }}
+    But wait, there's more
+    {{ yield "more_content" . }}
+  {{ end }}
+
 content_for allows you to set a template to be rendered in a block or yield from
 within a template.
 
