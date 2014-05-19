@@ -498,7 +498,7 @@ input type=$t`,
 	parseTest{
 		Name:     "Tab indentation",
 		Content:  "html\n\thead",
-		Expected: "<html><head /></html>",
+		Expected: "<html><head></head></html>",
 	},
 	parseTest{
 		Name: "Template call",
@@ -538,7 +538,7 @@ input type=$t`,
     >>mini
     `,
 		Template: "master",
-		Expected: "<html><head /></html>",
+		Expected: "<html><head></head></html>",
 	},
 	parseTest{
 		Name: "Define template",
@@ -547,7 +547,12 @@ input type=$t`,
 ::mini
   head`,
 		Template: "parse",
-		Expected: "<html><head /></html>",
+		Expected: "<html><head></head></html>",
+	},
+	parseTest{
+		Name:     "Void elements",
+		Content:  "span.content-button\n  i.fa.fa-play",
+		Expected: `<span class="content-button"><i class="fa fa-play"></i></span>`,
 	},
 }
 

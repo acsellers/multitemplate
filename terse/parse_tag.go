@@ -56,6 +56,11 @@ func (t *tag) Parse(children bool) error {
 			t.Classes = append(t.Classes, cl)
 		}
 	}
+	if !t.Enclosing {
+		if !VoidElements[t.Name] {
+			t.Enclosing = true
+		}
+	}
 
 	if len(t.Source) > 0 && t.Source[0] == '(' {
 		if len(t.Node.Children) == 0 {
