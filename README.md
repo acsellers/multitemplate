@@ -132,32 +132,26 @@ timeframe as the other features earmarked for that version, then the
 longer features may get bumped.
 
 
-Future Version Plans
+Actual Future Version Plans
 --------------------
-
-_1.1_
-
-* New things, maybe a language, helpers module, or something from left field.
-
-_1.0_
-
-* Stability, plan to keep same API at this point and add languages, subsystems
-
-_0.6_
-
-* Mustache partial CMTS
-* More CMTS tests
 
 _0.5_
 
-* Terse parser gets ported to bham
-* FormBuilder-like helper module
-* Bham spec
-* Common MultiTemplate Test Suite (set of tests that each language must pass)
-* Stdlib CMTS
-* Bham CMTS
-* Terse CMTS
-* Refactor mustache tests to use multitemplate.Template and Table Driven tests
+* Component library for reusable html code
+* Fixes added while building a website (or two) with the library
+
+_0.6_
+
+* Common parser structures like indent parser, maybe a delimeter parser
+* Bham, Terse using common structures
+
+_0.7_
+
+* Use composable parser stages for Bham, Terse, Stdlib, Mustache-ish
+
+_1.0_
+
+* More stability and tests
 
 Version History
 ---------------

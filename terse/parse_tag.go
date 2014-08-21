@@ -28,6 +28,7 @@ type tag struct {
 	Attrs     map[string]string
 	DynAttrs  map[string]string
 	Remaining string
+	Totem     bool
 	Enclosing bool
 }
 
@@ -105,8 +106,10 @@ func (t *tag) Parse(children bool) error {
 		case len(check) == 0:
 			return fmt.Errorf("Missing tag in nested tags for %s", t.Node.Code)
 		case check[0] == '%':
+			t.Totem = true
 			t.Remaining = strings.TrimSpace(check)
 		case ValidElements[firstTextToken(check)]:
+			t.Totem = true
 			t.Remaining = strings.TrimSpace(check)
 		}
 	}

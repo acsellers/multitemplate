@@ -115,8 +115,11 @@ func tagToken(node *rawNode) (*token, error) {
 		t.Children = []*token{rt}
 	}
 	t.Closing = []*token{c}
-	nc, e := childTokenize(node)
-	t.Children = append(t.Children, nc...)
+	if !tg.Totem {
+		nc, e := childTokenize(node)
+		t.Children = append(t.Children, nc...)
+		return t, e
+	}
 	return t, e
 }
 
