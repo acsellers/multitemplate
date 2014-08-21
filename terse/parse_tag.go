@@ -98,21 +98,16 @@ func (t *tag) Parse(children bool) error {
 	if len(t.Remaining) > 0 && t.Remaining[0] == ' ' {
 		t.Remaining = t.Remaining[1:]
 	}
-	for len(t.Remaining) > 0 && t.Remaining[0] == '>' {
+	// totem tags
+	if len(t.Remaining) > 0 && t.Remaining[0] == '>' {
 		check := strings.TrimSpace(t.Remaining[1:])
 		switch {
 		case len(check) == 0:
 			return fmt.Errorf("Missing tag in nested tags for %s", t.Node.Code)
 		case check[0] == '%':
-			element := firstTextToken(check[1:])
-			check = check[len(element)+1:]
 			t.Remaining = strings.TrimSpace(check)
-			t.ChildTags = append(t.ChildTags, element)
 		case ValidElements[firstTextToken(check)]:
-			element := firstTextToken(check)
-			check = check[len(element):]
 			t.Remaining = strings.TrimSpace(check)
-			t.ChildTags = append(t.ChildTags, element)
 		}
 	}
 	return nil
