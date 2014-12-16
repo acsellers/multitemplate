@@ -76,6 +76,16 @@ func (t *Template) Context(ctx *Context) (*Template, error) {
 	}
 	tmpl.ctx = ctx
 	ctx.tmpl = tmpl
+	if ctx.Yields == nil {
+		ctx.Yields = make(map[string]string)
+	}
+	if ctx.Blocks == nil {
+		ctx.Blocks = make(map[string]RenderedBlock)
+	}
+	if ctx.output == nil {
+		ctx.output = newPouchWriter()
+	}
+
 	return tmpl.Funcs(generateFuncs(tmpl)), nil
 }
 
