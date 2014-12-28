@@ -7,15 +7,15 @@ import (
 )
 
 var linkFuncs = template.FuncMap{
-	"link_to": func(link, name string) template.HTML {
+	"link_to": func(link, name string, options ...AttrList) template.HTML {
 		u, e := url.Parse(link)
 		if e != nil {
 			return ""
 		}
 
-		return template.HTML(
-			fmt.Sprintf(`<a href="%s">%s</a>`, u.String(), name),
-		)
+		al := combine("", "", options)
+		al["href"] = u.String()
+		return buildTag("a", template.HTML(template.HTMLEscapeString(name)), al)
 	},
 	"link_to_function": func(text, function string, options ...AttrList) template.HTML {
 		al := combine("", "", options)

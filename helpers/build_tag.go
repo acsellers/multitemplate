@@ -29,7 +29,7 @@ func buildTag(tagName string, content template.HTML, al AttrList) template.HTML 
 		}
 	}
 
-	if string(content) == "" {
+	if string(content) == "" && tagName != "textarea" {
 		tag += " />"
 	} else {
 		tag += ">" + string(content) + "</" + tagName + ">"
