@@ -143,9 +143,13 @@ func (t *token) Compile(prefix string) []parse.Node {
 			if len(prefix) == 0 || prefix[0] != '\n' {
 				prefix = "\n" + prefix
 			}
+			var pos parse.Pos
+			if len(t.Children) > 0 {
+				pos = parse.Pos(t.Children[0].Pos)
+			}
 			bn.List = &parse.ListNode{
 				NodeType: parse.NodeList,
-				Pos:      parse.Pos(t.Children[0].Pos),
+				Pos:      pos,
 				Nodes:    t.ChildCompile(prefix),
 			}
 
