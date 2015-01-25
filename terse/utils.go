@@ -33,8 +33,10 @@ func (rsc *resources) UpdateVars(n parse.Node) {
 		for _, ln := range an.List.Nodes {
 			rsc.UpdateVars(ln)
 		}
-		for _, ln := range an.ElseList.Nodes {
-			rsc.UpdateVars(ln)
+		if an.ElseList != nil {
+			for _, ln := range an.ElseList.Nodes {
+				rsc.UpdateVars(ln)
+			}
 		}
 	case *parse.RangeNode:
 		for _, ln := range an.List.Nodes {
